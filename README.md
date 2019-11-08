@@ -1,3 +1,4 @@
 # --- Work-in-Progress ---
 # Goldelish-Engine
-A reimplementation of the Corange Game Engine (https://github.com/orangeduck/Corange) in the ATS programming language.
+
+This is just a personal project that I've undertaken to help me get better at programming in ATS.
