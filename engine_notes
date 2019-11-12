@@ -94,7 +94,7 @@ root
   -Makefile -> allows the project to be compiled
 
 step 2: formulate a plan of attack
-goals (in order of which I plan to do first to which I plan to do last):
+goals:
 -work on current header files
   -centity.h
   -cgraphics.h
