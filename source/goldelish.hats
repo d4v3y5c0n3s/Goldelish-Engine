@@ -13,8 +13,8 @@ This code is the main header file for the engine.
 #include "g_physics.hats"
 
 (*  Engine Functions  *)
-fn goldelish_init(core_assets_path: ptr) : void = "mac#"
-fn goldelish_finish() : void = "mac#"
+fn goldelish_init(core_assets_path: ptr) : void = "sta#goldelish_init"
+fn goldelish_finish() : void = "sta#goldelish_finish"
 
 (*  Entities  *)
 #include "g_entity.hats"
