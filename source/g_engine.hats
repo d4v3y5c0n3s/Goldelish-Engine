@@ -14,12 +14,15 @@ staload _(*STDIO*) = "libats/libc/DATS/stdio.dats"
 staload STRINGS = "libats/libc/SATS/strings.sats"//  string.h
 staload _(*STRINGS*) = "libats/libc/DATS/strings.dats"
 staload DIRENT = "libats/libc/SATS/direct.sats"//  dirent.h
-staload
-#include "libats/libc/"//  assert.h
-#include "libats/libc/"//  math.h
-#include "libats/libc/"//  time.h
-#include "libats/libc/"//  signal.h
-#include "libats/libc/"//  float.h
+staload _(*DIRENT*) = "libats/libc/DATS/direct.dats"
+//  assert.h (I don't think this is needed in ATS)
+staload MATH = "libats/libc/SATS/math.sats"//  math.h
+staload _(*MATH*) = "libats/libc/DATS/math.dats"
+staload TIME = "libats/libc/SATS/time.sats"//  time.h
+staload _(*TIME*) = "libats/libc/DATS/time.dats"
+staload SIGNAL = "libats/libc/SATS/signal.sats"//  signal.h
+staload FLOAT = "libats/libc/SATS/float.sats"//  float.h
+staload _(*FLOAT*) = "libats/libc/DATS/float.dats"
 
 (*  SDL includes  *)
 
