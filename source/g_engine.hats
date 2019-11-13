@@ -25,6 +25,13 @@ staload FLOAT = "libats/libc/SATS/float.sats"//  float.h
 staload _(*FLOAT*) = "libats/libc/DATS/float.dats"
 
 (*  SDL includes  *)
+//  Here are staloads for SDL from the SDL folder (currently writing the .sats & .cats files for this
+staload SDL2 = ""//
+staload SDL2_OPENGL = ""//
+staload SDL2_RWOPS = ""//
+staload SDL2_MIXER = ""//
+staload SDL2_NET = ""//
+staload SDL2_LOCAL = ""//
 
 (*  ###  file system path  ###  *)
 
