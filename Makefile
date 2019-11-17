@@ -1,92 +1,81 @@
+# the makefile, attempt #2
+
+include $(PATSHOME)/share/atsmake-pre.mk
+
+CFLAGS0 = $(CFLAGS)
+LDFLAGS0 = $(LDFLAGS)
+
+CFLAGS0 += -I ./include -std=gnu99 -Wall -Werror -Who-unused -03 -g
+LDFLAGS0 += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
+
+MYCCRULE=MYCCRULE
+
+MALLOCFLAG=-DATS_MEMALLOC_LIBC
+
+#  todo:
 #
-#	This is a Makefile for compiling the engine (uses GNU Make for compilation.)
-#
+#  figure out how to reimplement SRC and OBJ
+SRC = $(wildcard src/*.c) $(wildcard src/*/*.c)
+OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
 
-# includes a Makefile that sets up commonly used rules/variables for using ATS (which is included in your ATS installation)
-#include $(PATSHOME)/share/atsmake-pre.mk
-
-CC=gcc
-AR=ar
-
-#  where source files are and where to compile them to
-#SRC =
-#OBJ =
-
-ifdef \
-PATSHOME
-	PATSHOMEQ="$(PATSHOME)"
-else
-ifdef ATSHOME
-	PATSHOMEQ="$(ATSHOME)"
-else
-	PATSHOMEQ="/usr/local/lib/ats2-postiats"
-endif
-endif
-
-PATSCC=$(PATSHOME)/bin/patscc
-PATSOPT=$(PATSHOME)/bin/patsopt
-PATSLIB=$(PATSHOME)/ccomp/atslib
-
-#  compilation flags
-CFLAGS += -I ./include -std=gnu99 -Wall -Werror -Wno-unused -03 -g
-LFLAGS += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
-
-#  platforms
+#  figure out how to create $(DYNAMIC) and $(STATIC)
 PLATFORM = $(shell uname)
 ifeq ($($findstring Linux, $(PLATFORM)), Linux)
 	DYNAMIC = libgoldelish.so
 	STATIC = libgoldelish.a
-	CFLAGS += -fPIC
-	LFLAGS += -lGL
+	CFLAGS0 += -fPIC
+	LDFLAGS0 += -lGL
 endif
-
 ifeq ($(findstring Darwin, $(PLATFORM)), Darwin)
 	DYNAMIC = libgoldelish.so
 	STATIC = libgoldelish.a
-	CFLAGS +=  -fPIC
-	LFLAGS += -framework OpenGL
+	CFLAGS0 +=  -fPIC
+	LDFLAGS0 += -framework OpenGL
 endif
-
 ifeq ($(findstring MINGW, $(PLATFORM)), MINGW)
 	DYNAMIC = corange.dll
 	STATIC = libcorange.a
-	LFLAGS += -lmingw32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
+	LDFLAGS0 += -lmingw32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 endif
 
-#  patterns for make
-all:	$(DYNAMIC)	$(STATIC)
-
+#  figure out how to compile .dats to .o  ##  figure out how to compile all .dats in 'source' to 'object'
+#   - solution: simply create rules for compiling ats to c, then c to o
+all: $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(OBJ)
-	$(PATSCC)	$(OBJ)	$(LFLAGS)	-o	$@
-
+	$(CC) $(OBJ) $(PATSLIB) $(LDFLAGS) -o $@
 $(STATIC): $(OBJ)
-	$(AR)	rcs	$@	$(OBJ)
-
-obj/%.o: src/%.dats | obj
-	$(PATSCC)	$<	-c	$(CFLAGS)	-o	$@
-
-obj/%.o: src/*/%.dats | obj
-	$(PATSCC)	$<	-c	$(CFLAGS)	-o	$@
-
+	$(AR) rcs $@ $(OBJ)
+obj/%.o: source/%.c | obj
+	$(CC) $< -c $(CFLAGS0) $(PATSLIB) -o $@
+obj/%.o: source/*/%.c | obj
+	$(CC) $< -c $(CFLAGS0) $(PATSLIB) -o $@
 obj:
-	mkdir	obj
+	mkdir obj
 
-clean:
-	rm $(OBJ)	$(STATIC)	$(DYNAMIC)
+# - compiles ats to c -
+source/%.dats: source/%.dats | source
+	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
+source/*/%.dats:
+	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
+# - after this, when compiling the c, remember to use 'PATSLIB' so that it can compile -
 
-#  for cleaning ATS
-cleanats::	;	$(RMF)	*_?ats.c
+#all:
+#	goldelish
+#goldelish: goldelish.dats
+#	$(PATSCC2) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
+#regress: goldelish
+#	./$<
+#cleanall:
+#	$(RMF) goldelish
 
-# installation for different platforms
-install_unix:
-	cp	$(STATIC)	/usr/local/lib/$(STATIC)
+testall:
+	all
+testall:
+	regress
+testall:
+	cleanall
 
-install_win32:
-	cp	$(STATIC)	C:/MinGW/lib/$(STATIC)
+include $(PATSHOME)/share/atsmake-post.mk
 
-install_win64:
-	cp	$(STATIC)	C:/MinGW64/x86_64-w64-mingw32/lib/$(STATIC)
-	cp	$(DYNAMIC)	C:/MinGW64/x86_64-w64-mingw32/bin/$(DYNAMIC)
-
-# same as previous include, except for the end of the Makefile
-#include $(PATSHOME)/share/atsmake-post.mk
+cleanats:
+	$(RMF) *_?ats.c
