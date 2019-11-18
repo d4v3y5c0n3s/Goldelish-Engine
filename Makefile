@@ -1,6 +1,6 @@
 # the makefile, attempt #2
 
-include $(PATSHOME)/share/atsmake-pre.mk
+# - The reason that Make isn't compiling is that no .dats files have been created yet.  So until then, this Makefile should be fine. -
 
 CFLAGS0 = $(CFLAGS)
 LDFLAGS0 = $(LDFLAGS)
@@ -12,11 +12,14 @@ MYCCRULE=MYCCRULE
 
 MALLOCFLAG=-DATS_MEMALLOC_LIBC
 
-#  todo:
-#
 #  figure out how to reimplement SRC and OBJ
 SRC = $(wildcard src/*.c) $(wildcard src/*/*.c)
 OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
+
+#  ATS compilers
+PATSCC=$(PATSHOMEQ)/bin/patscc
+PATSOPT=$(PATSHOMEQ)/bin/patsopt
+PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib
 
 #  figure out how to create $(DYNAMIC) and $(STATIC)
 PLATFORM = $(shell uname)
@@ -38,8 +41,8 @@ ifeq ($(findstring MINGW, $(PLATFORM)), MINGW)
 	LDFLAGS0 += -lmingw32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 endif
 
-#  figure out how to compile .dats to .o  ##  figure out how to compile all .dats in 'source' to 'object'
-#   - solution: simply create rules for compiling ats to c, then c to o
+# - simply create rules for compiling ats to c, then .c to .o -
+# - when compiling the c, remember to use 'PATSLIB' so that it can compile -
 all: $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(OBJ)
 	$(CC) $(OBJ) $(PATSLIB) $(LDFLAGS) -o $@
@@ -53,29 +56,15 @@ obj:
 	mkdir obj
 
 # - compiles ats to c -
+#the reason that this isn't making, is that these two patterns aren't a part of the 'all' (i think)
 source/%.dats: source/%.dats | source
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
 source/*/%.dats:
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
-# - after this, when compiling the c, remember to use 'PATSLIB' so that it can compile -
 
-#all:
-#	goldelish
-#goldelish: goldelish.dats
-#	$(PATSCC2) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
-#regress: goldelish
-#	./$<
-#cleanall:
-#	$(RMF) goldelish
-
-testall:
-	all
-testall:
-	regress
-testall:
-	cleanall
-
-include $(PATSHOME)/share/atsmake-post.mk
+testall:: all
+testall:: regress
+testall:: cleanall
 
 cleanats:
 	$(RMF) *_?ats.c
