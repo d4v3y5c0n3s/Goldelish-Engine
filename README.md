@@ -7,5 +7,6 @@
 #### Why a game engine? ####
 
 #### What is the project's current state? ####
+The code is totally incomplete and doesn't compile.  I'm still learning ATS, so as I learn more these gaps will get filled in until it works properly.  I'll make an announcement of some sort when this happens.
 
 #### How can I help? ####
