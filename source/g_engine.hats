@@ -55,6 +55,7 @@ fun fpath_file (path: fpath) : fpath = "sta#fpath_file"
 fun fpath_file_location (path: fpath) : fpath = "sta#fpath_file_location"
 fun fpath_file_extension (path: fpath) : fpath = "sta#fpath_file_extension"
 
+(*  --  NOTICE: This may need to be rethought for ATS  --
 (*  ###  errors & debugging  ###  *)
 fun at_error(f: void -> void, c: char ptr): void = "sta#at_error"
 fun at_warning(f: void -> void, c: char ptr): void = "sta#at_warning"
@@ -80,6 +81,7 @@ fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
 #define debug()
 
 #define alloc_check()
+*)
 
 (*  ###  framerate  ###  *)
 
