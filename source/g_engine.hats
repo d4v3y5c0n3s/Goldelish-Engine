@@ -81,7 +81,21 @@ fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
 #define debug()
 
 #define alloc_check()
+
+(*  #  OpenGL error checking  #  *)
+#ifdef RELEASE
+#define SDL_GL_CheckError()
+#else
+#define SDL_GL_CheckError() { GLenum __glerror = glGetError(); if (__glerror) { error("OpenGL Error: %s", SDL_GL_ErrorString(__glerror)); } }
+#endif
+
+(*  #  conditional hinting  #  *)
+#define likely(x)  __builtin_expect((x),1)
+#define unlikely(x)	__builtin_expect((x),0)
 *)
+
+(*  ###  timing  ###  *)
+typedef timer =
 
 (*  ###  framerate  ###  *)
 
