@@ -95,11 +95,30 @@ fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
 *)
 
 (*  ###  timing  ###  *)
-typedef timer =
+typedef
+timer = @{ id=int, start=ulint, end=ulint, split=ulint }
+
+fun timer_start (id: int, tag: char ptr) : timer = "sta#timer_start"
+fun timer_split (t: timer, tag: char ptr) : timer = "sta#timer_split"
+fun timer_stop (t: timer, tag: char ptr) : timer = "sta#timer_stop"
+
+fun timestamp (out: char ptr) : void = "sta#timestamp"
 
 (*  ###  framerate  ###  *)
+fun frame_begin () : void = "sta#frame_begin"
+fun frame_end () : void = "sta#frame_end"
+fun frame_end_at_rate ( fps: double ) : void = "sta#%"
+
+fun frame_rate () : double = "sta#%"
+fun frame_time () : double = "sta#%"
+fun frame_rate_string () : char ptr = "sta#"
 
 (*  ###  types  ###  *)
+typedef type_id = int
+
+//#define typeid(TYPE) type_find(#TYPE, sizeof(TYPE))
+fun type_find( type: char ptr, size: size_t ) : type_id = "sta#%"
+fun type_id_name ( id: int ) : char ptr = "sta#%"
 
 (*  ###  floating point math  ###  *)
 
