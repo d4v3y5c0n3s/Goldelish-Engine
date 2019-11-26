@@ -1,1 +1,43 @@
-//an interface for interacting with entities
+(*
+###  g_entity.hats  ###
+
+This is an interface for interacting with entities
+*)
+
+#include "g_engine.hats"
+
+typedef entity = void
+
+fun entity_init () : void = "sta#%"
+fun entity_finish () : void = "sta#%"
+
+(*
+#define entity_handler(type, new, del) entity_handler_cast(typeid(type), (void*(*)())new , (void(*)(void*))del)
+void entity_handler_cast(int type_id, void* entity_new() , void entity_del(void* entity));
+
+/* Create, get and destroy entities */
+#define entity_new(fmt, type, ...) (type*)entity_new_type_id(fmt, typeid(type), ##__VA_ARGS__)
+#define entity_get_as(fmt, type, ...) ((type*)entity_get_as_type_id(fmt, typeid(type)), ##__VA_ARGS__)
+*)
+
+fun entity_exists ( fmt: char ptr, () ) : bool = "sta#%"
+fun entity_get ( fmt: char ptr, () ) : entity ptr = "sta#%"
+fun entity_get_as_type_id ( fmt: char ptr, type_id: int, () ) : entity ptr = "sta#%"
+fun entity_new_type_id ( fmt: char ptr, type_id: int, () ) : entity ptr = "sta#%"
+fun entity_delete ( fmt: char ptr, () ) : void = "sta#%"
+
+fun entity_name ( e: entity ptr ) : char ptr = "sta#%"
+fun entity_typename ( a: entity ptr ) : char ptr = "sta#%"
+
+(*
+/* Get the number of a certain entity type */
+#define entity_type_count(type) entity_type_count_type_id(typeid(type))
+int entity_type_count_type_id(int type_id);
+
+/* Create or get multiple entities of a certain type */
+#define entities_new(name_format, count, type) entities_new_type_id(name_format, count, typeid(type))
+#define entities_get(out, returned, type) entities_get_type_id((entity**)out, returned, typeid(type)) 
+*)
+
+fun entity_new_type_id ( name_format: char ptr, count: int, type_id: int ) : void = "sta#%"
+fun entity_get_type_id ( out: entity ptr ptr, returned: int ptr, type_id: int ) : void = "sta#%"
