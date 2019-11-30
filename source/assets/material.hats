@@ -1,1 +1,51 @@
-//definition of object materials
+(*
+###  material.hats  ###
+
+definition of object materials
+*)
+
+#include "g_engine.hats"
+#include "g_asset.hats"
+#include "assets/shader.hats"
+
+typedef material_item = @(
+	as_int=int,
+	as_float=float,
+	as_vec2=vec2,
+	as_vec3=vec3,
+	as_vec4=vec4,
+	as_asset=asset_hndl
+)
+
+val mat_item_int = 0
+val mat_item_float = 1
+val mat_item_vec2 = 2
+val mat_item_vec3 = 3
+val mat_item_vec4 = 4
+val mat_item_shader = 5
+val mat_item_texture = 6
+
+typedef material_entry = @(
+	program=shader_program ptr,
+	num_items=int,
+	types=int ptr,
+	names=char ptr ptr,
+	items=material_item ptr
+)
+
+fun material_entry_delete ( me: material_entry ptr ) : void = "sta#%"
+fun material_entry_item ( me: material_entry ptr, name: char ptr ) : material_item = "sta#%"
+fun material_entry_has_item ( me: material_entry ptr, name: char ptr ) : bool = "sta#%"
+fun material_entry_add_item ( me: material_entry ptr, name: char ptr, type: int, mi: material_item ) : void = "sta#%"
+
+typedef material = @( num_entries=int, entries=material_entry ptr ptr )
+
+fun material_new () : material ptr = "sta#%"
+fun material_delete ( m: material ptr ) : void = "sta#%"
+
+fun mat_load_file ( filename: char ptr ) : material ptr = "sta#%"
+
+fun material_get_entry ( m: material ptr, index: int ) : material_entry ptr = "sta#%"
+fun material_add_entry ( m: material ptr ) : material_entry ptr = "sta#%"
+
+fun material_first_program ( m: material ptr ) : shader_program ptr = "sta#%"
