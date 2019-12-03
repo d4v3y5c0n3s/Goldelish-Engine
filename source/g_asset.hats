@@ -52,7 +52,7 @@ fun file_load ( filename: fpath ) : void = "sta#%"
 fun file_unload ( filename: fpath ) : void = "sta#%"
 fun file_reload ( filename: fpath ) : void = "sta#%"
 fun file_isloaded ( path: fpath ) : bool = "sta#%"
-fun file_exists ( path: fpath ) : bool = "sta#%
+fun file_exists ( path: fpath ) : bool = "sta#%"
 
 fun folder_load ( folder: fpath ) : void = "sta#%"
 fun folder_unload ( folder: fpath ) : void = "sta#%"
