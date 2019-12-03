@@ -55,7 +55,7 @@ fun file_isloaded ( path: fpath ) : bool = "sta#%"
 fun file_exists ( path: fpath ) : bool = "sta#%
 
 fun folder_load ( folder: fpath ) : void = "sta#%"
-fun folder_unload ( folder: fpath ) : void = "sta#%
+fun folder_unload ( folder: fpath ) : void = "sta#%"
 fun folder_reload ( folder: fpath ) : void = "sta#%"
 fun folder_load_recursive ( folder: fpath ) : void = "sta#%"
 
