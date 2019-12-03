@@ -49,7 +49,7 @@ void asset_handler_cast(
 
 //  load/reload/unload assets at path or folder
 fun file_load ( filename: fpath ) : void = "sta#%"
-fun file_unload ( filename: fpath ) : void = "sta#%
+fun file_unload ( filename: fpath ) : void = "sta#%"
 fun file_reload ( filename: fpath ) : void = "sta#%"
 fun file_isloaded ( path: fpath ) : bool = "sta#%"
 fun file_exists ( path: fpath ) : bool = "sta#%
