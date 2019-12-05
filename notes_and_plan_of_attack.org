@@ -1,0 +1,145 @@
+###   mess around  ###
+
+// Corange Game Engine in ATS Reimplementation  //
+
+resources to use:
+  -http://www.pbr-book.org/
+  -https://learnopengl.com/
+  -https://vulkan-tutorial.com/
+  -https://danielsefton.com/2016/05/developing-a-data-oriented-game-engine-part-1/
+  -https://gamedevelopment.tutsplus.com/articles/what-is-data-oriented-game-engine-design--cms-21052
+  -https://www.randygaul.net/2013/05/05/data-oriented-design-starting-up/
+  -http://gamesfromwithin.com/data-oriented-design
+  -https://gamedev.stackexchange.com/questions/138438/a-more-data-oriented-design-approach-to-entity-component-system-game-engine
+  -https://www.gamedev.net/forums/topic/681142-multithreaded-game-engine-architecture-with-data-oriented-design/
+  -https://github.com/githwxi/ATS-Postiats/wiki
+  -https://www.gamefromscratch.com/post/2018/06/26/Five-Great-GameDev-Websites-Compilation.aspx
+  -https://bluishcoder.co.nz/2012/08/30/safer-handling-of-c-memory-in-ats.html
+  -https://sites.google.com/a/likai.org/cs/ats/ml-programmers-guide-to-ats
+  -http://www.dice.se/wp-content/uploads/2014/12/Introduction_to_Data-Oriented_Design.pdf
+  -https://stackoverflow.com/questions/1641580/what-is-data-oriented-design
+  -http://www.dataorienteddesign.com/dodmain/
+  -https://github.com/dbartolini/data-oriented-design
+  -https://asawicki.info/news_1422_data-oriented_design_-_links_and_thoughts.html
+  -http://bitsquid.blogspot.com/
+  -https://www.youtube.com/playlist?list=PLUxuJBZBzEdxzVpoBQY9agA8JUgNkeYSV
+
+step 1: plan out structure below
+root
+  -assets_core -> assets such as shaders & models so you can look at something
+  -demos -> examples using the engine
+  -include -> the engine's header files
+    -SDL2 -> code for interfacing with SDL2
+      -SDL_local.h -> see parent
+    -assets -> code for dealing with assets such as skeletons and terrain
+      -animation.h -> defines an animation as an array of frames & times
+      -cmesh.h -> definition of 3D mesh in the game engine
+      -config.h -> defines configuration files
+      -effect.h -> defines a visual effect within the engine
+      -font.h -> defines a font's data
+      -image.h -> defines an image (and allows CPU-side image processing)
+      -lang.h -> defines languages for the game to use
+      -material.h -> definition of object materials
+      -music.h -> defines music files
+      -renderable.h -> defines a renderable mesh (may be rigged or not)
+      -shader.h -> defines a GLSL shader program
+      -skeleton.h -> defines a skeleton for 3D animations
+      -sound.h -> defines a sound
+      -terrain.h -> definition WIP heightmap-based terrain LOD system
+      -texture.h -> defines textures
+    -data -> code for datatypes such as dictionaries or splines
+      -dict.h -> allows *void to be accessed with *char as keys
+      -int_hashtable.h -> a hashtable for integers
+      -int_list.h -> a dynamically resizable array of integers
+      -list.h -> a dynamically expandable array of pointers
+      -randf.h -> allows the creation of random floats
+      -spline.h -> allows the creation of splines (think 3D curved lines)
+      -vertex_hashtable.h -> hashtable for vertices, allows duplicate vertices to be checked for
+      -vertex_list.h -> a dynamically resizable array of vertices
+    -entities -> code for predefined entities such as light and particles
+      -animated_object.h -> an object animated by a skeleton
+      -camera.h -> a basic camera
+      -instance_object.h -> a collection of static objects; supports instanced rendering
+      -landscape.h -> object for rendering instance of terrain
+      -light.h -> light object for lighting up scenes
+      -particles.h -> displays particles
+      -physics_object.h -> an object which utilizes the physics system
+      -static_object.h -> an unmovable object that interacts with physics-affected objects
+    -rendering -> code for the renderer
+      -renderer.h -> a relatively simple deferred renderer implementation
+      -sky.h -> allows the creation of a dynamic sky
+    -ui -> code for the user interface system
+      -ui_browser.h -> (unclear whatis) maybe a ui window of some kind?
+      -ui_button.h -> button which may be clicked on
+      -ui_dialog.h -> a popup window
+      -ui_listbox.h -> used to display arrays of objects
+      -ui_option.h -> same as button, but created in groups where only one may be selected
+      -ui_rectangle.h -> a rectangle shape for ui
+      -ui_slider.h -> used to slide through a range of values
+      -ui_spinner.h -> allows a spinning icon to appear to inform the user that the game is loading
+      -ui_style.h -> allows the appearance of the ui to be somewhat customized
+      -ui_text.h -> allows the usage of text in the ui
+      -ui_textbox.h -> a box which allows text to be entered
+      -ui_toast.h -> a notifacation window
+    -casset.h -> defines what an asset is in the context of the engine
+    -caudio.h -> a basic audio playing system
+    -cengine.h -> defines common functions and structs that are used throughout the engine
+    -centity.h -> an interface for interacting with entities
+    -cgraphics.h -> a basic layer for the graphics system
+    -cjoystick.h -> a basic layer for SDL controls
+    -cnet.h -> a basic networking layer
+    -corange.h -> brings the different pieces of the engine together
+    -cphysics.h -> a basic physics system definition
+    -cui.h -> user interface manager
+  -src -> the engine's source files
+    -> same as above, just the corresponding source files
+  -Makefile -> allows the project to be compiled
+
+step 2: formulate a plan of attack
+goals:
+-work on current header files
+  -centity.h
+  -cgraphics.h
+  -cjoystick.h
+  -cnet.h
+  -corange.h
+  -cphysics.h
+  -cui.h
+  -casset.h -> defines what an asset is in the context of the engine
+  -caudio.h -> a basic audio playing system
+  -cengine.h -> defines common functions and structs that are used throughout the engine
+  -contents of SDL2 folder
+  -contents of rendering folder
+  -contents of data folder
+  -contents of entities folder
+  -contents of ui folder
+  -contents of assets folder
+-work on current source files
+  -centity.c
+  -cgraphics.c
+  -cjoystick.c
+  -cnet.c
+  -corange.c
+  -cphysics.c
+  -cui.c
+  -contents of SDL2 folder
+  -contents of rendering folder
+  -contents of data folder
+  -contents of entities folder
+  -contents of ui folder
+  -contents of assets folder
+-refine & improve code
+  -TBA
+-add new features
+  -TBA
+
+(please excuse these lists, I haven't really started learning Org-mode yet)
+
+current todo:
+- finish all the header files in the project
+ - finish the headers in the "SDL" folder
+  - finish SDL.cats <-- currently working towards this!
+  - finish SDL_local.hats
+ - finish the headers in the "rendering" folder
+ - finish the headers in the "ui" folder
+- refine the headers, and make sure they are error-free
