@@ -1,5 +1,5 @@
 (*
-###
+###  animated_object.hats  ###
 
 an object animated by a skeleton
 *)
