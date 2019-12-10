@@ -1,1 +1,33 @@
-//used to slide through a range of values
+(*
+###  ui_slider.hats  ###
+
+used to slide through a range of values
+*)
+
+#include "ui/ui_rectangle.hats"
+#include "ui/ui_button.hats"
+
+typedef ui_slider = @{
+	label=ui_button ptr,
+	slot=ui_rectangle ptr,
+	bar=ui_rectangle ptr,
+	pressed=bool,
+	active=bool,
+	amount=float
+}
+
+fun ui_slider_new () : ui_slider ptr = "sta#%"
+fun ui_slider_delete ( s: ui_slider ptr ) : void = "sta#%"
+
+fun ui_slider_set_label ( s: ui_slider ptr, label: char ptr ) : void = "sta#%"
+fun ui_slider_move ( s: ui_slider ptr, position: vec2 ) : void = "sta#%"
+fun ui_slider_set_amount ( s: ui_slider ptr, amount: float ) : void = "sta#%"
+fun ui_slider_get_amount ( s: ui_slider ptr ) : float = "sta#%"
+fun ui_slider_set_active ( s: ui_slider ptr, active: bool ) : void = "sta#%"
+
+fun ui_slider_deactivate ( s: ui_slider ptr ) : void = "sta#%"
+fun ui_slider_activate ( s: ui_slider ptr ) : void = "sta#%"
+
+fun ui_slider_event ( s: ui_slider ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_slider_update ( s: ui_slider ptr ) : void = "sta#%"
+fun ui_slider_render ( s: ui_slider ptr ) : void = "sta#%"
