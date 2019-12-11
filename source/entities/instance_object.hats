@@ -1,4 +1,4 @@
-(*
+p(*
 ###  instance_object.hats  ###
 
 a collection of static objects; supports instanced rendering

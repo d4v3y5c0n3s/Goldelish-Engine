@@ -1,4 +1,4 @@
-(*
+p(*
 ###  landscape.hats  ###
 
 object for rendering instance of terrain
