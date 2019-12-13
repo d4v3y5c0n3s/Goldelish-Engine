@@ -13,3 +13,7 @@ The code is totally incomplete and doesn't compile.  I'm still learning ATS, so 
 
 #### How can I help? ####
 Create issues if you see some way that my code could be improved.  If you wish to help the project in some other way, then create an issue so that I can see how you'd like to help.  Thanks for any help you can provide! :D
+
+##### Corange Engine Copyright Notice #####
+Copyright (c) 2010, Daniel Holden
+All rights reserved.
