@@ -153,3 +153,4 @@ extern GLPATCHPARAMETERIFN glPatchParameteri;
 extern GLPATCHPARAMETERFVFN glPatchParameterfv;
 
 extern GLBROKENEXTENSIONFN glBrokenExtension;
+N
