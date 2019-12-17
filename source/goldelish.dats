@@ -30,7 +30,7 @@ fun corange_signal ( sig: int ) : void =
 
 val logout: FILE ptr = ()
 
-fun corange_error ( str: char ptr ) : void =
+fun corange_error ( str: string ) : void =
 (
 
 )

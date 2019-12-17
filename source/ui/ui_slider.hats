@@ -19,7 +19,7 @@ typedef ui_slider = @{
 fun ui_slider_new () : ui_slider ptr = "sta#%"
 fun ui_slider_delete ( s: ui_slider ptr ) : void = "sta#%"
 
-fun ui_slider_set_label ( s: ui_slider ptr, label: char ptr ) : void = "sta#%"
+fun ui_slider_set_label ( s: ui_slider ptr, label: string ) : void = "sta#%"
 fun ui_slider_move ( s: ui_slider ptr, position: vec2 ) : void = "sta#%"
 fun ui_slider_set_amount ( s: ui_slider ptr, amount: float ) : void = "sta#%"
 fun ui_slider_get_amount ( s: ui_slider ptr ) : float = "sta#%"

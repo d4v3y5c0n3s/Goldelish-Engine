@@ -43,14 +43,14 @@ void ui_handler_cast(int type_id,
 #define ui_elem_get_as(fmt, type, ...) ((type*)ui_elem_get_as_type_id(fmt, typeid(type), ##__VA_ARGS__))
 *)
 
-fun ui_elem_exists ( fmt: char ptr, ... ) : bool = "sta#%"
-fun ui_elem_get ( fmt: char ptr, ... ) : ui_elem ptr = "sta#%"
-fun ui_elem_get_as_type_id ( fmt: char ptr, type_id: int, ... ) : ui_elem ptr = "sta#%"
-fun ui_elem_new_type_id ( fmt: char ptr, type_id: int, ... ) : ui_elem ptr = "sta#%"
-fun ui_elem_delete ( fmt: char ptr, ... ) : void = "sta#%"
-fun ui_elem_event ( fmt: char ptr, ... ) : void = "sta#%"
-fun ui_elem_update ( fmt: char ptr, ... ) : void = "sta#%"
-fun ui_elem_render ( fmt: char ptr, ... ) : void = "sta#%"
+fun ui_elem_exists ( fmt: string, ... ) : bool = "sta#%"
+fun ui_elem_get ( fmt: string, ... ) : ui_elem ptr = "sta#%"
+fun ui_elem_get_as_type_id ( fmt: string, type_id: int, ... ) : ui_elem ptr = "sta#%"
+fun ui_elem_new_type_id ( fmt: string, type_id: int, ... ) : ui_elem ptr = "sta#%"
+fun ui_elem_delete ( fmt: string, ... ) : void = "sta#%"
+fun ui_elem_event ( fmt: string, ... ) : void = "sta#%"
+fun ui_elem_update ( fmt: string, ... ) : void = "sta#%"
+fun ui_elem_render ( fmt: string, ... ) : void = "sta#%"
 
-fun ui_elem_name ( e: ui_elem ptr ) : char ptr = "sta#%"
-fun ui_elem_typename ( e: ui_elem ptr ) : char ptr = "sta#%"
+fun ui_elem_name ( e: ui_elem ptr ) : string = "sta#%"
+fun ui_elem_typename ( e: ui_elem ptr ) : string = "sta#%"

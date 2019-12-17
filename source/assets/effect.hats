@@ -33,7 +33,7 @@ typedef effect = @{
 }
 
 fun effect_new () : effect ptr = "sta#%"
-fun effect_load_file ( filename: char ptr ) : effect ptr = "sta#%"
+fun effect_load_file ( filename: string ) : effect ptr = "sta#%"
 fun effect_delete ( e: effect ptr ) : void = "sta#%"
 
 fun effect_get_key ( e: effect ptr, ptime: float ) : effect_key = "sta#%"

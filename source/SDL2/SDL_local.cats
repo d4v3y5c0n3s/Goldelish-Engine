@@ -4,6 +4,9 @@
 //  defines the SDL functions for later use by "SDL_local.sats" in addition to the extension constants
 //*)
 
+//  include the C header
+#include "SDL_locat.h"
+
 //  SDL functions
 #define goldelish_SDL_PrintStackTrace SDL_PrintStackTrace
 

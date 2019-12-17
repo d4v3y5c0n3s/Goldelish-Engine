@@ -25,7 +25,7 @@ fun ui_button_delete ( b: ui_button ptr ) : void = "sta#%"
 
 fun ui_button_move ( b: ui_button ptr, pos: vec2 ) : void = "sta#%"
 fun ui_button_resize ( b: ui_button ptr, size: vec2 ) : void = "sta#%"
-fun ui_button_set_label ( b: ui_button ptr, label: char ptr ) : void = "sta#%"
+fun ui_button_set_label ( b: ui_button ptr, label: string ) : void = "sta#%"
 fun ui_button_set_label_color ( b: ui_button ptr, color: vec4 ) : void = "sta#%"
 fun ui_button_set_font ( b: ui_button ptr, f: asset_hndl ) : void = "sta#%"
 fun ui_button_set_onclick ( b: ui_button ptr, onclick: ui_button ptr, ptr -> void(*this is a function pointer*)

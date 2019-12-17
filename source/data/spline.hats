@@ -43,7 +43,7 @@ typedef color_curves = @{
 	a_spline=spline ptr
 }
 
-fun color_curves_load ( filename: char ptr ) : color_curves ptr = "sta#%"
+fun color_curves_load ( filename: string ) : color_curves ptr = "sta#%"
 fun color_curves_delete ( cc: color_curves ptr ) : void = "sta#%"
-fun color_curves_write_lut ( cc: color_curves ptr, filename: char ptr ) : void = "sta#%"
+fun color_curves_write_lut ( cc: color_curves ptr, filename: string ) : void = "sta#%"
 fun color_curves_map ( cc: color_curves ptr, in: vec3 ) : vec3 = "sta#%"

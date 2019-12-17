@@ -16,5 +16,5 @@ typedef font = @{
 	offsets=vec2 ptr,
 }
 
-fun font_load_file ( filename: char ptr ) : font ptr = "sta#%"
+fun font_load_file ( filename: string ) : font ptr = "sta#%"
 fun font_delete ( font: font ptr ) : void = "sta#%"

@@ -17,4 +17,4 @@ fun animation_frame ( a: animation ptr, i: int ) : frame ptr = "sta#%"
 fun animation_sample ( a: animation ptr, time: float ) : frame ptr = "sta#%"
 fun animation_sample_to ( a: animation ptr, time: float, out: frame ptr ) : void = "sta#%"
 
-fun ani_load_file ( filename char ptr ) : animation ptr = "sta#%"
+fun ani_load_file ( filename string ) : animation ptr = "sta#%"

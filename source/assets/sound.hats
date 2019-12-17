@@ -8,7 +8,7 @@ defines a sound
 
 typedef sound = @{ sample=Mix_Chunk ptr }
 
-fun wav_load_file ( filename: char ptr ) : sound ptr = "sta#%"
+fun wav_load_file ( filename: string ) : sound ptr = "sta#%"
 fun sound_delete ( s: sound ptr ) : void = "sta#%"
 
 fun sound_play ( s: sound ptr ) : int = "sta#%"

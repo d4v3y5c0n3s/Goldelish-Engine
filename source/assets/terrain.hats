@@ -44,8 +44,8 @@ typedef terrain = @{
 	chunks=terrain_chunk ptr ptr
 }
 
-fun raw_load_file ( filename: char ptr ) : terrain ptr = "sta#%"
-fun raw_save_file ( ter: terrain ptr, filename: char ptr ) : void  = "sta#%"
+fun raw_load_file ( filename: string ) : terrain ptr = "sta#%"
+fun raw_save_file ( ter: terrain ptr, filename: string ) : void  = "sta#%"
 fun terrain_delete ( ter: terrain ptr ) : void = "sta#%"
 
 fun terrain_get_chunk ( ter: terrain ptr, x: int, y: int ) : terrain_chunk ptr = "sta#%"

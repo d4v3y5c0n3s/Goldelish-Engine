@@ -24,7 +24,7 @@ typedef cmesh = @{
 	)
 }
 
-fun col_load_file ( filename=char ptr ) : cmesh ptr = "sta#%"
+fun col_load_file ( filename=string ) : cmesh ptr = "sta#%"
 fun cmesh_delete ( cm: cmesh ptr ) : void = "sta#%"
 
 fun cmesh_bound ( cm: cmesh ptr ) : sphere = "sta#%"

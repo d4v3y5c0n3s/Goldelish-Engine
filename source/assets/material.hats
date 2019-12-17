@@ -29,21 +29,21 @@ typedef material_entry = @(
 	program=shader_program ptr,
 	num_items=int,
 	types=int ptr,
-	names=char ptr ptr,
+	names=string ptr,
 	items=material_item ptr
 )
 
 fun material_entry_delete ( me: material_entry ptr ) : void = "sta#%"
-fun material_entry_item ( me: material_entry ptr, name: char ptr ) : material_item = "sta#%"
-fun material_entry_has_item ( me: material_entry ptr, name: char ptr ) : bool = "sta#%"
-fun material_entry_add_item ( me: material_entry ptr, name: char ptr, type: int, mi: material_item ) : void = "sta#%"
+fun material_entry_item ( me: material_entry ptr, name: string ) : material_item = "sta#%"
+fun material_entry_has_item ( me: material_entry ptr, name: string ) : bool = "sta#%"
+fun material_entry_add_item ( me: material_entry ptr, name: string, type: int, mi: material_item ) : void = "sta#%"
 
 typedef material = @( num_entries=int, entries=material_entry ptr ptr )
 
 fun material_new () : material ptr = "sta#%"
 fun material_delete ( m: material ptr ) : void = "sta#%"
 
-fun mat_load_file ( filename: char ptr ) : material ptr = "sta#%"
+fun mat_load_file ( filename: string ) : material ptr = "sta#%"
 
 fun material_get_entry ( m: material ptr, index: int ) : material_entry ptr = "sta#%"
 fun material_add_entry ( m: material ptr ) : material_entry ptr = "sta#%"

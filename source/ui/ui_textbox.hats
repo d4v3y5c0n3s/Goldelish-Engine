@@ -31,8 +31,8 @@ fun ui_textbox_move ( tb: ui_textbox ptr, pos: vec2 ) : void = "sta#%"
 fun ui_textbox_resize ( tb: ui_textbox ptr, size: vec2 ) : void = "sta#%"
 
 fun ui_textbox_set_font ( tb: ui_textbox ptr, f: asset_hndl ) : void = "sta#%"
-fun ui_textbox_set_label ( tb: ui_textbox ptr, label: char ptr ) : void = "sta#%"
-fun ui_textbox_set_contents ( tb: ui_textbox ptr, label: char ptr ) : void = "sta#%"
+fun ui_textbox_set_label ( tb: ui_textbox ptr, label: string ) : void = "sta#%"
+fun ui_textbox_set_contents ( tb: ui_textbox ptr, label: string ) : void = "sta#%"
 fun ui_textbox_set_alignment ( tb: ui_textbox ptr, halign: int, valign: int ) : void = "sta#%"
 
 fun ui_textbox_disable ( tb: ui_textbox ptr ) : void = "sta#%"

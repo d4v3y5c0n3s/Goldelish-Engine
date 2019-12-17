@@ -4,11 +4,6 @@
 This file has code for general things & math operations in the engine.
 *)
 
-(*
-	NOTICE:
-	The pointer handling below is incorrect (char ptr) because I haven't reached that point in the Introduction to ATS book.  Once I have, I will revise this and other files so that the engine will run properly.
-*)
-
 (*  standard lib includes  *)
 //  ATS includes the C standard libraries ready-to-use
 staload STDLIB = "libats/libc/SATS/stdlib.sats"//  stdlib.h
@@ -46,9 +41,9 @@ staload SDL2_LOCAL = "SDL2/SDL_LOCAL.sats"//
 #define WARNING_BUFFER_SIZE	2048 * 4
 
 (*  ###  file system path  ###  *)
-typedef fpath = @{path=char ptr[MAX_PATH]}// this is a record type (P.S. this may not work, apparently C arrays are in ATS, but there wasn't much info on this)
+typedef fpath = @{path=string[MAX_PATH]}// this is a record type (P.S. this may not work, apparently C arrays are in ATS, but there wasn't much info on this)
 
-fun P ( path: char ptr ) : fpath = "sta#P"
+fun P ( path: string ) : fpath = "sta#P"
 
 fun fpath_full (path: fpath) : fpath = "sta#fpath_full"
 fun fpath_file (path: fpath) : fpath = "sta#fpath_file"
@@ -57,13 +52,13 @@ fun fpath_file_extension (path: fpath) : fpath = "sta#fpath_file_extension"
 
 (*  --  NOTICE: This may need to be rethought for ATS  --
 (*  ###  errors & debugging  ###  *)
-fun at_error(f: void -> void, c: char ptr): void = "sta#at_error"
-fun at_warning(f: void -> void, c: char ptr): void = "sta#at_warning"
-fun at_debug(f: void -> void, c: char ptr): void = "sta#at_debug"
+fun at_error(f: void -> void, c: string): void = "sta#at_error"
+fun at_warning(f: void -> void, c: string): void = "sta#at_warning"
+fun at_debug(f: void -> void, c: string): void = "sta#at_debug"
 
-fun error_(c: char ptr): void = "sta#error_"
-fun warning_(c: char ptr): void = "sta#warning_"
-fun debug_(c: char ptr): void = "sta#debug_"
+fun error_(c: string): void = "sta#error_"
+fun warning_(c: string): void = "sta#warning_"
+fun debug_(c: string): void = "sta#debug_"
 
 fun error_buf(size: int): char = "sta#error_buf"//ERROR_BUFFER_SIZE
 fun error_str(): char = "sta#error_str"//ERROR_BUFFER_SIZE
@@ -98,11 +93,11 @@ fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
 typedef
 timer = @{ id=int, start=ulint, end=ulint, split=ulint }
 
-fun timer_start (id: int, tag: char ptr) : timer = "sta#timer_start"
-fun timer_split (t: timer, tag: char ptr) : timer = "sta#timer_split"
-fun timer_stop (t: timer, tag: char ptr) : timer = "sta#timer_stop"
+fun timer_start (id: int, tag: string) : timer = "sta#timer_start"
+fun timer_split (t: timer, tag: string) : timer = "sta#timer_split"
+fun timer_stop (t: timer, tag: string) : timer = "sta#timer_stop"
 
-fun timestamp (out: char ptr) : void = "sta#timestamp"
+fun timestamp (out: string) : void = "sta#timestamp"
 
 (*  ###  framerate  ###  *)
 fun frame_begin () : void = "sta#frame_begin"
@@ -111,15 +106,15 @@ fun frame_end_at_rate ( fps: double ) : void = "sta#%"
 
 fun frame_rate () : double = "sta#%"
 fun frame_time () : double = "sta#%"
-fun frame_rate_string () : char ptr = "sta#"
+fun frame_rate_string () : string = "sta#"
 
 (*  ###  types  ###  *)
 typedef type_id = int
 
 //  WILL NEED REVISION
 #define typeid(TYPE) type_find(#TYPE, sizeof(TYPE))
-fun type_find( type: char ptr, size: size_t ) : type_id = "sta#%"
-fun type_id_name ( id: int ) : char ptr = "sta#%"
+fun type_find( type: string, size: size_t ) : type_id = "sta#%"
+fun type_id_name ( id: int ) : string = "sta#%"
 
 (*  ###  floating point math  ###  *)
 //  REVISE MACROS
@@ -187,7 +182,7 @@ fun vec2_normalize ( v: vec2 ) : vec2 = "sta#%"
 
 fun vec2_reflect ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
 
-fun vec2_from_string ( s: char ptr ) : vec2 = "sta#%"
+fun vec2_from_string ( s: string ) : vec2 = "sta#%"
 fun vec2_print ( v: vec2 ) void = "sta#%"
 
 fun vec2_to_array ( v: vec2, out: float ptr ) : void = "sta#%
@@ -245,7 +240,7 @@ fun vec3_normalize ( v: vec3 ) : vec3 = "sta#%"
 fun vec3_reflect ( v1: vec3, v2: vec3 ) : vec3 = "sta#%"
 fun vec3_project ( v1: vec3, v2: vec3 ) : vec3 = "sta#%"
 
-fun vec3_from_string ( s: char ptr ) : vec3 = "sta#%"
+fun vec3_from_string ( s: string ) : vec3 = "sta#%"
 fun vec3_print ( v: vec3 ) : void = "sta#%"
 
 fun vec3_to_array ( v: vec3, out: float ptr ) : void = "sta#%"
@@ -299,7 +294,7 @@ fun vec4_normalize ( v: vec4 ) : vec4 = "sta#%"
 
 fun vec4_reflect ( v1: vec4, v2: vec4 ) : vec4 = "sta#%"
 
-fun vec4_from_string ( s: char ptr ) : vec4 = "sta#%"
+fun vec4_from_string ( s: string ) : vec4 = "sta#%"
 fun vec4_print ( v: vec4 ) : void = "sta#%"
 
 fun vec4_to_array ( v: vec4, out: float ptr ) : void = "sta#%"

@@ -26,9 +26,9 @@ fun renderable_set_material ( r: renderable ptr, mat: asset_hndl ) : void = "sta
 
 fun renderable_to_model ( r: renderable ptr ) : model ptr = "sta#%"
 
-fun bmf_load_file ( filename: char ptr ) : renderable ptr = "sta#%"
-fun obj_load_file ( filename: char ptr ) : renderable ptr = "sta#%"
-fun smd_load_file ( filename: char ptr ) : renderable ptr = "sta#%"
-fun ply_load_file ( filename: char ptr ) : renderable ptr = "sta#%"
+fun bmf_load_file ( filename: string ) : renderable ptr = "sta#%"
+fun obj_load_file ( filename: string ) : renderable ptr = "sta#%"
+fun smd_load_file ( filename: string ) : renderable ptr = "sta#%"
+fun ply_load_file ( filename: string ) : renderable ptr = "sta#%"
 
-fun bmf_save_file ( r: renderable ptr, filename: char ptr ) : void = "sta#%"
+fun bmf_save_file ( r: renderable ptr, filename: string ) : void = "sta#%"

@@ -15,7 +15,7 @@ fun ui_option_delete ( o: ui_option ptr ) : void = "sta#%"
 
 fun ui_option_set_active ( o: ui_option ptr, active: bool ) : void = "sta#%"
 fun ui_option_move ( o: ui_option ptr, position: vec2 ) : void = "sta#%"
-fun ui_option_set_options ( o: ui_option ptr, label: char ptr, num: int, values: char ptr ptr ) : void = "sta#%"
+fun ui_option_set_options ( o: ui_option ptr, label: string, num: int, values: string ptr ) : void = "sta#%"
 fun ui_option_get_selected ( o: ui_option ptr ) : int = "sta#%"
 fun ui_option_set_selected ( o: ui_option ptr, selected: int ) : void = "sta#%"
 fun ui_option_set_onselect ( o: ui_option ptr, onselect: ui_option ptr -> void(*func pointer*) ) : void = "sta#%"

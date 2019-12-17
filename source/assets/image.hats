@@ -9,7 +9,7 @@ defines an image (and allows CPU-side image processing)
 typedef image = @{
 	width=int,
 	height=int,
-	data=unsigned char ptr,//<-- probably revise this
+	data=unsigned string,//<-- probably revise this
 	repeat_type=int,
 	sample_type=int
 }
@@ -25,7 +25,7 @@ datatype SAMPLE =
 	 | IMAGE_SAMPLE_LINEAR of ()
 	 | IMAGE_SAMPEL_NEAREST of ()
 
-fun image_new ( width: int, height: int, data: unsigned char ptr ) : image ptr = "sta#%"
+fun image_new ( width: int, height: int, data: unsigned string ) : image ptr = "sta#%"
 fun image_empty ( width: int, height: int ) : image ptr = "sta#%"
 fun image_blank ( width: int, height: int ) : image ptr = "sta#%"
 fun image_copy ( src: image ptr ) : image ptr = "sta#%"
@@ -100,10 +100,10 @@ fun image_mask_count ( i: image ptr ) : long = "sta#%"
 fun image_mask_median ( i: image ptr, u: int ptr, v: int ptr ) : void = "sta#%"
 fun image_mask_random ( i: image ptr, u: int ptr, v: int ptr ) : void = "sta#%"
 
-fun image_read_from_file ( filename: char ptr ) : image ptr = "sta#%"
-fun image_tga_load_file ( filename: char ptr ) : image ptr = "sta#%"
-fun image_bmp_load_file ( filename: char ptr ) : image ptr = "sta#%"
+fun image_read_from_file ( filename: string ) : image ptr = "sta#%"
+fun image_tga_load_file ( filename: string ) : image ptr = "sta#%"
+fun image_bmp_load_file ( filename: string ) : image ptr = "sta#%"
 
-fun image_write_to_file ( i: image ptr, filename: char ptr ) : void = "sta#%"
-fun image_tga_save_file ( i: image ptr, filename: char ptr ) : void = "sta#%"
-fun image_bmp_save_file ( i: image ptr, filename: char ptr ) : void = "sta#%"
+fun image_write_to_file ( i: image ptr, filename: string ) : void = "sta#%"
+fun image_tga_save_file ( i: image ptr, filename: string ) : void = "sta#%"
+fun image_bmp_save_file ( i: image ptr, filename: string ) : void = "sta#%"

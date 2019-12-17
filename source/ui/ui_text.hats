@@ -17,7 +17,7 @@ datatype TEXT_VERT_ALIGN =
 | TEXT_ALIGN_BOTTOM of ()
 
 typedef ui_text = @{
-	string=char ptr,
+	string=string,
 	positions_buffer=GLuint,
 	texcoords_buffer=GLuint,
 	colors_buffer=GLuint,
@@ -39,7 +39,7 @@ typedef ui_text = @{
 }
 
 fun ui_text_new () : ui_text ptr = "sta#%"
-fun ui_text_new_string ( string: char ptr ) : ui_text ptr = "sta#%"
+fun ui_text_new_string ( string: string ) : ui_text ptr = "sta#%"
 fun ui_text_delete ( text: ui_text ptr ) : void = "sta#%"
 
 fun ui_text_move ( text: ui_text ptr, pos: vec2 ) : void = "sta#%"
@@ -49,7 +49,7 @@ fun ui_text_set_scale ( text: ui_text ptr, scale: vec2 ) : void = "sta#%"
 fun ui_text_align ( text: ui_text ptr, halign: int, valign: int ) : void = "sta#%"
 
 fun ui_text_draw ( text: ui_text ptr ) : void = "sta#%"
-fun ui_text_draw_string ( text: ui_text ptr, string: char ptr ) : void = "sta#%"
+fun ui_text_draw_string ( text: ui_text ptr, string: string ) : void = "sta#%"
 
 fun ui_text_event ( text: ui_text ptr, e: SDL_Event ) : void = "sta#%"
 fun ui_text_update ( text: ui_text ptr ) : void = "sta#%"

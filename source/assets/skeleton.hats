@@ -29,11 +29,11 @@ fun frame_joint_add ( f: frame ptr, parent: int, position: vec3, rotation: quat 
 fun frame_gen_transforms ( f: frame ptr ) : void = "sta#%"
 fun frame_gen_inv_transforms ( f: frame ptr ) : void = "sta#%"
 
-typedef skeleton = @( joint_count=int, joint_names=char ptr ptr, rest_pose=frame ptr )
+typedef skeleton = @( joint_count=int, joint_names=string ptr, rest_pose=frame ptr )
 
 fun skeleton_new () : skeleton ptr = "sta#%"
 fun skeleton_delete ( s: skeleton ptr ) : void = "sta#%"
-fun skeleton_joint_add ( s: skeleton ptr, name: char ptr, parent: int ) : void = "sta#%"
-fun skeleton_joint_id ( s: skeleton ptr, name: char ptr ) : int = "sta#%"
+fun skeleton_joint_add ( s: skeleton ptr, name: string, parent: int ) : void = "sta#%"
+fun skeleton_joint_id ( s: skeleton ptr, name: string ) : int = "sta#%"
 
-fun skl_load_file ( filename: char ptr ) : skeleton ptr = "sta#%"
+fun skl_load_file ( filename: string ) : skeleton ptr = "sta#%"

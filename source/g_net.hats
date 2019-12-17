@@ -21,5 +21,5 @@ datatype HTTP_ERR_TYPE =
 	 | DATA of ()
 	 | NO_FILE of ()
 
-fun net_http_get ( out: char ptr, max: int, fmt: char ptr, ... ) : int = "sta#%"
-fun net_http_upload ( filename: char ptr, fmt: char ptr, ... ) : int = "sta#%"
+fun net_http_get ( out: string, max: int, fmt: string, ... ) : int = "sta#%"
+fun net_http_upload ( filename: string, fmt: string, ... ) : int = "sta#%"

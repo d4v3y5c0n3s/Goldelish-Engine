@@ -20,14 +20,14 @@ void entity_handler_cast(int type_id, void* entity_new() , void entity_del(void*
 #define entity_get_as(fmt, type, ...) ((type*)entity_get_as_type_id(fmt, typeid(type)), ##__VA_ARGS__)
 *)
 
-fun entity_exists ( fmt: char ptr, () ) : bool = "sta#%"
-fun entity_get ( fmt: char ptr, () ) : entity ptr = "sta#%"
-fun entity_get_as_type_id ( fmt: char ptr, type_id: int, () ) : entity ptr = "sta#%"
-fun entity_new_type_id ( fmt: char ptr, type_id: int, () ) : entity ptr = "sta#%"
-fun entity_delete ( fmt: char ptr, () ) : void = "sta#%"
+fun entity_exists ( fmt: string, () ) : bool = "sta#%"
+fun entity_get ( fmt: string, () ) : entity ptr = "sta#%"
+fun entity_get_as_type_id ( fmt: string, type_id: int, () ) : entity ptr = "sta#%"
+fun entity_new_type_id ( fmt: string, type_id: int, () ) : entity ptr = "sta#%"
+fun entity_delete ( fmt: string, () ) : void = "sta#%"
 
-fun entity_name ( e: entity ptr ) : char ptr = "sta#%"
-fun entity_typename ( a: entity ptr ) : char ptr = "sta#%"
+fun entity_name ( e: entity ptr ) : string = "sta#%"
+fun entity_typename ( a: entity ptr ) : string = "sta#%"
 
 (*
 /* Get the number of a certain entity type */
@@ -39,5 +39,5 @@ int entity_type_count_type_id(int type_id);
 #define entities_get(out, returned, type) entities_get_type_id((entity**)out, returned, typeid(type)) 
 *)
 
-fun entity_new_type_id ( name_format: char ptr, count: int, type_id: int ) : void = "sta#%"
+fun entity_new_type_id ( name_format: string, count: int, type_id: int ) : void = "sta#%"
 fun entity_get_type_id ( out: entity ptr ptr, returned: int ptr, type_id: int ) : void = "sta#%"

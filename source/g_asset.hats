@@ -71,5 +71,5 @@ fun asset_reload_type_id ( type: type_id ) : void = "sta#%"
 fun asset_reload_all () : void = "sta#%"
 
 //  get path or typename of asset at ptr
-fun asset_ptr_path ( a: asset ptr ) : char ptr = "sta#%"
-fun asset_ptr_typename ( a: asset ptr ) : char ptr = "sta#%"
+fun asset_ptr_path ( a: asset ptr ) : string = "sta#%"
+fun asset_ptr_typename ( a: asset ptr ) : string = "sta#%"
