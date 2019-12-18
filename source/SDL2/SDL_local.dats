@@ -35,9 +35,32 @@ implement SDL_PathFullName ( dst, path ) =
 	  val ret: char ptr = realpath ( path, dst )
 #endif
 
-implement SDL_PathFileName ( dst: char ptr, path: char ptr ) = (
-
-	  exception END_OF_NAME of ()
-
-	  fun loop ( index: int, path: string ) :
+//  this function has been modified to return a string in order to be pure
+implement
+SDL_PathFileName ( dst: string, path: string ) =
+(
+fun reverse_iterate ( index: int, ext_loc: int, path_name: string ) : ( int, int ) = (
+    if path_name[index] == '/' then (index, ext_loc)
+    if path_name[index] == '\\' then (index, ext_loc)
+    if path_name[index] == '.' then (
+       reverse_iterate ( index - 1, index, path_name )
+    ) else (
+      reverse_iterate ( index - 1, ext_loc, path_name )
+    )
 )
+
+let
+	val file = path + results.0 + 1;  val len = results.1 - i - 1;
+in
+	val results = reverse_iterate ( path.size(), 0, path )//  stores both index and ext_loc in a tuple
+end
+
+//  the following code mutates return_str
+let
+	return_str[len] = "\0"
+in
+	var return_str = file
+end
+)
+
+implement
