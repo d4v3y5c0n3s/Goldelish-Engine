@@ -3,7 +3,7 @@
 ## Goldelish-Engine ##
 
 #### Why use ATS? ####
-ATS (http://www.ats-lang.org) in my opinion is a really underrated programming language with some incredible features that few have experienced.  By using ATS to make Goldelish Engine, I am hoping to spread awareness of ATS to those who've never heard of it before.  In addition, I am learning to program in ATS and wanted a long-term project I could work on to improve my programming skills.
+ATS (http://www.ats-lang.org) in my opinion is a really great programming language with some incredible features that few have experienced.  By using ATS to make Goldelish Engine, I am hoping to spread awareness of ATS to those who've never heard of it before.  In addition, I am learning to program in ATS and wanted a long-term project I could work on to improve my programming skills.
 
 #### Why a game engine? ####
 Game engines are a great way to show off a programming language's prowess by translating your code into something you can see, hear, and play.  Also, I am very interested in game programming.
