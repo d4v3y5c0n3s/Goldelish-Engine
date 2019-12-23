@@ -5,7 +5,9 @@ more complete SDL function definitions
 *)
 
 //  include the .cats file
+%{#
 #include "SDL_local.cats"
+%}
 
 //  SDL functions
 fun SDL_PrintStackTrace () : void = "mac#%"

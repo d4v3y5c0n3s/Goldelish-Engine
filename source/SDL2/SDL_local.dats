@@ -35,9 +35,15 @@ implement SDL_PathFullName ( dst, path ) =
 	  val ret: char ptr = realpath ( path, dst )
 #endif
 
-//  this function has been modified to return a string in order to be pure
+%{
+#include <unistd.h>
+%}
+
+abst@ype file_dest = int
+
+
 implement
-SDL_PathFileName ( dst: string, path: string ) =
+SDL_PathFileName ( dst: string ptr, path: string ) =
 (
 fun reverse_iterate ( index: int, ext_loc: int, path_name: string ) : ( int, int ) = (
     if path_name[index] == '/' then (index, ext_loc)
@@ -49,18 +55,50 @@ fun reverse_iterate ( index: int, ext_loc: int, path_name: string ) : ( int, int
     )
 )
 
+//
 let
-	val file = path + results.0 + 1;  val len = results.1 - i - 1;
+	//; dst[len] := "\0"
 in
 	val results = reverse_iterate ( path.size(), 0, path )//  stores both index and ext_loc in a tuple
-end
-
-//  the following code mutates return_str
-let
-	return_str[len] = "\0"
-in
-	var return_str = file
+	val file = path + results.0 + 1
+	val len = results.1 - i - 1;
 end
 )
 
 implement
+SDL_PathFileExtension ( dst: string ptr, path: string ) =
+
+implement
+SDL_PathFileLocation ( dst: string ptr, path: string ) =
+
+implement
+SDL_PathParentDirectory ( dst: string ptr, path: string ) =
+
+implement
+SDL_PathRelative ( dst: string ptr, path: string ) =
+
+implement
+SDL_PathForwardSlashes ( path: string ) =
+
+implement
+SDL_PathJoin ( dst: string ptr, fst: string ptr, snd: string ptr ) =
+
+implement
+SDL_PathIsFile ( path: string ) =
+
+implement
+SDL_PathIsDirectory ( path: string ) =
+
+//  static char curr_dir[MAX_PATH];
+
+implement
+SDL_GetWorkingDir () =
+
+implement
+SDL_SetWorkingDir ( dir: string ptr ) =
+
+implement
+SDL_GL_PriintInfo () =
+
+implement
+SDL_GL_PrintExtensions () =
