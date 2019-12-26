@@ -5,8 +5,10 @@ the full function definitions for SDL & the initial values for the OpenGL extens
 *)
 
 //  include statements go here
-#include "SDL_local.sats"
+staload "SDL_local.sats"
+$%{
 #include "SDL_rwops.h"
+%}
 
 //  standard lib includes
 staload STDLIB = "libats/libc/SATS/stdlib.sats"//  stdlib.h
@@ -35,38 +37,47 @@ implement SDL_PathFullName ( dst, path ) =
 	  val ret: char ptr = realpath ( path, dst )
 #endif
 
-%{
+$%{
 #include <unistd.h>
 %}
 
-abst@ype file_dest = int
-
-
 implement
-SDL_PathFileName ( dst: string ptr, path: string ) =
+SDL_PathFileName ( dst: string ptr, path: string ) = let
+		 copy_string( dst, file, len ); dst[len] := "\0"
+in
+fun string_copy_size ( to: string, from: string, length: size_t ) : void =
 (
+//  ---  WIP  ---
+
+)
 fun reverse_iterate ( index: int, ext_loc: int, path_name: string ) : ( int, int ) = (
     if path_name[index] == '/' then (index, ext_loc)
     if path_name[index] == '\\' then (index, ext_loc)
     if path_name[index] == '.' then (
        reverse_iterate ( index - 1, index, path_name )
-    ) else (
-      reverse_iterate ( index - 1, ext_loc, path_name )
-    )
+       ) else (
+       	 reverse_iterate ( index - 1, ext_loc, path_name )
+	 )
 )
-
-//
-let
-	//; dst[len] := "\0"
-in
-	val results = reverse_iterate ( path.size(), 0, path )//  stores both index and ext_loc in a tuple
-	val file = path + results.0 + 1
-	val len = results.1 - i - 1;
+val results = reverse_iterate ( path.size(), 0, path )
+val file = path + results.0 + 1
+val len = results.1 - i - 1;
 end
-)
 
 implement
-SDL_PathFileExtension ( dst: string ptr, path: string ) =
+SDL_PathFileExtension ( dst: string ptr, path: string ) = let
+		      string_copy (dst, f_ext)
+in
+fun string_copy () : void =
+fun reverse_iterate ( i: int, ext_len ) : ( int, int ) = (
+    if path[i] != '.' then reverse_iterate (i-1, ext_len+1)
+    if path[i] == '.' then ( i, ext_len )
+    else ( reverse_iterate (i-1, ext_len) )
+)
+val results = reverse_iterate ( path.size(), 0 )
+val prev = path.size() - results.1 + 1
+val f_ext = path + prev
+end
 
 implement
 SDL_PathFileLocation ( dst: string ptr, path: string ) =
