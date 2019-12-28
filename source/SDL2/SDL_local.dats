@@ -204,3 +204,73 @@ if then (
 )
 
 fun SDL_GL_ExtensionFunctionLoaded ( function: ptr ) : bool =
+(
+if function == null then ( false )
+else ( true )
+)
+
+#if !defined(__unix__) && !defined(__APPLE__)
+    var GLACTIVETEXTUREFN: glActiveTexture = null
+    var GLCOMPRESSEDTEXIMAGE2DFN: glCompressedTexImage2D = null
+    var GLTEXIMAGE3DFN: glTexImage3D = null
+#endif
+var GLCREATESHADERFN: glCreateShader = null
+var GLCREATEPROGRAMFN: glCreateProgram = null
+var GLSHADERSOURCEFN: glShaderSource = null
+var GLCOMPILESHADERFN: glCompileShader = null
+var GLGETSHADERINFOLOGFN: glGetShaderInfoLog = null
+var GLATTACHSHADERFN: glAttachShader = null
+var GLLINKPROGRAMFN: glLinkProgram = null
+var GLGETPROGRAMINFOLOGFN: glGetProgramInfoLog = null
+var GLISPROGRAMFN: glIsProgram = null
+var GLISSHADERFN: glIsShader = null
+var GLGETATTACHEDSHADERSFN: glGetAttachedShaders = null
+var GLGETUNIFORMLOCATIONFN: glGetUniformLocation = null
+var GLUNIFORM1FFN: glUniform1f = null
+var GLUNIFORM1IFN: glUniform1i = null
+var GLDELETESHADERFN: glDeleteShader = null
+var GLDELETEPROGRAMFN: glDeleteProgram = null
+var GLUSEPROGRAMFN: glUseProgram = null
+var GLVERTEXATTRIBPOINTERFN: glVertexAttribPointer = null
+var GLVERTEXATTRIBDIVISORFN: glVertexAttribDivisor = null
+var GLENABLEVERTEXATTRIBARRAYFN: glEnableVertexAttribArray = null
+var GLDISABLEVERTEXATTRIBARRAYFN: glDisableVertexAttribArray = null
+var GLUNIFORM2FFN: glUniform2f = null
+var GLUNIFORM3FFN: glUniform3f = null
+var GLUNIFORM4FFN: glUniform4f = null
+var GLUNIFORMMATRIX3FVFN: glUniformMatrix3fv = null
+var GLUNIFORMMATRIX4FVFN: glUniformMatrix4fv = null
+var GLUNIFORM1FVFN: glUniform1fv = null
+var GLUNIFORM2FVFN: glUniform2fv = null
+var GLUNIFORM3FVFN: glUniform3fv = null
+var GLUNIFORM4FVFN: glUniform4fv = null
+var GLGETSHADERIVFN: glGetShaderiv = null
+var GLGETPROGRAMIVFN: glGetProgramiv = null
+var GLPROGRAMPARAMETERIFN: glProgramParameteri = null
+var GLBINDATTRIBLOCATIONFN: glBindAttribLocation = null
+var GLGENFRAMEBUFFERSFN: glGenFramebuffers = null
+var GLBINDFRAMEBUFFERFN: glBindFramebuffer = null
+var GLBLITFRAMEBUFFERFN: glBlitFramebuffer = null
+var GLFRAMEBUFFERTEXTUREFN: glFramebufferTexture = null
+var GLFRAMEBUFFERTEXTURE2DFN: glFramebufferTexture2D = null
+var GLDELETEFRAMEBUFFERSFN: glDeleteFramebuffers = null
+var GLCHECKFRAMEBUFFERSTATUSFN: glCheckFramebufferStatus = null
+var GLGENBUFFERSFN: glGenBuffers = null
+var GLGENRENDERBUFFERSFN: glGenRenderbuffers = null
+var GLDELETEBUFFERSFN: glDeleteBuffers = null
+var GLDELETERENDERBUFFERSFN: glDeleteRenderbuffers = null
+var GLBINDBUFFERFN: glBindBuffer = null
+var GLBINDRENDERBUFFERFN: glBindRenderbuffer = null
+var GLBUFFERDATAFN: glBufferData = null
+var GLGETBUFFERSUBDATAFN: glGetBufferSubData = null
+var GLFRAMEBUFFERRENDERBUFFERFN: glFramebufferRenderbuffer = null
+var GLGETATTRIBLOCATIONFN: glGetAttribLocation = null
+var GLRENDERBUFFERSTORAGEFN: glRenderbufferStorage = null
+var GLRENDERBUFFERSTORAGEMULTISAMPLEFN: glRenderbufferStorageMultisample = null
+var GLDRAWBUFFERSFN: glDrawBuffers = null
+var GLGENERATEMIPMAPFN: glGenerateMipmap = null
+var GLDRAWELEMENTSINSTANCEDFN: glDrawElementsInstanced = null
+var GLPATCHPARAMETERIFN: glPatchParameteri = null
+var GLPATCHPARAMETERFVFN: glPatchParameterfv = null
+
+var GLBROKENEXTENSIONFN: glBrokenExtension = null
