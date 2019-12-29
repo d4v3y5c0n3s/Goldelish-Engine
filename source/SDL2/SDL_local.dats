@@ -129,9 +129,10 @@ SDL_PathForwardSlashes ( path ) = let
 iterate ( 0 )
 in
 fun iterate ( i: int ) : void = (
+if i < strlen (path) then (
 if path[i] == '\\' then ( path[i] = '/' )
-
 iterate ( i + 1 )
+) else ( () )
 )
 end
 

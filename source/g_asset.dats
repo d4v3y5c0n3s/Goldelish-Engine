@@ -36,3 +36,170 @@ asset_add_path_variable ( variable, mapping ) =
 			path_variables[num_path_variables] := pv//  WIP
 			num_path_variables = num_path_variables + 1
 )
+
+fun asset_map_fullpath ( filename: fpath ) : fpath = let
+out
+in
+val out: fpath = ()
+SDL_PathFullName (out.ptr, filename.ptr)
+end
+
+fun asset_map_shortpath ( filename: fpath ) : fpath = let
+out
+in
+val out: fpath = ()
+SDL_PathRelative (out.ptr, filename.ptr)
+end
+
+implement asset_unmap_filename ( filename ) = let
+asset_map_shortpath (fullpath)
+in
+val fullpath: fpath = asset_map_fullpath (filename)
+
+fun iterate ( i: int ) : void =
+(
+if not i < num_path_variables then ()
+else (
+val variable: fpath = path_variables[i].variable
+val mapping: fpath = path_variables[i].mapping
+val fullmapping: fpath = asset_map_fullpath (mapping)
+
+val subptr: char ptr = strstr (fullpath.ptr, fullmapping.ptr)
+
+if (subptr) then (
+val sub: fpath = (); %{# strcpy(sub.ptr, subptr) %}
+
+val replace_len = strlen (variable.ptr)
+val start_len = strlen (fullpath.ptr) - strlen (sub.ptr)
+val ext_len = strlen (sub.ptr) - strlen (fullmapping.ptr)
+
+fullpath.ptr[start_len] := '\0'
+strcat (fullpath.ptr, variable.ptr)
+strcat (fullpath.ptr, "/")
+strcat (fullpath.ptr, sub.ptr + strlen (fullmapping.ptr))
+)
+
+iterate ( i + 1 )
+)
+)
+
+iterate ( 0 )
+end
+
+implement asset_map_filename ( filename ) = let
+asset_map_fullpath ( out )
+in
+val out: fpath = filename
+
+fun iterate ( i: int ) : void = (
+if not i < num_path_variables then ( () )
+else (
+val variable: fpath = path_variables[i].variable
+val mapping: fpath = path_variables[i].mapping
+
+val subptr: char ptr = strstr (out.ptr, variable.ptr)
+
+if subptr then (
+val sub: fpath = (); strcpy (sub.ptr, subptr)
+
+val replace_len = strlen (mapping.ptr)
+val start_len = strlen (out.ptr) - strlen (sub.ptr)
+val ext_len = strlen (sub.ptr) - strlen (variable.ptr)
+
+out.ptr[start_len] = '\0'
+strcat (out.ptr, mapping.ptr)
+strcat (out.ptr, sub.ptr + strlen (variable.ptr))
+)
+)
+)
+end
+
+implement asset_hndl_null () = let
+ah
+in
+var ah: asset_hndl = ()
+ah.path = P("")
+ah.ptr = null
+ah.timestamp = 0
+end
+
+implement asset_hndl_new ( path ) = let
+ah
+in
+var ah: asset_hndl = ()
+ah.path = asset_map_filename (path)
+ah.ptr = null
+ah.timestamp = 0
+end
+
+implement asset_hndl_new_load ( path: fpath ) = let
+ah
+in
+var ah: asset_hndl = asset_hndl_new (path)
+if not file_isloaded (ah.path) then ( file_load (ah.path) )
+end
+
+implement asset_hndl_new_ptr ( as ) = let
+ah
+in
+var ah: asset_hndl = ()
+ah.path = P(asset_ptr_path(as))
+ah.ptr = as
+ah.timestamp = SDL_GetTicks()
+end
+
+implement asset_hndl_isnull ( ah ) = ( strcmp (ah->path.ptr, "") == 0 )
+
+implement asset_hndl_path ( ah ) = ( ah->path )
+
+implement asset_hndl_eq ( ah0, ah1 ) = ( strcmp (ah0->path.ptr, ah1->path.ptr) == 0 )
+
+implement asset_hndl_ptr ( ah ) = (
+if unlikely(ah->path.ptr[0] == '\0') then ( error ("Cannot load NULL asset handle"); null )
+if likely(ah->timestamp > asset_timestamp) then ( ah->ptr )
+else (
+ah->ptr = dict_get (asset_dict, ah->path.ptr)
+ah->timestamp = SDL_GetTicks ()
+
+if likely (ah->timestamp > asset_timestamp) then  ah->ptr
+else (
+ah->ptr =
+ah->timestamp =
+
+if unlikely (ah->ptr = null) then error ( "Failed to get Asset '%s', is it loaded yet?", ah->path.ptr ); null
+)
+)
+)
+
+implement asset_cache_flush () = ( asset_timestamp = SDL_GetTicks() )
+
+implement asset_init () = ( asset_dict = dict_new (1024); asset_cache_flush () )
+
+implement asset_handler_delete ( h ) = free (h->extension); free (h);
+
+fun delete_bucket_list ( b: bucket ptr ) : void = (
+if b == null then ( () )
+
+delete_bucket_list (b->next)
+
+debug ("Unloading: '%s'", b->key)
+
+val ext: fpath = null
+SDL_PathFileExtension (ext.ptr, b->key)
+
+fun iterate ( i: int ) : void = (
+if i < num_asset_handlers then (
+val handler: asset_handler = asset_handlers[i]
+if strcmp (ext.ptr, handler.extension) == 0 then (
+bucket_delete_with ( b, handler.del_func )
+)
+iterate ( i + 1 )
+)
+else ( () )
+)
+iterate ( 0 )
+)
+
+implement asset_finish () = (
+fun iterate ( i: int )
+)
