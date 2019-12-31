@@ -24,6 +24,15 @@ resources to use:
   -http://bitsquid.blogspot.com/
   -https://www.youtube.com/playlist?list=PLUxuJBZBzEdxzVpoBQY9agA8JUgNkeYSV
 
+C Macros:
+  -https://www.geeksforgeeks.org/multiline-macros-in-c/
+  -https://codeforwin.org/2019/02/how-to-write-multiline-macro-c-language.html
+  -https://www.tutorialspoint.com/multiline-macros-in-c
+  -https://www.thegeekstuff.com/2013/04/c-macros-inline-functions/
+  -https://pmihaylov.com/macros-in-c/
+  -https://www.programiz.com/c-programming/c-preprocessor-macros
+  -https://gcc.gnu.org/onlinedocs/cpp/Macro-Arguments.html
+
 step 1: plan out structure below
 root
   -assets_core -> assets such as shaders & models so you can look at something
