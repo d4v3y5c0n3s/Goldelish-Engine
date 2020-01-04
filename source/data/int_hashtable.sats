@@ -1,11 +1,11 @@
 (*
-###  int_hashtable.hats  ###
+###  int_hashtable.sats  ###
 
 a hashtable for integers
 *)
 
-#include "g_engine.hats"
-#include "data/int_list.hats"
+#include "g_engine.sats"
+#include "data/int_list.sats"
 
 typedef int_bucket = @{ keys=list ptr, values=int_list ptr }
 

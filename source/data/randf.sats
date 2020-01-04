@@ -1,10 +1,10 @@
 (*
-###  randf.hats  ###
+###  randf.sats  ###
 
 allows the creation of random floats
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 fun randf () : float = "sta#%"
 fun randf_seed ( s: float ) : float = "sta#%"

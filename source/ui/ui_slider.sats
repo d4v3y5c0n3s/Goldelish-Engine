@@ -1,11 +1,11 @@
 (*
-###  ui_slider.hats  ###
+###  ui_slider.sats  ###
 
 used to slide through a range of values
 *)
 
-#include "ui/ui_rectangle.hats"
-#include "ui/ui_button.hats"
+#include "ui/ui_rectangle.sats"
+#include "ui/ui_button.sats"
 
 typedef ui_slider = @{
 	label=ui_button ptr,

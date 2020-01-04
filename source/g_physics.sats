@@ -1,11 +1,11 @@
 (*
-###  g_physics.hats  ###
+###  g_physics.sats  ###
 
 a basic physics system definition
 *)
 
-#include "g_engine.hats"
-#include "assets/cmesh.hats"
+#include "g_engine.sats"
+#include "assets/cmesh.sats"
 
 fun vec3_gravity () : vec3 = "sta#%"
 

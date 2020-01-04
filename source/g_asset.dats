@@ -37,14 +37,14 @@ asset_add_path_variable ( variable, mapping ) =
 			num_path_variables = num_path_variables + 1
 )
 
-fun asset_map_fullpath ( filename: fpath ) : fpath = let
+implement asset_map_fullpath ( filename )  = let
 out
 in
 val out: fpath = ()
 SDL_PathFullName (out.ptr, filename.ptr)
 end
 
-fun asset_map_shortpath ( filename: fpath ) : fpath = let
+implement asset_map_shortpath ( filename ) = let
 out
 in
 val out: fpath = ()
@@ -177,7 +177,7 @@ implement asset_init () = ( asset_dict = dict_new (1024); asset_cache_flush () )
 
 implement asset_handler_delete ( h ) = free (h->extension); free (h);
 
-fun delete_bucket_list ( b: bucket ptr ) : void = (
+implement delete_bucket_list ( b ) = (
 if b == null then ( () )
 
 delete_bucket_list (b->next)
@@ -201,5 +201,61 @@ iterate ( 0 )
 )
 
 implement asset_finish () = (
-fun iterate ( i: int )
+fun iterate_bucket ( i: int ) : void = (
+if i < asset_dict->size then let delete_bucket_list (b); iterate_bucket ( i - 1); in val b: bucket ptr = asset_dict->buckets[i] end
+else ( () )
 )
+fun iterate_free ( i: int ) : void = (
+if i < num_asset_handlers then ( free( asset_handlers[num_asset_handlers].extension ); iterate_free; )
+else ( () )
+)
+)
+
+implement asset_handler_cast ( type, extension, asset_loader, asset_deleter ) =
+(
+if num_asset_handlers == MAX_ASSET_HANDLERS then ( warning ( "Max number of asset handlers reached.  Handler for extension '%s' not added.", extension ) )
+else (
+var h: asset_handler = ()
+val c: char ptr = malloc( strlen( extension ) + 1 )
+val () = strcpy ( c, extension )
+h.type = type
+h.extension = c
+h.load_func = asset_loader
+h.del_func = asset_deleter
+
+asset_handlers[ num_asset_handlers ] := h
+num_asset_handlers = num_asset_handlers + 1
+)
+)
+
+implement file_load ( filename ) =
+
+implement file_exists ( filename ) =
+
+implement folder_load ( folder ) =
+
+implement folder_load_recursive ( folder ) =
+
+implement file_reload ( filename ) =
+
+implement folder_reload ( folder ) =
+
+implement file_unload ( filename ) =
+
+implement folder_unload ( folder ) =
+
+implement file_isloaded ( path ) =
+
+implement asset_get_load ( path ) =
+
+implement asset_get ( path ) =
+
+implement asset_get_as_type ( path, type ) =
+
+implement asset_reload_type_id ( type ) =
+
+implement asset_reload_all () =
+
+implement asset_ptr_path ( a ) =
+
+implement asset_ptr_typename ( a ) =

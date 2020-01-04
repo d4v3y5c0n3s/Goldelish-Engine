@@ -1,11 +1,11 @@
 (*
-###  physics_object.hats  ###
+###  physics_object.sats  ###
 
 an object which utilizes the physics system
 *)
 
-#include "g_engine.hats"
-#include "entities/static_object.hats"
+#include "g_engine.sats"
+#include "entities/static_object.sats"
 
 typedef physics_object = @{
 	position=vec3,

@@ -1,10 +1,10 @@
 (*
-###  music.hats  ###
+###  music.sats  ###
 
 defines music files
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef music = @(
 	handle=Mix_Music ptr

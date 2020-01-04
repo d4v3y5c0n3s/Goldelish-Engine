@@ -1,10 +1,10 @@
 (*
-###  image.hats  ###
+###  image.sats  ###
 
 defines an image (and allows CPU-side image processing)
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef image = @{
 	width=int,

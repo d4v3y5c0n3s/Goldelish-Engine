@@ -1,10 +1,10 @@
 (*
-###  g_entity.hats  ###
+###  g_entity.sats  ###
 
 This is an interface for interacting with entities
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef entity = void
 

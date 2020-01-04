@@ -1,12 +1,12 @@
 (*
-###  ui_toast.hats  ###
+###  ui_toast.sats  ###
 
 a notifacation window
 *)
 
-#include "g_engine.hats"
-#include "ui/ui_text.hats"
-#include "ui/ui_rectangle.hats"
+#include "g_engine.sats"
+#include "ui/ui_text.sats"
+#include "ui/ui_rectangle.sats"
 
 typedef ui_toast = @{
 	label=ui_text ptr,

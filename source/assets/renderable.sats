@@ -1,11 +1,11 @@
 (*
-###  renderable.hats  ###
+###  renderable.sats  ###
 
 defines a renderable mesh (may be rigged or not)
 *)
 
-#include "g_engine.hats"
-#include "assets/material.hats"
+#include "g_engine.sats"
+#include "assets/material.sats"
 
 typedef vertex_weight = @( bone_ids=int, bone_weights=float )//  bone_ids[3] & bone_weights[3] in C
 

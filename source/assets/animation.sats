@@ -1,10 +1,10 @@
 (*
-###  animation.hats  ###
+###  animation.sats  ###
 
 defines an animation as an array of frames & times
 *)
 
-#include "skeleton.hats"
+#include "skeleton.sats"
 
 typedef animation = @{ frame_count=int, frame_time=float, frames=frame ptr ptr }
 

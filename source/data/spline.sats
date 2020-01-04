@@ -1,10 +1,10 @@
 (*
-###  spline.hats  ###
+###  spline.sats  ###
 
 allows the creation of splines (think 2D curved lines)
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 #define MAX_SPLINE_POINTS 20
 

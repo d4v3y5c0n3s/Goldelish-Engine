@@ -1,12 +1,12 @@
 (*
-###  vertex_hashtable.hats  ###
+###  vertex_hashtable.sats  ###
 
 hashtable for vertices, allows duplicate vertices to be checked for
 *)
 
-#include "g_engine.hats"
-#include "data/vertex_list.hats"
-#include "data/int_list.hats"
+#include "g_engine.sats"
+#include "data/vertex_list.sats"
+#include "data/int_list.sats"
 
 typedef vertex_bucket = @{ keys=vertex_list ptr, values=int_list ptr }
 

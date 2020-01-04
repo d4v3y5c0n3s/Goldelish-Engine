@@ -1,11 +1,11 @@
 (*
-###  ui_rectangle.hats  ###
+###  ui_rectangle.sats  ###
 
 a rectangle shape for ui
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
 
 typedef ui_rectangle = @{
 	top_left=vec2, bottom_right=vec2,

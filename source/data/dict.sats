@@ -1,10 +1,10 @@
 (*
-###  dict.hats  ###
+###  dict.sats  ###
 
 allows *void to be accessed with *char as keys
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 (*  buckets (aka linked lists)  *)
 typedef bucket = @{ key=string, item=ptr, next=bucket ptr }

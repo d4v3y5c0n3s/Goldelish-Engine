@@ -1,11 +1,11 @@
 (*
-###  camera.hats  ###
+###  camera.sats  ###
 
 a basic camera
 *)
 
-#include "g_engine.hats"
-#include "g_joystick.hats"
+#include "g_engine.sats"
+#include "g_joystick.sats"
 
 typedef camera = @{
 	position=vec3,

@@ -1,15 +1,15 @@
 (*
-###  particles.hats  ###
+###  particles.sats  ###
 
 displays particles
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
 
-#include "assets/effect.hats"
+#include "assets/effect.sats"
 
-#include "entities/camera.hats"
+#include "entities/camera.sats"
 
 typedef particles = @{
 	position=vec3,

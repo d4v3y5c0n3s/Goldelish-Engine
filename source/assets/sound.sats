@@ -1,10 +1,10 @@
 (*
-###  sound.hats  ###
+###  sound.sats  ###
 
 defines a sound
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef sound = @{ sample=Mix_Chunk ptr }
 

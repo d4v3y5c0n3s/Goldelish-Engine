@@ -1,11 +1,11 @@
 (*
-###  lang.hats  ###
+###  lang.sats  ###
 
 defines languages for the game to use
 *)
 
-#include "data/dict.hats"
-#include "gasset.hats"
+#include "data/dict.sats"
+#include "gasset.sats"
 
 typedef lang =  @{ map=dict ptr }
 

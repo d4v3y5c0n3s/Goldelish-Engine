@@ -1,11 +1,11 @@
 (*
-###
+###  shader.sats  ###
 
 defines a GLSL shader program
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
 
 typedef shader = GLuint
 typedef shader_print = GLuint

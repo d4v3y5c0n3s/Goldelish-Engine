@@ -1,11 +1,11 @@
 (*
-###  static_object.hats  ###
+###  static_object.sats  ###
 
 an unmovable object that interacts with physics-affected objects\
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
 
 typedef static_object = @{
 	position=vec3,

@@ -1,12 +1,12 @@
 (*
-###  ui_button.hats  ###
+###  ui_button.sats  ###
 
 button which may be clicked on
 *)
 
-#include "g_engine.hats"
-#include "ui/ui_text.hats"
-#include "ui/ui_rectangle.hats"
+#include "g_engine.sats"
+#include "ui/ui_text.sats"
+#include "ui/ui_rectangle.sats"
 
 typedef ui_button = @{
 	back=ui_rectangle ptr,

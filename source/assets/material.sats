@@ -1,12 +1,12 @@
 (*
-###  material.hats  ###
+###  material.sats  ###
 
 definition of object materials
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
-#include "assets/shader.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
+#include "assets/shader.sats"
 
 typedef material_item = @(
 	as_int=int,

@@ -1,11 +1,11 @@
 (*
-###  terrain.hats  ###
+###  terrain.sats  ###
 
 definition WIP heightmap-based terrain LOD system
 *)
 
-#include "g_engine.hats"
-#inlcude "assets/cmesh.hats"
+#include "g_engine.sats"
+#inlcude "assets/cmesh.sats"
 
 #define NUM_TERRAIN_SUBDIVISIONS 0
 #define NUM_TERRAIN_BUFFERS 7

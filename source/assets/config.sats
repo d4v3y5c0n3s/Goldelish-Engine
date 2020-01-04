@@ -1,12 +1,12 @@
 (*
-###  config.hats  ###
+###  config.sats  ###
 
 defines configuration files
 *)
 
-#include "g_engine.hats"
-#include "gasset.hats"
-#include "data/dict.hats"
+#include "g_engine.sats"
+#include "gasset.sats"
+#include "data/dict.sats"
 
 typedef config = @{ entries=dict ptr }
 

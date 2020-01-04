@@ -1,11 +1,11 @@
 (*
-###  g_ui.hats  ###
+###  g_ui.sats  ###
 
 user interface manager
 *)
 
-#include "ui/ui_style.hats"
-#include "g_engine.hats"
+#include "ui/ui_style.sats"
+#include "g_engine.sats"
 
 typedef ui_elem = ()//  defined as void, perhaps revise this
 

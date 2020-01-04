@@ -1,11 +1,11 @@
 (*
-###  ui_spinner.hats  ###
+###  ui_spinner.sats  ###
 
 allows a spinning icon to appear to inform the user that the game is loading
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
 
 typedef ui_spinner = @{
 	top_left=vec2,

@@ -1,10 +1,10 @@
 (*
-###  g_asset.hats  ###
+###  g_asset.sats  ###
 
 This defines what an asset is in the context of the engine.
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef asset = void//  double-check this later
 
@@ -33,19 +33,9 @@ fun asset_add_path_variable ( variable: fpath, mapping: fpath ) : void = "sta#%"
 fun asset_map_filename ( filename: fpath ) : fpath = "sta#%"
 fun asset_unmap_filename ( filename: fpath ) : fpath = "sta#%"
 
-//  create handler for asset type; requires type, file extension, and load/unload functions
-(*
-#define asset_handler(type, extension, loader, deleter) \
-  asset_handler_cast(typeid(type), extension, \
-  (asset*(*)(const char*))loader , \
-  (asset(*)(void*))deleter)
-
-void asset_handler_cast(
-  type_id type, const char* extension,
-  asset* asset_loader(const char* filename) ,
-  void asset_deleter(asset* asset) );
-  );
-*)
+//  create handler for asset type
+fun{t@ype:a,b,c,d} asset_handler ( type: a, extension: b, loader: c, deleter: d ) : void = "mac#"
+fun asset_handerler_cast ( type: type_id, extension: char ptr, asset_loader: char ptr -> asset ptr, asset_deleter: asset ptr -> void ) : void = "sta#"
 
 //  load/reload/unload assets at path or folder
 fun file_load ( filename: fpath ) : void = "sta#%"

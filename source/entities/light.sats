@@ -1,10 +1,10 @@
 (*
-###  light.hats  ###
+###  light.sats  ###
 
 light object for lighting up scenes
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 datatype TYPE =
 | LIGHT_TYPE_POINT = 0

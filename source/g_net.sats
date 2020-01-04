@@ -1,10 +1,10 @@
 (*
-###  g_net.hats  ###
+###  g_net.sats  ###
 
 a basic networking layer
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 fun net_init () : void = "sta#%"
 fun net_finish () : void = "sta#%"

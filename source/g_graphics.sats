@@ -1,10 +1,10 @@
 (*
-###  g_graphics.hats  ###
+###  g_graphics.sats  ###
 
 a basic layer for the graphics system
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 fun graphics_init () : void = "sta#%"
 fun graphics_finish () : void = "sta#%"

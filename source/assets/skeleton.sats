@@ -1,10 +1,10 @@
 (*
-### skeleton.hats  ###
+### skeleton.sats  ###
 
 defines a skeleton for 3D animations
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef frame = @(
 	joint_count=int,

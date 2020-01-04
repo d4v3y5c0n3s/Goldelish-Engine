@@ -1,11 +1,11 @@
 (*
-###  ui_listbox.hats  ###
+###  ui_listbox.sats  ###
 
 used to display arrays of objects
 *)
 
-#include "ui/ui_rectangle.hats"
-#include "ui/ui_text.hats"
+#include "ui/ui_rectangle.sats"
+#include "ui/ui_text.sats"
 
 typedef ui_listbox = @{
 	back=ui_rectangle ptr,

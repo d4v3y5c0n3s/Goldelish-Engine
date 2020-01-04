@@ -1,12 +1,12 @@
 (*
-###  ui_browser.hats  ###
+###  ui_browser.sats  ###
 
 (unclear what this is) maybe a ui window of some kind?
 *)
 
-#include "ui/ui_rectangle.hats"
-#include "ui/ui_text.hats"
-#include "ui/ui_listbox.hats"
+#include "ui/ui_rectangle.sats"
+#include "ui/ui_text.sats"
+#include "ui/ui_listbox.sats"
 
 typedef ui_browser = @{
 	outer=ui_rectangle ptr,

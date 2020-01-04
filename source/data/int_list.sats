@@ -1,10 +1,10 @@
 (*
-###  int_list.hats  ###
+###  int_list.sats  ###
 
 a dynamically resizable array of integers
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef int_list = @{ num_items=int, num_slots=int, items=int ptr }
 

@@ -1,11 +1,11 @@
 (*
-###  texture.hats  ###
+###  texture.sats  ###
 
 defines textures
 *)
 
-#include "g_engine.hats"
-#include "assets/image.hats"
+#include "g_engine.sats"
+#include "assets/image.sats"
 
 typedef texture = @{ handle=GLuint, type=GLuint }
 

@@ -1,11 +1,11 @@
 (*
-###  ui_textbox.hats  ###
+###  ui_textbox.sats  ###
 
 a box which allows text to be entered
 *)
 
-#include "ui/ui_rectangle.hats"
-#include "ui/ui_text.hats"
+#include "ui/ui_rectangle.sats"
+#include "ui/ui_text.sats"
 
 typedef ui_textbox = @{
 	outer=ui_rectangle ptr,

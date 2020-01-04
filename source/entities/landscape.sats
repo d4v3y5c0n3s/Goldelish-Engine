@@ -1,13 +1,13 @@
 p(*
-###  landscape.hats  ###
+###  landscape.sats  ###
 
 object for rendering instance of terrain
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
-#include "assets/image.hats"
-#include "assets/terrain.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
+#include "assets/image.sats"
+#include "assets/terrain.sats"
 
 typedef landscape_blobtree = @{
 	bound=sphere,

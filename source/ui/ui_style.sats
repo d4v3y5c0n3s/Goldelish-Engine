@@ -1,11 +1,11 @@
 (*
-###  ui_style.hats  ###
+###  ui_style.sats  ###
 
 allows the appearance of the ui to be somewhat customized
 *)
 
-#include "g_engine.hats"
-#include "ui/ui_text.hats"
+#include "g_engine.sats"
+#include "ui/ui_text.sats"
 
 typedef ui_style = @{
 	box_back_image=fpath, box_back_width=int, box_back_height=int, box_back_tile=bool, box_back_border_size=int, box_back_border_color=vec4, box_glitch=float, box_blend_src=int, box_blend_dst=int,

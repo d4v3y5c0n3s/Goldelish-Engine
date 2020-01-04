@@ -1,11 +1,11 @@
 (*
-###  ui_text.hats  ###
+###  ui_text.sats  ###
 
 allows the usage of text in the ui
 *)
 
-#include "g_engine.hats"
-#include "g_asset.hats"
+#include "g_engine.sats"
+#include "g_asset.sats"
 
 datatype TEXT_HORIZ_ALIGN =
 | TEXT_ALIGN_LEFT of ()

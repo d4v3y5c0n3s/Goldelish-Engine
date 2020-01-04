@@ -1,11 +1,11 @@
 (*
-###  font.hats  ###
+###  font.sats  ###
 
 defines a font's data
 *)
 
-#include "g_engine.hats"
-#include "gasset.hats"
+#include "g_engine.sats"
+#include "gasset.sats"
 
 typedef font = @{
 	texture_map=asset_hndl,

@@ -1,10 +1,10 @@
 (*
-###  vertex_list.hats  ###
+###  vertex_list.sats  ###
 
 a dynamically resizable array of vertices
 *)
 
-#include "g_engine.hats"
+#include "g_engine.sats"
 
 typedef vertex_list = @{ num_items=int, num_slots=int, items=vertex ptr }
 
