@@ -162,6 +162,8 @@ current todo:
 ** TODO Use "val () = function_call ()" rather than "function_call ()" when you don't want the compiler to treat it like a "return" statement
 ** TODO You've been using the "let/in/end" statements incorrectly, look at docs
 ** TODO Many of the C macros can be replaced with templates, as when programming in C macros are used to imitate templates
+** TODO Rework some of the code to to use "val"s and avoid global mutators where possible
+** TODO Replace the "loop" functions in your code with lambdas "lam" where possible
 
 * What are you currently working on specifically?
 ** TODO Currently, I am creating all the ".dats" files and filling in function names/values which I will flesh out later
