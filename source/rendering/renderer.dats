@@ -195,5 +195,144 @@ implement render_clear ( dr ) =
 var cmesh_counter: uint32_t = 0
 
 val cmesh_pallet = [
-
+    {"$GOLDELISH/textures/solid/black.dds"},
+    {"$GOLDELISH/textures/solid/blue.dds"},
+    {"$GOLDELISH/textures/solid/burnt_orange.dds"},
+    {"$GOLDELISH/textures/solid/green.dds"},
+    {"$GOLDELISH/textures/solid/light_blue.dds"},
+    {"$GOLDELISH/textures/solid/lime.dds"},
+    {"$GOLDELISH/textures/solid/orange.dds"},
+    {"$GOLDELISH/textures/solid/pink.dds"},
+    {"$GOLDELISH/textures/solid/purple.dds"},
+    {"$GOLDELISH/textures/solid/red.dds"},
+    {"$GOLDELISH/textures/solid/turquoise.dds"},
+    {"$GOLDELISH/textures/solid/white.dds"},
+    {"$GOLDELISH/textures/solid/yellow.dds"},
+    {"$GOLDELISH/textures/solid/grey.dds"}
 ]//  [14] fpath array
+
+implement render_cmesh ( dr, cm, world ) =
+{
+}
+
+implement render_static ( dr, so ) =
+{
+}
+
+implement render_skin ( dr, io ) =
+{
+}
+
+implement render_instance ( dr, io ) =
+{
+}
+
+implement render_vegetation ( dr, io ) =
+{
+}
+
+implement render_axis ( dr, world ) =
+{
+}
+
+implement render_frame ( dr, f, world ) =
+{
+}
+
+implement render_animated ( dr, ao ) =
+{
+}
+
+implement render_landscape_blobtree ( dr, shader, lbt, terr ) =
+{
+}
+
+implement render_landscape ( dr, l ) =
+{
+}
+
+implement render_light ( dr, l ) =
+{
+}
+
+implement render_frustum ( dr, f ) =
+{
+}
+
+implement render_plane ( dr, p ) =
+{
+}
+
+implement render_line ( dr, line_start, line_end, line_color, line_thickness ) =
+{
+}
+
+implement render_point ( dr, position, color, size ) =
+{
+}
+
+implement render_ellipsoid ( dr, e ) =
+{
+}
+
+implement render_paint_circle ( dr, axis, radius ) =
+{
+}
+
+var compare_cam: camera ptr = ()
+
+implement render_object_cost ( ro ) =
+{
+}
+
+implement render_object_sort ( ro0, ro1 ) =
+{
+}
+
+implement render_gbuffer ( dr ) =
+{
+}
+
+implement render_ssao ( dr ) =
+{
+}
+
+implement render_skies ( dr ) =
+{
+}
+
+implement render_sea ( dr ) =
+{
+}
+
+implement render_compose_low ( dr ) =
+{
+}
+
+implement render_compose_high ( dr ) =
+{
+}
+
+implement render_compose ( dr ) =
+{
+}
+
+implement render_particles ( dr ) =
+{
+}
+
+implement render_tonemap ( dr ) =
+{
+}
+
+implement render_post0 ( dr ) =
+{
+}
+
+implement render_post1 ( dr ) =
+{
+}
+
+implement renderer_render ( dr ) =
+{
+}
