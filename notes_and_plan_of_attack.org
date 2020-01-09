@@ -161,6 +161,6 @@ goals:
 ** TODO Currently, I am creating all the ".dats" files and filling in function names/values which I will flesh out later
 *** DONE Work on all files within the "assets" folder
 *** DONE Work on all files within the "data" folder
-*** TODO Work on all files within the "entities" folder
-*** TODO Work on all files within the "rendering" folder
+*** DONE Work on all files within the "entities" folder
+*** DONE Work on all files within the "rendering" folder
 *** TODO Work on all files within the "ui" folder
