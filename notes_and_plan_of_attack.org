@@ -158,9 +158,13 @@ goals:
 ** TODO Replace the "loop" functions in your code with lambdas "lam" where possible
 
 * What are you currently working on specifically?  (AKA, the current ToDo list)
-** TODO Currently, I am creating all the ".dats" files and filling in function names/values which I will flesh out later
+** DONE Currently, I am creating all the ".dats" files and filling in function names/values which I will flesh out later
 *** DONE Work on all files within the "assets" folder
 *** DONE Work on all files within the "data" folder
 *** DONE Work on all files within the "entities" folder
 *** DONE Work on all files within the "rendering" folder
-*** TODO Work on all files within the "ui" folder
+*** DONE Work on all files within the "ui" folder
+** TODO Now, I am refining the files currently in the engine to hopefully run and compile
+*** TODO g_asset
+**** TODO .sats
+**** TODO .dats
