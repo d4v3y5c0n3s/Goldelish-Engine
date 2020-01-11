@@ -3,9 +3,8 @@
 
 This defines what an asset is in the context of the engine.
 *)
-#include "share/atspre_staload.hats"
 
-staload "g_engine.sats"
+#include "g_engine.sats"
 
 //abstype asset = ptr
 
