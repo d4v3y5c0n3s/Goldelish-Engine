@@ -1,6 +1,8 @@
-# the makefile, attempt #2
+# the makefile
 
-# - The reason that Make isn't compiling is that no .dats files have been created yet.  So until then, this Makefile should be fine. -
+CC=gcc
+AR=ar
+PATSHOMEQ=$(PATSHOME)
 
 CFLAGS0 = $(CFLAGS)
 LDFLAGS0 = $(LDFLAGS)
@@ -19,11 +21,11 @@ OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
 #  ATS compilers
 PATSCC=$(PATSHOMEQ)/bin/patscc
 PATSOPT=$(PATSHOMEQ)/bin/patsopt
-PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib
+PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib/libatslib.a
 
 #  figure out how to create $(DYNAMIC) and $(STATIC)
 PLATFORM = $(shell uname)
-ifeq ($($findstring Linux, $(PLATFORM)), Linux)
+ifeq ($(findstring Linux, $(PLATFORM)), Linux)
 	DYNAMIC = libgoldelish.so
 	STATIC = libgoldelish.a
 	CFLAGS0 += -fPIC
@@ -36,8 +38,8 @@ ifeq ($(findstring Darwin, $(PLATFORM)), Darwin)
 	LDFLAGS0 += -framework OpenGL
 endif
 ifeq ($(findstring MINGW, $(PLATFORM)), MINGW)
-	DYNAMIC = corange.dll
-	STATIC = libcorange.a
+	DYNAMIC = goldelish.dll
+	STATIC = libgoldelish.a
 	LDFLAGS0 += -lmingw32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 endif
 
@@ -45,18 +47,15 @@ endif
 # - when compiling the c, remember to use 'PATSLIB' so that it can compile -
 all: $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(OBJ)
-	$(CC) $(OBJ) $(PATSLIB) $(LDFLAGS) -o $@
+	$(CC) $(OBJ) $(PATSLIB) $(LDFLAGS0) -o $@
 $(STATIC): $(OBJ)
 	$(AR) rcs $@ $(OBJ)
 obj/%.o: source/%.c | obj
-	$(CC) $< -c $(CFLAGS0) $(PATSLIB) -o $@
+	$(CC) $< -c $(CFLAGS0) -o $@
 obj/%.o: source/*/%.c | obj
-	$(CC) $< -c $(CFLAGS0) $(PATSLIB) -o $@
+	$(CC) $< -c $(CFLAGS0) -o $@
 obj:
 	mkdir obj
-
-# - compiles ats to c -
-#the reason that this isn't making, is that these two patterns aren't a part of the 'all' (i think)
 source/%.dats: source/%.dats | source
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
 source/*/%.dats:
@@ -68,3 +67,16 @@ testall:: cleanall
 
 cleanats:
 	$(RMF) *_?ats.c
+
+clean:
+	rm $(OBJ) $(STATIC) $(DYNAMIC)
+
+install_unix: $(STATIC)
+	cp $(STATIC) /usr/local/lib/$(STATIC)
+
+install_win32: $(STATIC)
+	cp $(STATIC) C:/MinGW/lib/$(STATIC)
+
+install_win64: $(STATIC) $(DYNAMIC)
+	cp $(STATIC) C:/MinGW64/x86_64-w64-mingw32/lib/$(STATIC)
+	cp $(DYNAMIC) C:/MinGW64/x86_64-w64-mingw32/bin/$(DYNAMIC)
