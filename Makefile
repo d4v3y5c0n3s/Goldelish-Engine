@@ -1,4 +1,5 @@
 # the makefile
+#  NOTE: The Makefile doesn't seem to be compiling .dats files, try connecting it to "all"
 
 CC=gcc
 AR=ar
@@ -14,7 +15,6 @@ MYCCRULE=MYCCRULE
 
 MALLOCFLAG=-DATS_MEMALLOC_LIBC
 
-#  figure out how to reimplement SRC and OBJ
 SRC = $(wildcard src/*.c) $(wildcard src/*/*.c)
 OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
 
@@ -23,7 +23,6 @@ PATSCC=$(PATSHOMEQ)/bin/patscc
 PATSOPT=$(PATSHOMEQ)/bin/patsopt
 PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib/libatslib.a
 
-#  figure out how to create $(DYNAMIC) and $(STATIC)
 PLATFORM = $(shell uname)
 ifeq ($(findstring Linux, $(PLATFORM)), Linux)
 	DYNAMIC = libgoldelish.so

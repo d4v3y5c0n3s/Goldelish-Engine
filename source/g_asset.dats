@@ -4,40 +4,41 @@
 source file for dealing with assets
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "g_asset.sats"
 
 staload "data/dict.sats"
 staload "data/list.sats"
 
-datatype MAX_ASSET =
-	 | MAX_ASSET_HANDLERS of 512
-	 | MAX_PATH_VARIABLES of 512
+val MAX_ASSET_HANDLERS = 512
+and MAX_PATH_VARIABLES = 512
 
 typedef asset_handler = @{
-	type=type_id, extension=char ptr, load_func=char ptr -> ptr, del_func=void
+	t=type_id, extension=string, load_func=string -<cloref1> ptr, del_func=void -> void
 }
 
-val asset_handlers: asset_handler = //[MAX_ASSET.MAX_ASSET_HANDLERS]
-val num_asset_handlers = 0
+var asset_handlers: arrszref(asset_handler)//[MAX_ASSET_HANDLERS]
+var num_asset_handlers = 0
 
 typedef path_variable = @{
 	variable=fpath, mapping=fpath
 }
 
-val path_variables: path_variable = //[MAX_PATH_VARIABLES]
-val num_path_variables = 0
+var path_variables: arrszref(path_variable)//[MAX_PATH_VARIABLES]
+var num_path_variables = 0
 
 implement
 asset_add_path_variable ( variable, mapping ) =
 (
 			if num_path_variables == MAX_PATH_VARIABLES then error("Already reached maximum num of path variables (%i)", MAX_PATH_VARIABLES)
 			if variable.ptr[0] != '$' then error("Variables must start with a dollar sign e.g. '$CORANGE'")
-			val pv: path_variable = { variable, mapping }//  WIP
-			path_variables[num_path_variables] := pv//  WIP
+			val pv = @{ variable=variable, mapping=mapping }: path_variable
+			path_variables[num_path_variables] := pv
 			num_path_variables = num_path_variables + 1
 )
 
-implement asset_map_fullpath ( filename )  = let
+fn asset_map_fullpath ( filename: fpath )  = let
 out
 in
 val out: fpath = ()
