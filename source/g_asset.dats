@@ -32,59 +32,57 @@ implement
 asset_add_path_variable ( variable, mapping ) =
 (
 			if num_path_variables == MAX_PATH_VARIABLES then error("Already reached maximum num of path variables (%i)", MAX_PATH_VARIABLES)
-			if variable.ptr[0] != '$' then error("Variables must start with a dollar sign e.g. '$CORANGE'")
+			if variable.path[0] != '$' then error("Variables must start with a dollar sign e.g. '$CORANGE'")
 			val pv = @{ variable=variable, mapping=mapping }: path_variable
 			path_variables[num_path_variables] := pv
 			num_path_variables = num_path_variables + 1
 )
 
-fn asset_map_fullpath ( filename: fpath )  = let
-out
+fn asset_map_fullpath ( filename: fpath ) : fpath  = let
+   var out = @{ path="" }: fpath
+   SDL_PathFullName (out.path, filename.path)
 in
-val out: fpath = ()
-SDL_PathFullName (out.ptr, filename.ptr)
+	out
 end
 
-implement asset_map_shortpath ( filename ) = let
-out
+fn asset_map_shortpath ( filename: fpath ) = let
+	  var out = @{ path="" }: fpath
+	  SDL_PathRelative (out.path, filename.path)
 in
-val out: fpath = ()
-SDL_PathRelative (out.ptr, filename.ptr)
+	out
 end
 
 implement asset_unmap_filename ( filename ) = let
-asset_map_shortpath (fullpath)
+	  val fullpath: fpath = asset_map_fullpath (filename)
+
+	  fun iterate ( i: int ) : void =
+	  (
+	  if not i < num_path_variables then ()
+	  else (
+	       val variable: fpath = path_variables[i].variable
+	      val mapping: fpath = path_variables[i].mapping
+	      val fullmapping: fpath = asset_map_fullpath (mapping)
+
+	      var subptr = strstr (fullpath.path, fullmapping.path)
+
+	      if (subptr != ~1) then (
+	     val sub: fpath = (); strcpy(sub.path, fullmapping.path)
+
+	      val replace_len = strlen (variable.path)
+	      val start_len = strlen (fullpath.path) - strlen (sub.path)
+	      val ext_len = strlen (sub.path) - strlen (fullmapping.path)
+
+	      fullpath.path[start_len] := '\0'
+	      strcat (fullpath.path, variable.path)
+	  	 strcat (fullpath.path, "/")
+	  	 strcat (fullpath.path, sub.path + strlen (fullmapping.path))
+	  )
+
+		iterate ( i + 1 )
+	  )
+)
 in
-val fullpath: fpath = asset_map_fullpath (filename)
-
-fun iterate ( i: int ) : void =
-(
-if not i < num_path_variables then ()
-else (
-val variable: fpath = path_variables[i].variable
-val mapping: fpath = path_variables[i].mapping
-val fullmapping: fpath = asset_map_fullpath (mapping)
-
-val subptr: char ptr = strstr (fullpath.ptr, fullmapping.ptr)
-
-if (subptr) then (
-val sub: fpath = (); %{# strcpy(sub.ptr, subptr) %}
-
-val replace_len = strlen (variable.ptr)
-val start_len = strlen (fullpath.ptr) - strlen (sub.ptr)
-val ext_len = strlen (sub.ptr) - strlen (fullmapping.ptr)
-
-fullpath.ptr[start_len] := '\0'
-strcat (fullpath.ptr, variable.ptr)
-strcat (fullpath.ptr, "/")
-strcat (fullpath.ptr, sub.ptr + strlen (fullmapping.ptr))
-)
-
-iterate ( i + 1 )
-)
-)
-
-iterate ( 0 )
+	iterate ( 0 ); asset_map_shortpath (fullpath)
 end
 
 implement asset_map_filename ( filename ) = let
@@ -98,18 +96,18 @@ else (
 val variable: fpath = path_variables[i].variable
 val mapping: fpath = path_variables[i].mapping
 
-val subptr: char ptr = strstr (out.ptr, variable.ptr)
+val subptr: char ptr = strstr (out.path, variable.path)
 
 if subptr then (
-val sub: fpath = (); strcpy (sub.ptr, subptr)
+val sub: fpath = (); strcpy (sub.path, subptr)
 
-val replace_len = strlen (mapping.ptr)
-val start_len = strlen (out.ptr) - strlen (sub.ptr)
-val ext_len = strlen (sub.ptr) - strlen (variable.ptr)
+val replace_len = strlen (mapping.path)
+val start_len = strlen (out.path) - strlen (sub.path)
+val ext_len = strlen (sub.path) - strlen (variable.path)
 
-out.ptr[start_len] = '\0'
-strcat (out.ptr, mapping.ptr)
-strcat (out.ptr, sub.ptr + strlen (variable.ptr))
+out.path[start_len] = '\0'
+strcat (out.path, mapping.path)
+strcat (out.path, sub.path + strlen (variable.path))
 )
 )
 )
@@ -120,7 +118,7 @@ ah
 in
 var ah: asset_hndl = ()
 ah.path = P("")
-ah.ptr = null
+ah.path = null
 ah.timestamp = 0
 end
 
@@ -129,7 +127,7 @@ ah
 in
 var ah: asset_hndl = ()
 ah.path = asset_map_filename (path)
-ah.ptr = null
+ah.path = null
 ah.timestamp = 0
 end
 
@@ -145,21 +143,21 @@ ah
 in
 var ah: asset_hndl = ()
 ah.path = P(asset_ptr_path(as))
-ah.ptr = as
+ah.path = as
 ah.timestamp = SDL_GetTicks()
 end
 
-implement asset_hndl_isnull ( ah ) = ( strcmp (ah->path.ptr, "") == 0 )
+implement asset_hndl_isnull ( ah ) = ( strcmp (ah->path.path, "") == 0 )
 
 implement asset_hndl_path ( ah ) = ( ah->path )
 
-implement asset_hndl_eq ( ah0, ah1 ) = ( strcmp (ah0->path.ptr, ah1->path.ptr) == 0 )
+implement asset_hndl_eq ( ah0, ah1 ) = ( strcmp (ah0->path.path, ah1->path.path) == 0 )
 
 implement asset_hndl_ptr ( ah ) = (
-if unlikely(ah->path.ptr[0] == '\0') then ( error ("Cannot load NULL asset handle"); null )
+if unlikely(ah->path.path[0] == '\0') then ( error ("Cannot load NULL asset handle"); null )
 if likely(ah->timestamp > asset_timestamp) then ( ah->ptr )
 else (
-ah->ptr = dict_get (asset_dict, ah->path.ptr)
+ah->ptr = dict_get (asset_dict, ah->path.path)
 ah->timestamp = SDL_GetTicks ()
 
 if likely (ah->timestamp > asset_timestamp) then  ah->ptr
@@ -167,7 +165,7 @@ else (
 ah->ptr =
 ah->timestamp =
 
-if unlikely (ah->ptr = null) then error ( "Failed to get Asset '%s', is it loaded yet?", ah->path.ptr ); null
+if unlikely (ah->ptr = null) then error ( "Failed to get Asset '%s', is it loaded yet?", ah->path.path ); null
 )
 )
 )
@@ -186,12 +184,12 @@ delete_bucket_list (b->next)
 debug ("Unloading: '%s'", b->key)
 
 val ext: fpath = null
-SDL_PathFileExtension (ext.ptr, b->key)
+SDL_PathFileExtension (ext.path, b->key)
 
 fun iterate ( i: int ) : void = (
 if i < num_asset_handlers then (
 val handler: asset_handler = asset_handlers[i]
-if strcmp (ext.ptr, handler.extension) == 0 then (
+if strcmp (ext.path, handler.extension) == 0 then (
 bucket_delete_with ( b, handler.del_func )
 )
 iterate ( i + 1 )

@@ -25,13 +25,14 @@ staload FLOAT = "libats/libc/SATS/float.sats"//  float.h
 staload _(*FLOAT*) = "libats/libc/DATS/float.dats"
 
 (*  SDL includes  *)
-//  Here are staloads for SDL from the SDL folder (currently writing the .sats & .cats files for this
-staload SDL2 = "SDL2/SDL.sats"//
-staload SDL2_OPENGL = "SDL2/SDL_OPENGL.sats"//
-staload SDL2_RWOPS = "SDL2/SDL_RWOPS.sats"//
-staload SDL2_MIXER = "SDL2/SDL_MIXER.sats"//
-staload SDL2_NET = "SDL2/SDL_NET.sats"//
-staload SDL2_LOCAL = "SDL2/SDL_LOCAL.sats"//
+%{
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_rwops.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_net.h>
+%}
+staload SDL2_LOCAL = "SDL2/SDL_local.sats"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512
@@ -41,7 +42,7 @@ staload SDL2_LOCAL = "SDL2/SDL_LOCAL.sats"//
 #define WARNING_BUFFER_SIZE	2048 * 4
 
 (*  ###  file system path  ###  *)
-typedef fpath = @{path=string[MAX_PATH]}// this is a record type (P.S. this may not work, apparently C arrays are in ATS, but there wasn't much info on this)
+typedef fpath = @{ path=string }
 
 fun P ( path: string ) : fpath = "sta#P"
 
