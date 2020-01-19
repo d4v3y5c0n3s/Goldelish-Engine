@@ -134,3 +134,4 @@
 **** disadvantage: will take longer to make Goldelish
 *** conclusion:
 **** While I would like to finish Goldelish sooner rather than later, a big reason that I chose to start this project was to learn.  Thus, I will start reworking the engine and implementing dependant types.  I will start work in the "data" directory.
+***** If I want to make a game, I'll just call Corange from ATS
