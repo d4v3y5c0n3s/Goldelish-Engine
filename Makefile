@@ -55,9 +55,10 @@ obj/%.o: source/*/%.c | obj
 	$(CC) $< -c $(CFLAGS0) -o $@
 obj:
 	mkdir obj
-source/%.dats: source/%.dats | source
+
+source/%.dats.c: source/%.dats | source
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
-source/*/%.dats:
+source/*/%.dats.c: source/*/%.dats | source
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
 
 testall:: all
