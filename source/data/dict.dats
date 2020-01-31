@@ -18,8 +18,8 @@ in
 end
 
 implement {a} dict_new ( size ) = let
-	  val d = malloc ( sizeof(dict) )
-	  d->size := size
+	  val d = malloc_gc ( sizeof<dict> )
+	  //d->size := size
 	  //d->buckets :=
 in
 	d

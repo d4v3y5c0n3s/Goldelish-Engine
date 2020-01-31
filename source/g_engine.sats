@@ -44,7 +44,7 @@ staload SDL2_LOCAL = "SDL2/SDL_local.sats"
 (*  ###  file system path  ###  *)
 typedef fpath = @{ path=string }
 
-fun P ( path: string ) : fpath = "sta#P"
+fun P {s:int | s >= 0} ( path: string s ) : Option(fpath) = "sta#"
 
 fun fpath_full (path: fpath) : fpath = "sta#fpath_full"
 fun fpath_file (path: fpath) : fpath = "sta#fpath_file"
@@ -94,11 +94,11 @@ fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
 typedef
 timer = @{ id=int, start=ulint, end=ulint, split=ulint }
 
-fun timer_start (id: int, tag: string) : timer = "sta#timer_start"
-fun timer_split (t: timer, tag: string) : timer = "sta#timer_split"
-fun timer_stop (t: timer, tag: string) : timer = "sta#timer_stop"
+fun timer_start {i:int | i > 0}{s:int | s > 0} (id: int i, tag: string s) : timer = "sta#"
+fun timer_split {s:int | s > 0} (t: timer, tag: string s) : timer = "sta#timer_split"
+fun timer_stop {s:int | s > 0} (t: timer, tag: string s) : timer = "sta#timer_stop"
 
-fun timestamp (out: string) : void = "sta#timestamp"
+fun timestamp {s:int | s > 0} (out: string s) : void = "sta#timestamp"
 
 (*  ###  framerate  ###  *)
 fun frame_begin () : void = "sta#frame_begin"

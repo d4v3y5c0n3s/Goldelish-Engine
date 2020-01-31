@@ -7,24 +7,31 @@
 staload "g_engine.sats"
 
 implement P ( path ) =
-(
-)
+if strlen (path) >= 256 then None() else Some( @{ path=path }: fpath )
 
-implement fpath_full ( path ) =
-(
-)
+implement fpath_full ( path ) = let
+	  var ret: fpath; SDL_PathFullName(ret.path, path.path)
+in
+	ret
+end
 
-implement fpath_file ( path ) =
-(
-)
+implement fpath_file ( path ) = let
+	  var ret: fpath; SDL_PathFileName(ret.path, path.path)
+in
+	ret
+end
 
-implement fpath_file_location ( path ) =
-(
-)
+implement fpath_file_location ( path ) let
+	  var ret: fpath; SDL_PathFileLocation(ret.path, path.path)
+in
+	ret
+end
 
-implement fpath_file_extension ( path ) =
-(
-)
+implement fpath_file_extension ( path ) = let
+	  var ret: fpath; SDL_PathFileExtension(ret.path, path.path)
+in
+	ret
+end
 
 //  error functions
 fun error_func_t ( x: char ptr ) : void
@@ -68,8 +75,7 @@ implement debug_ ( str ) =
 
 //  timing functions
 implement timer_start ( id, tag ) =
-(
-)
+	  debug("Timer %d '%s' Start: %f", id, tag, 0.0f); @{id=id, start=SDL_GetTicks(), end=0, split=SDL_GetTicks()}:timer
 
 implement timer_split ( t, tag ) =
 (

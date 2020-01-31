@@ -15,8 +15,10 @@ MYCCRULE=MYCCRULE
 
 MALLOCFLAG=-DATS_MEMALLOC_LIBC
 
-SRC = $(wildcard src/*.c) $(wildcard src/*/*.c)
+SRC = $(wildcard source/*.c) $(wildcard source/*/*.c)
 OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
+
+ATS_SRC = $(wildcard source/*.dats) $(wildcard source/*/*.dats)
 
 #  ATS compilers
 PATSCC=$(PATSHOMEQ)/bin/patscc
@@ -44,21 +46,21 @@ endif
 
 # - simply create rules for compiling ats to c, then .c to .o -
 # - when compiling the c, remember to use 'PATSLIB' so that it can compile -
-all: $(DYNAMIC) $(STATIC)
+all: ats_compile $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(OBJ)
 	$(CC) $(OBJ) $(PATSLIB) $(LDFLAGS0) -o $@
 $(STATIC): $(OBJ)
 	$(AR) rcs $@ $(OBJ)
-obj/%.o: source/%.c | obj
+obj/%.o: src/%.dats.c | obj
 	$(CC) $< -c $(CFLAGS0) -o $@
-obj/%.o: source/*/%.c | obj
+obj/%.o: src/*/%.dats.c | obj
 	$(CC) $< -c $(CFLAGS0) -o $@
 obj:
 	mkdir obj
-
-source/%.dats.c: source/%.dats | source
+ats_compile:
+ats_src/%.dats.c: ats_src/%.dats
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
-source/*/%.dats.c: source/*/%.dats | source
+ats_src/*/%.dats.c: ats_src/*/%.dats
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
 
 testall:: all
