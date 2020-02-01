@@ -57,7 +57,7 @@ obj/%.o: src/*/%.dats.c | obj
 	$(CC) $< -c $(CFLAGS0) -o $@
 obj:
 	mkdir obj
-ats_compile:
+ats_compile:: ats_src/%.dats.c ats_src/*/%.dats.c
 ats_src/%.dats.c: ats_src/%.dats
 	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
 ats_src/*/%.dats.c: ats_src/*/%.dats
