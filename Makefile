@@ -1,9 +1,8 @@
-# the makefile
-#  NOTE: The Makefile doesn't seem to be compiling .dats files, try connecting it to "all"
+# the makefile (fingers crossed that this works!)
 
-CC=gcc
+include $(PATSHOME)/share/atsmake-pre.mk
+
 AR=ar
-PATSHOMEQ=$(PATSHOME)
 
 CFLAGS0 = $(CFLAGS)
 LDFLAGS0 = $(LDFLAGS)
@@ -11,19 +10,10 @@ LDFLAGS0 = $(LDFLAGS)
 CFLAGS0 += -I ./include -std=gnu99 -Wall -Werror -Who-unused -03 -g
 LDFLAGS0 += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 
-MYCCRULE=MYCCRULE
-
-MALLOCFLAG=-DATS_MEMALLOC_LIBC
-
-SRC = $(wildcard source/*.c) $(wildcard source/*/*.c)
-OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
-
-ATS_SRC = $(wildcard source/*.dats) $(wildcard source/*/*.dats)
-
-#  ATS compilers
-PATSCC=$(PATSHOMEQ)/bin/patscc
-PATSOPT=$(PATSHOMEQ)/bin/patsopt
-PATSLIB=$(PATSHOMEQ)/ccomp/atslib/lib/libatslib.a
+SOURCES_C += $(wildcard source/*.c) $(wildcard source/*/*.c)#  the C files in the project
+SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)#  the static files in the project
+SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)#  the dynamic files in the project
+SOURCES_OBJ = $(addprefix obj/,$(notdir $(SOURCES_C:.c=.o))) $(addprefix obj/,$(notdir $(SOURCES_SATS:.sats=_sats.o))) $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
 
 PLATFORM = $(shell uname)
 ifeq ($(findstring Linux, $(PLATFORM)), Linux)
@@ -44,34 +34,32 @@ ifeq ($(findstring MINGW, $(PLATFORM)), MINGW)
 	LDFLAGS0 += -lmingw32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 endif
 
-# - simply create rules for compiling ats to c, then .c to .o -
-# - when compiling the c, remember to use 'PATSLIB' so that it can compile -
-all: ats_compile $(DYNAMIC) $(STATIC)
-$(DYNAMIC): $(OBJ)
-	$(CC) $(OBJ) $(PATSLIB) $(LDFLAGS0) -o $@
-$(STATIC): $(OBJ)
-	$(AR) rcs $@ $(OBJ)
-obj/%.o: src/%.dats.c | obj
-	$(CC) $< -c $(CFLAGS0) -o $@
-obj/%.o: src/*/%.dats.c | obj
-	$(CC) $< -c $(CFLAGS0) -o $@
+INCLUDE += $(LDFLAGS0)
+
+MYPORTDIR = MYPORTDIR
+MYPORTCPP = MYPORTCPP
+MYTARGET = MYTARGET
+
+include $(PATSHOME)/share/atsmake-post.mk
+
+all:: $(SOURCES_OBJ) $(DYNAMIC) $(STATIC)
+$(DYNAMIC): $(SOURCES_OBJ)
+	$(CC) $(SOURCES_OBJ) $(LDFLAGS0) -o $@
+$(STATIC): $(SOURCES_OBJ)
+	$(AR) rcs $@ $(SOURCES_OBJ)
+obj/%_sats.o: source/%.sats | obj
+	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+obj/%_sats.o: source/*/%.sats | obj
+	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+obj/%_dats.o: source/%.dats | obj
+	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
+obj/%_dats.o: source/*/%.dats | obj
+	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
 obj:
 	mkdir obj
-ats_compile:: ats_src/%.dats.c ats_src/*/%.dats.c
-ats_src/%.dats.c: ats_src/%.dats
-	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
-ats_src/*/%.dats.c: ats_src/*/%.dats
-	$(PATSOPT) $(CFLAGS0) -o $@ $< $(LDFLAGS0)
-
-testall:: all
-testall:: regress
-testall:: cleanall
-
-cleanats:
-	$(RMF) *_?ats.c
 
 clean:
-	rm $(OBJ) $(STATIC) $(DYNAMIC)
+	rm $(SOURCES_OBJ) $(STATIC) $(DYNAMIC)
 
 install_unix: $(STATIC)
 	cp $(STATIC) /usr/local/lib/$(STATIC)
