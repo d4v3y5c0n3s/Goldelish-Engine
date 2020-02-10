@@ -5,9 +5,9 @@ This is the main header file for handling audio within the engine.
 *)
 
 (*  includes  *)
-#include "g_engine.sats"
-#include "assets/sound.sats"
-#include "assets/music.sats"
+#include "./g_engine.sats"
+#include "./assets/sound.sats"
+#include "./assets/music.sats"
 
 (*  functions  *)
 fn audio_init() : void = "sta#audio_init"

@@ -4,8 +4,8 @@
 user interface manager
 *)
 
-#include "ui/ui_style.sats"
-#include "g_engine.sats"
+#include "./ui/ui_style.sats"
+#include "./g_engine.sats"
 
 typedef ui_elem = ()//  defined as void, perhaps revise this
 
@@ -18,13 +18,7 @@ fun ui_update () : void = "sta#%"
 fun ui_render () : void = "sta#%"
 
 (*
-#define ui_handler(type, new, delete, event, update, render) \
-  ui_handler_cast(typeid(type), \
-  (ui_elem*(*)())new, \
-  (void(*)(ui_elem*))delete, \
-  (void(*)(ui_elem*,SDL_Event))event, \
-  (void(*)(ui_elem*))update, \
-  (void(*)(ui_elem*))render)
+#define ui_handler(type, new, delete, event, update, render)
 *)
 
 (*
@@ -43,14 +37,14 @@ void ui_handler_cast(int type_id,
 #define ui_elem_get_as(fmt, type, ...) ((type*)ui_elem_get_as_type_id(fmt, typeid(type), ##__VA_ARGS__))
 *)
 
-fun ui_elem_exists ( fmt: string, ... ) : bool = "sta#%"
-fun ui_elem_get ( fmt: string, ... ) : ui_elem ptr = "sta#%"
-fun ui_elem_get_as_type_id ( fmt: string, type_id: int, ... ) : ui_elem ptr = "sta#%"
-fun ui_elem_new_type_id ( fmt: string, type_id: int, ... ) : ui_elem ptr = "sta#%"
-fun ui_elem_delete ( fmt: string, ... ) : void = "sta#%"
-fun ui_elem_event ( fmt: string, ... ) : void = "sta#%"
-fun ui_elem_update ( fmt: string, ... ) : void = "sta#%"
-fun ui_elem_render ( fmt: string, ... ) : void = "sta#%"
+fun ui_elem_exists ( fmt: string ) : bool = "sta#%"
+fun ui_elem_get ( fmt: string ) : ui_elem ptr = "sta#%"
+fun ui_elem_get_as_type_id ( fmt: string, type_id: int ) : ui_elem ptr = "sta#%"
+fun ui_elem_new_type_id ( fmt: string, type_id: int ) : ui_elem ptr = "sta#%"
+fun ui_elem_delete ( fmt: string ) : void = "sta#%"
+fun ui_elem_event ( fmt: string ) : void = "sta#%"
+fun ui_elem_update ( fmt: string ) : void = "sta#%"
+fun ui_elem_render ( fmt: string ) : void = "sta#%"
 
 fun ui_elem_name ( e: ui_elem ptr ) : string = "sta#%"
 fun ui_elem_typename ( e: ui_elem ptr ) : string = "sta#%"
