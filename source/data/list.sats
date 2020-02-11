@@ -4,7 +4,7 @@
 a dynamically expandable array of pointers
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
 typedef list = @{ num_items=int, num_slots=int, items=void ptr ptr }
 

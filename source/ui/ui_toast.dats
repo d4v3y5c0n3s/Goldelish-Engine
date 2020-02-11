@@ -4,10 +4,10 @@
 
 *)
 
-staload "ui/ui_toast.sats"
+staload "./ui/ui_toast.sats"
 
-staload "g_ui.sats"
-staload "g_graphics.sats"
+staload "./g_ui.sats"
+staload "./g_graphics.sats"
 
 #define MAX_TOASTS 128
 var toasts_num = 0

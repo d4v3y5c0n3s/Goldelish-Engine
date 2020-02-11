@@ -4,9 +4,9 @@
 defines configuration files
 *)
 
-#include "g_engine.sats"
-#include "gasset.sats"
-#include "data/dict.sats"
+#include "./g_engine.sats"
+#include "./gasset.sats"
+#include "./data/dict.sats"
 
 typedef config = @{ entries=dict ptr }
 

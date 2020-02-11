@@ -4,8 +4,8 @@
 allows the creation of a dynamic sky
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
 
 val TIME_SUNRISE = 0.00
 and TIME_MORNING = 0.10

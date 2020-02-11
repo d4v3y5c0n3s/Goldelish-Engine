@@ -4,9 +4,9 @@
 (unclear what this is) maybe a ui window of some kind?
 *)
 
-#include "ui/ui_rectangle.sats"
-#include "ui/ui_text.sats"
-#include "ui/ui_listbox.sats"
+#include "./ui/ui_rectangle.sats"
+#include "./ui/ui_text.sats"
+#include "./ui/ui_listbox.sats"
 
 typedef ui_browser = @{
 	outer=ui_rectangle ptr,

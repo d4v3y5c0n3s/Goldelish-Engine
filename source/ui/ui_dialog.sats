@@ -4,10 +4,10 @@
 a menu/information dialog
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
-#include "ui/ui_text.sats"
-#include "ui/ui_button.sats"
+#include "./ui/ui_text.sats"
+#include "./ui/ui_button.sats"
 
 extern val dialog_count = 0//  int
 

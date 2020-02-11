@@ -4,8 +4,8 @@
 
 *)
 
-staload "data/list.sats"
-staload "data/dict.sats"
+staload "./data/list.sats"
+staload "./data/dict.sats"
 
 typedef entity_handler = '{ type_id=int, new_func=void->ptr, del_func=void->void }
 

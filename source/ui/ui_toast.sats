@@ -4,9 +4,9 @@
 a notifacation window
 *)
 
-#include "g_engine.sats"
-#include "ui/ui_text.sats"
-#include "ui/ui_rectangle.sats"
+#include "./g_engine.sats"
+#include "./ui/ui_text.sats"
+#include "./ui/ui_rectangle.sats"
 
 typedef ui_toast = @{
 	label=ui_text ptr,

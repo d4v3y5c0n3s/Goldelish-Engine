@@ -4,7 +4,7 @@
 
 *)
 
-staload "g_audio.sats"
+staload "./g_audio.sats"
 
 val audio_rate: int = 22050
 val audio_format: Uint16 = AUDIO_S16

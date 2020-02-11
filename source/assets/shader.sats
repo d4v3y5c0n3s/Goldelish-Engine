@@ -4,8 +4,8 @@
 defines a GLSL shader program
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
 
 typedef shader = GLuint
 typedef shader_print = GLuint

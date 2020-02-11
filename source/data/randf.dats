@@ -4,7 +4,7 @@
 
 *)
 
-staload "data/randf.sats"
+staload "./data/randf.sats"
 
 implement randf (  ) =
 {

@@ -4,7 +4,7 @@
 
 *)
 
-staload "assets/config.sats"
+staload "./assets/config.sats"
 
 implement SDL_RWreadline ( file, buffer, buffersize ) =
 (

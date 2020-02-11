@@ -4,7 +4,7 @@
 
 *)
 
-staload "data/int_list.sats"
+staload "./data/int_list.sats"
 
 implement image_new ( width, height, data ) =
 (

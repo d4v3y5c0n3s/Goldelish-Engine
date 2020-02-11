@@ -4,8 +4,8 @@
 
 *)
 
-staload "assets/shader.sats"
-staload "assets/texture.sats"
+staload "./assets/shader.sats"
+staload "./assets/texture.sats"
 
 implement load_shader_file ( filename, type ) =
 (

@@ -4,7 +4,7 @@
 
 *)
 
-staload "ui/ui_option.sats"
+staload "./ui/ui_option.sats"
 
 implement ui_option_new (  ) =
 {

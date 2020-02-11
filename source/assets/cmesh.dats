@@ -4,9 +4,9 @@
 
 *)
 
-staload "assets/cmesh.sats"
+staload "./assets/cmesh.sats"
 
-staload "data/vertex_list.sats"
+staload "./data/vertex_list.sats"
 
 implement ctri_bound ( t ) =
 (

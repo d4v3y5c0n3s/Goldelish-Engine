@@ -4,15 +4,15 @@
 
 *)
 
-staload "ui/ui_text.sats"
-staload "ui/ui_style.sats"
+staload "./ui/ui_text.sats"
+staload "./ui/ui_style.sats"
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
-staload "assets/material.sats"
-staload "assets/shader.sats"
-staload "assets/texture.sats"
-staload "assets/font.sats"
+staload "./assets/material.sats"
+staload "./assets/shader.sats"
+staload "./assets/texture.sats"
+staload "./assets/font.sats"
 
 implement ui_text_new (  ) =
 {

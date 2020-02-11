@@ -4,8 +4,8 @@
 
 *)
 
-staload "ui/ui_listbox.sats"
-staload "ui/ui_style.sats"
+staload "./ui/ui_listbox.sats"
+staload "./ui/ui_style.sats"
 
 implement ui_listbox_new (  ) =
 {

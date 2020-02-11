@@ -4,7 +4,7 @@
 
 *)
 
-staload "rendering/sky.sats"
+staload "./rendering/sky.sats"
 
 implement sky_new (  ) =
 {

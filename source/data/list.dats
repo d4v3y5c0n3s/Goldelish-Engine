@@ -4,7 +4,7 @@
 
 *)
 
-staload "data/list.sats"
+staload "./data/list.sats"
 
 implement list_new (  ) =
 {

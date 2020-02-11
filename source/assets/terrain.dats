@@ -4,11 +4,11 @@
 
 *)
 
-staload "assets/terrain.sats"
+staload "./assets/terrain.sats"
 
-staload "g_net.sats"
+staload "./g_net.sats"
 
-staload "assets/cmesh.sats"
+staload "./assets/cmesh.sats"
 
 implement terrain_chunk_delete ( tc ) =
 (

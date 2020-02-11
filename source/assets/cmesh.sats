@@ -4,7 +4,7 @@
 definition of 3D mesh in the game engine
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
 typedef ctri = @{ a=vec3, b=vec3, c=vec3, norm=vec3, bound=sphere }
 

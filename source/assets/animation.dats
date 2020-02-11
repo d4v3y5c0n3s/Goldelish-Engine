@@ -4,7 +4,7 @@
 
 *)
 
-staload "assets/animation.sats"
+staload "./assets/animation.sats"
 
 implement animation_new (  ) =
 (

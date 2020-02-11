@@ -4,8 +4,8 @@
 a box which allows text to be entered
 *)
 
-#include "ui/ui_rectangle.sats"
-#include "ui/ui_text.sats"
+#include "./ui/ui_rectangle.sats"
+#include "./ui/ui_text.sats"
 
 typedef ui_textbox = @{
 	outer=ui_rectangle ptr,

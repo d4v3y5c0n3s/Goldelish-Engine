@@ -4,8 +4,8 @@
 
 *)
 
-staload "ui/ui_textbox.sats"
-staload "ui/ui_style.sats"
+staload "./ui/ui_textbox.sats"
+staload "./ui/ui_style.sats"
 
 implement ui_textbox_new (  ) =
 {

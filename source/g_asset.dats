@@ -6,10 +6,10 @@ source file for dealing with assets
 
 #include "share/atspre_staload.hats"
 
-staload "g_asset.sats"
+staload "./g_asset.sats"
 
-staload "data/dict.sats"
-staload "data/list.sats"
+staload "./data/dict.sats"
+staload "./data/list.sats"
 
 val MAX_ASSET_HANDLERS = 512
 and MAX_PATH_VARIABLES = 512

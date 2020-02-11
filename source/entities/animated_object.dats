@@ -4,9 +4,9 @@
 
 *)
 
-staload "entities/animated_object.sats"
+staload "./entities/animated_object.sats"
 
-staload "assets/animation.sats"
+staload "./assets/animation.sats"
 
 implement animated_object_new (  ) =
 {

@@ -4,10 +4,10 @@
 
 *)
 
-staload "g_graphics.sats"
-staload "g_asset.sats"
+staload "./g_graphics.sats"
+staload "./g_asset.sats"
 
-staload "assets/image.sats"
+staload "./assets/image.sats"
 
 var screen: SDL_Window ptr = ()
 var context: SDL_GLContext ptr = ()

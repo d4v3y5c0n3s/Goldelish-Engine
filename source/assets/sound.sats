@@ -4,7 +4,7 @@
 defines a sound
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
 typedef sound = @{ sample=Mix_Chunk ptr }
 

@@ -4,9 +4,9 @@
 button which may be clicked on
 *)
 
-#include "g_engine.sats"
-#include "ui/ui_text.sats"
-#include "ui/ui_rectangle.sats"
+#include "./g_engine.sats"
+#include "./ui/ui_text.sats"
+#include "./ui/ui_rectangle.sats"
 
 typedef ui_button = @{
 	back=ui_rectangle ptr,

@@ -4,10 +4,10 @@
 
 *)
 
-staload "ui/ui_broser.sats"
-staload "ui/ui_style.sats"
+staload "./ui/ui_broser.sats"
+staload "./ui/ui_style.sats"
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
 implement ui_browser_new (  ) =
 {

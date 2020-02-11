@@ -4,9 +4,9 @@
 
 *)
 
-staload "ui/ui_dialog.sats"
+staload "./ui/ui_dialog.sats"
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
 var dialog_count = 0
 

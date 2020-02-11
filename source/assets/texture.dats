@@ -4,9 +4,9 @@
 
 *)
 
-staload "assets/texture.sats"
+staload "./assets/texture.sats"
 
-staload "data/spline.sats"
+staload "./data/spline.sats"
 
 implement texture_new (  ) =
 (

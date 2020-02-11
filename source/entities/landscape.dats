@@ -4,10 +4,10 @@
 
 *)
 
-staload "entities/landscape.sats"
+staload "./entities/landscape.sats"
 
-staload "assets/terrain.sats"
-staload "assets/texture.sats"
+staload "./assets/terrain.sats"
+staload "./assets/texture.sats"
 
 implement landscape_blobtree_new ( l ) =
 {

@@ -4,7 +4,7 @@
 defines an image (and allows CPU-side image processing)
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
 typedef image = @{
 	width=int,

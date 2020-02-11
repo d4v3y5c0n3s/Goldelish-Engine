@@ -4,11 +4,11 @@
 
 *)
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
-staload "assets/texture.sats"
-staload "assets/shader.sats"
-staload "assets/material.sats"
+staload "./assets/texture.sats"
+staload "./assets/shader.sats"
+staload "./assets/material.sats"
 
 implement ui_rectangle_new (  ) =
 {

@@ -4,11 +4,11 @@
 
 *)
 
-staload "ui/ui_button.sats"
-staload "ui/ui_style.sats"
-staload "ui/ui_rectangle.sats"
+staload "./ui/ui_button.sats"
+staload "./ui/ui_style.sats"
+staload "./ui/ui_rectangle.sats"
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
 implement ui_button_new (  ) =
 {

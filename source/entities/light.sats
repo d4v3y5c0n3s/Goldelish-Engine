@@ -4,7 +4,7 @@
 light object for lighting up scenes
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
 datatype TYPE =
 | LIGHT_TYPE_POINT = 0

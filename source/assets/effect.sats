@@ -4,8 +4,8 @@
 defines a visual effect within the engine
 *)
 
-#include "g_engine.sats"
-#include "gasset.sats"
+#include "./g_engine.sats"
+#include "./gasset.sats"
 
 typedef effect_key = @{
 	time=float, rotation=float, rotation_r=float, scale=vec3, scale_r=vec3, color=vec4, color_r=vec4, force=vec3, force_r=vec3

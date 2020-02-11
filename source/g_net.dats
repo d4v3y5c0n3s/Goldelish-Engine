@@ -4,7 +4,7 @@
 
 *)
 
-staload "g_net.sats"
+staload "./g_net.sats"
 
 var is_server = false
 

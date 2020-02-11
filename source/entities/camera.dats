@@ -4,9 +4,9 @@
 
 *)
 
-staload "entities/camera.sats"
+staload "./entities/camera.sats"
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
 implement camera_new (  ) =
 {

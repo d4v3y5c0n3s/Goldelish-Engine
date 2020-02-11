@@ -4,13 +4,13 @@
 
 *)
 
-staload "entities/particles.sats"
+staload "./entities/particles.sats"
 
-staload "g_net.sats"
+staload "./g_net.sats"
 
-staload "data/randf.sats"
+staload "./data/randf.sats"
 
-staload "assets/effect.sats"
+staload "./assets/effect.sats"
 
 implement particles_new (  ) =
 {

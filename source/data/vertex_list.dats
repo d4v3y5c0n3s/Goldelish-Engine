@@ -4,7 +4,7 @@
 
 *)
 
-staload "data/vertex_list.sats"
+staload "./data/vertex_list.sats"
 
 implement vertex_list_new (  ) =
 {

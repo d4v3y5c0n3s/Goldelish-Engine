@@ -4,8 +4,8 @@
 an object which utilizes the physics system
 *)
 
-#include "g_engine.sats"
-#include "entities/static_object.sats"
+#include "./g_engine.sats"
+#include "./entities/static_object.sats"
 
 typedef physics_object = @{
 	position=vec3,

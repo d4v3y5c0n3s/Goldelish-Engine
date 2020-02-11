@@ -4,7 +4,7 @@
 
 *)
 
-staload "assets/land.sats"
+staload "./assets/land.sats"
 
 implement SDL_RWreadline ( file, buffer, buffersize ) =
 (

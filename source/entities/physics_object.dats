@@ -4,9 +4,9 @@
 
 *)
 
-staload "entities/physics_object.sats"
+staload "./entities/physics_object.sats"
 
-staload "assets/cmesh.sats"
+staload "./assets/cmesh.sats"
 
 implement physics_object_new (  ) =
 {

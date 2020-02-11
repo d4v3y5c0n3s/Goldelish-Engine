@@ -4,8 +4,8 @@
 used to slide through a range of values
 *)
 
-#include "ui/ui_rectangle.sats"
-#include "ui/ui_button.sats"
+#include "./ui/ui_rectangle.sats"
+#include "./ui/ui_button.sats"
 
 typedef ui_slider = @{
 	label=ui_button ptr,

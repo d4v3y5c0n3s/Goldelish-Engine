@@ -4,7 +4,7 @@
 
 *)
 
-staload "g_joystick.sats"
+staload "./g_joystick.sats"
 
 #define MAX_STICKS 8
 

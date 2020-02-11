@@ -4,7 +4,7 @@
 
 *)
 
-staload "g_engine.sats"
+staload "./g_engine.sats"
 
 implement P ( path ) =
 if strlen (path) >= 256 then None() else Some( @{ path=path }: fpath )

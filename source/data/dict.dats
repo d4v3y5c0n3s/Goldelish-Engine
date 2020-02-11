@@ -5,7 +5,7 @@
 *)
 
 #include "share/atspre_staload.hats"
-staload "data/dict.sats"
+staload "./data/dict.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
 fun hash {n:int} {m:int | m > 0} ( s: string n, size: int m ) : int = let

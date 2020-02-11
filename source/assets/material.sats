@@ -4,9 +4,9 @@
 definition of object materials
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
-#include "assets/shader.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
+#include "./assets/shader.sats"
 
 typedef material_item = @(
 	as_int=int,

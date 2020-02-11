@@ -4,8 +4,8 @@ p(*
 a collection of static objects; supports instanced rendering
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
 
 typedef instance_data = @{
 	position=vec3,

@@ -2,7 +2,7 @@
 ###  goldelish.dats  ###
 *)
 
-staload "goldelish.sats"
+staload "./goldelish.sats"
 
 //  may not need all of these... reexamine later
 datatype SIG_ERR =

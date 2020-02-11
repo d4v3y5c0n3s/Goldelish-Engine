@@ -4,8 +4,8 @@
 a rectangle shape for ui
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
 
 typedef ui_rectangle = @{
 	top_left=vec2, bottom_right=vec2,

@@ -4,8 +4,8 @@
 defines languages for the game to use
 *)
 
-#include "data/dict.sats"
-#include "gasset.sats"
+#include "./data/dict.sats"
+#include "./gasset.sats"
 
 typedef lang =  @{ map=dict ptr }
 

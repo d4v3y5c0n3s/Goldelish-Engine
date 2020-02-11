@@ -4,7 +4,7 @@
 
 *)
 
-staload "entities/light.sats"
+staload "./entities/light.sats"
 
 #define DEFAULT_LIGHT_NEAR_CLIP 0.1
 #define DEFAULT_LIGHT_FAR_CLIP 8192.0

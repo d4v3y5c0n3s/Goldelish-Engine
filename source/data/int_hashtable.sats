@@ -4,8 +4,8 @@
 a hashtable for integers
 *)
 
-#include "g_engine.sats"
-#include "data/int_list.sats"
+#include "./g_engine.sats"
+#include "./data/int_list.sats"
 
 typedef int_bucket = @{ keys=list ptr, values=int_list ptr }
 

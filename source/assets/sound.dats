@@ -4,7 +4,7 @@
 
 *)
 
-staload "assets/sound.sats"
+staload "./assets/sound.sats"
 
 implement wav_load_file ( filename ) =
 (

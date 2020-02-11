@@ -4,9 +4,9 @@
 an object animated by a skeleton
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
-#include "assets/skeleton.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
+#include "./assets/skeleton.sats"
 
 typedef animated_object = @{
 	position=vec3,

@@ -4,7 +4,7 @@
 
 *)
 
-staload "data/vertex_hashtable.sats"
+staload "./data/vertex_hashtable.sats"
 
 implement vertex_hash ( ht, v ) =
 {

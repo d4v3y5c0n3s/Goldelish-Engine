@@ -4,13 +4,13 @@
 
 *)
 
-staload "ui/ui_spinner.sats"
-staload "ui/ui_style.sats"
+staload "./ui/ui_spinner.sats"
+staload "./ui/ui_style.sats"
 
-staload "g_graphics.sats"
+staload "./g_graphics.sats"
 
-staload "assets/material.sats"
-staload "assets/texture.sats"
+staload "./assets/material.sats"
+staload "./assets/texture.sats"
 
 implement ui_spinner_new (  ) =
 {

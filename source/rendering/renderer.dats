@@ -4,17 +4,17 @@
 
 *)
 
-staload "g_graphics.sats"
-staload "g_entity.sats"
+staload "./g_graphics.sats"
+staload "./g_entity.sats"
 
-staload "assets/shader.sats"
-staload "assets/texture.sats"
-staload "assets/material.sats"
-staload "assets/renderable.sats"
-staload "assets/terrain.sats"
-staload "assets/cmesh.sats"
+staload "./assets/shader.sats"
+staload "./assets/texture.sats"
+staload "./assets/material.sats"
+staload "./assets/renderable.sats"
+staload "./assets/terrain.sats"
+staload "./assets/cmesh.sats"
 
-staload "rendering/sky.sats"
+staload "./rendering/sky.sats"
 
 implement render_object_instance ( i ) =
 {

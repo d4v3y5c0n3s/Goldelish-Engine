@@ -4,7 +4,7 @@
 
 *)
 
-staload "assets/skeleton.sats"
+staload "./assets/skeleton.sats"
 
 implement frame_new (  ) =
 (

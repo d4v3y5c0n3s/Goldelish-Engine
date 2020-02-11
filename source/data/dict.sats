@@ -4,7 +4,7 @@
 allows void pointers to be accessed with strings as keys
 *)
 
-#include "g_engine.sats"
+#include "./g_engine.sats"
 
 (*  buckets (aka linked lists)  *)
 typedef bucket = @{ key=string, item=ptr, next=ptr }

@@ -4,8 +4,8 @@
 defines textures
 *)
 
-#include "g_engine.sats"
-#include "assets/image.sats"
+#include "./g_engine.sats"
+#include "./assets/image.sats"
 
 typedef texture = @{ handle=GLuint, type=GLuint }
 

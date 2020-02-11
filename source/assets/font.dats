@@ -5,7 +5,7 @@
 
 *)
 
-staload "assets/font.dats"
+staload "./assets/font.dats"
 
 implement SDL_RWreadline ( file, buffer, buffersize ) =
 (

@@ -4,11 +4,11 @@
 
 *)
 
-staload "entities/instance_object.sats"
+staload "./entities/instance_object.sats"
 
-staload "g_net.sats"
+staload "./g_net.sats"
 
-staload "assets/renderable.sats"
+staload "./assets/renderable.sats"
 
 implement instance_object_new (  ) =
 {

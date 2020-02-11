@@ -4,8 +4,8 @@
 allows a spinning icon to appear to inform the user that the game is loading
 *)
 
-#include "g_engine.sats"
-#include "g_asset.sats"
+#include "./g_engine.sats"
+#include "./g_asset.sats"
 
 typedef ui_spinner = @{
 	top_left=vec2,

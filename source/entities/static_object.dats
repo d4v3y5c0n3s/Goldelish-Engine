@@ -4,7 +4,7 @@
 
 *)
 
-staload "entities/static_object.sats"
+staload "./entities/static_object.sats"
 
 implement static_object_new (  ) =
 {
