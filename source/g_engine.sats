@@ -118,15 +118,9 @@ fun type_find( type: string, size: size_t ) : type_id = "sta#%"
 fun type_id_name ( id: int ) : string = "sta#%"
 
 (*  ###  floating point math  ###  *)
-//  REVISE MACROS
-(*
-#ifndef max
-	float max(float x, float y);
-#endif
-ifndef min
-       float min(float x, float y);
-endif
-*)
+
+fun max(x: float, y: float): float = "sta#%"
+fun min(x: float, y: float): float = "sta#%"
 
 fun clamp ( x:float, bottom:float, top:float ): float = "sta#%"
 fun saturate ( x:float ): float = "sta#%"

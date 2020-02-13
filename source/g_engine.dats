@@ -146,7 +146,7 @@ implement type_id_name ( id ) =
 )
 
 //  vector math
-implement rawcast ( x ) =
+fun rawcast ( x: float ): int =//  i think this turns a float into an int using unions, try using "unsafe" and setting a float to an int
 (
 )
 

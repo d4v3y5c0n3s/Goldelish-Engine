@@ -36,10 +36,6 @@ endif
 
 INCLUDE += $(LDFLAGS0)
 
-MYPORTDIR = MYPORTDIR
-MYPORTCPP = MYPORTCPP
-MYTARGET = MYTARGET
-
 include $(PATSHOME)/share/atsmake-post.mk
 
 all:: $(SOURCES_OBJ) $(DYNAMIC) $(STATIC)
@@ -48,7 +44,7 @@ $(DYNAMIC): $(SOURCES_OBJ)
 $(STATIC): $(SOURCES_OBJ)
 	$(AR) rcs $@ $(SOURCES_OBJ)
 obj/%_sats.o: source/%.sats | obj
-	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft - $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj/%_sats.o: source/*/%.sats | obj
 	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj/%_dats.o: source/%.dats | obj
@@ -59,7 +55,7 @@ obj:
 	mkdir obj
 
 clean:
-	rm $(SOURCES_OBJ) $(STATIC) $(DYNAMIC)
+	rm $(SOURCES_OBJ) $(STATIC) $(DYNAMIC) $(wildcard *.c); $(shell rm -r obj)
 
 install_unix: $(STATIC)
 	cp $(STATIC) /usr/local/lib/$(STATIC)
