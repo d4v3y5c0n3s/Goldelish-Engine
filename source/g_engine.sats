@@ -119,8 +119,7 @@ fun type_id_name ( id: int ) : string = "sta#%"
 
 (*  ###  floating point math  ###  *)
 
-fun max(x: float, y: float): float = "sta#%"
-fun min(x: float, y: float): float = "sta#%"
+//  min(x, y) & max(x, y) are already implemented in ATS
 
 fun clamp ( x:float, bottom:float, top:float ): float = "sta#%"
 fun saturate ( x:float ): float = "sta#%"

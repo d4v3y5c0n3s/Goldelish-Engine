@@ -146,49 +146,30 @@ implement type_id_name ( id ) =
 )
 
 //  vector math
-fun rawcast ( x: float ): int =//  i think this turns a float into an int using unions, try using "unsafe" and setting a float to an int
-(
-)
+fn rawcast ( x: float ): int = g0float2int(x)
 
-implement max ( x, y ) =
-(
-)
+implement clamp ( x, bottom, top ) = min(max(x, bottom), top)
 
-implement min ( x, y ) =
-(
-)
+implement between ( x, bottom, top ) = (x > bottom) && (x < top)
 
-implement clamp ( x, bottom, top ) =
-(
-)
+implement between_or ( x, bottom, top ) = (x >= bottom) && (x <= top)
 
-implement between ( x, bottom, top ) =
-(
-)
+implement saturate ( x ) = min(max(x, g0float2float_double_float(0.0)), g0float2float_double_float(1.0))
 
-implement between_or ( x, bottom, top ) =
-(
-)
+implement lerp ( p1, p2, amount ) = (p2 * amount) + (p1 * (1 - amount))
 
-implement saturate ( x ) =
-(
-)
+implement smoothstep ( p1, p2, amount ) = lerp(p1, p2, amount * amount * (3 - 2 * amount))
 
-implement lerp ( p1, p2, amount ) =
-(
-)
+implement smootherstep ( p1, p2, amount ) = let
+	  val scaled_amount = amount * amount * amount * ( amount * (amount * 6 - 15) + 10)
+in
+	lerp(p1, p2, scaled_amount)
+end
 
-implement smoothstep ( p1, p2, amount ) =
-(
-)
-
-implement smootherstep ( p1, p2, amount ) =
-(
-)
-
-implement cosine_interp ( p1, p2, amount ) =
-(
-)
+implement cosine_interp ( p1, p2, amount ) = let
+	  val mu2
+in
+end
 
 implement nearest_interp ( p1, p2, amount ) =
 (
