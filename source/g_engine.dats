@@ -166,38 +166,59 @@ in
 	lerp(p1, p2, scaled_amount)
 end
 
+//  need to implement cosine() before this function can be finished
 implement cosine_interp ( p1, p2, amount ) = let
-	  val mu2
+	  val mu2 =
 in
+	()
 end
 
+//  need to implement roundf() to finish this
 implement nearest_interp ( p1, p2, amount ) =
 (
 )
 
-implement cubic_interp ( p1, p2, p3, p4, amount ) =
-(
-)
+implement cubic_interp ( p1, p2, p3, p4, amount ) = let
+	  val amount_sqrd = amount * amount
+	  val amount_cubd = amount * amount * amount
+	  val a1 = p4 - p3 - p2 + p1
+	  val a2 = p1 - p2 - a1
+	  val a3 = p3 - p1
+	  val a4 = p2
+in
+	(a1 * amount_cubd) + (a2 * amount_sqrd) + (a3 * amount) + a4
+end
 
+//  need roundf()
 implement binearest_interp ( tl, tr, bl, br, x_amount, y_amount ) =
 (
 )
 
-implement bilinear_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+implement bilinear_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
+	  val left = lerp(tl, bl, y_amount)
+	  val right = lerp(tr, br, y_amount)
+in
+	lerp(right, left, x_amount)
+end
 
+//  need cosine_interp()
 implement bicosine_interp ( tl, tr, bl, br, x_amount, y_amount ) =
 (
 )
 
-implement bismoothstep_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+implement bismoothstep_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
+	  val left = smoothstep(tl, bl, y_amount)
+	  val right = smoothstep(tr, br, y_amount)
+in
+	smoothstep(right, left, x_amount)
+end
 
-implement bismootherstep_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+implement bismootherstep_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
+	  val left = smootherstep(tl, bl, y_amount)
+	  val right = smootherstep(tr, br, y_amount)
+in
+	smootherstep(right, left, x_amount)
+end
 
 implement vec2_new ( x, y ) =
 (
