@@ -6,23 +6,7 @@ This file has code for general things & math operations in the engine.
 
 (*  standard lib includes  *)
 //  ATS includes the C standard libraries ready-to-use
-staload STDLIB = "libats/libc/SATS/stdlib.sats"//  stdlib.h
-staload _(*STDLIB*) = "libats/libc/DATS/stdlib.dats"
-staload STDIO = "libats/libc/SATS/stdio.sats"//  stdio.h
-staload _(*STDIO*) = "libats/libc/DATS/stdio.dats"
-//  stdbool.h (bools are already in ATS)
-staload STRINGS = "libats/libc/SATS/strings.sats"//  string.h
-staload _(*STRINGS*) = "libats/libc/DATS/strings.dats"
-staload DIRENT = "libats/libc/SATS/direct.sats"//  dirent.h
-staload _(*DIRENT*) = "libats/libc/DATS/direct.dats"
-//  assert.h (I don't think this is needed in ATS)
-staload MATH = "libats/libc/SATS/math.sats"//  math.h
-staload _(*MATH*) = "libats/libc/DATS/math.dats"
-staload TIME = "libats/libc/SATS/time.sats"//  time.h
-staload _(*TIME*) = "libats/libc/DATS/time.dats"
-staload SIGNAL = "libats/libc/SATS/signal.sats"//  signal.h
-staload FLOAT = "libats/libc/SATS/float.sats"//  float.h
-staload _(*FLOAT*) = "libats/libc/DATS/float.dats"
+#include "share/HATS/atslib_staload_libats_libc.hats"
 
 (*  SDL includes  *)
 %{
@@ -119,75 +103,75 @@ fun type_id_name ( id: int ) : string = "sta#%"
 
 (*  ###  floating point math  ###  *)
 
-//  min(x, y) & max(x, y) are already implemented in ATS
+//  min(x, y) & max(x, y) are already implemented in the ATS prelude
 
-fun clamp ( x:float, bottom:float, top:float ): float = "sta#%"
-fun saturate ( x:float ): float = "sta#%"
-fun between ( x:float, bottom:float, top:float ): bool = "sta#%"
-fun between_or ( x:float, bottom:float, top:float ): bool = "sta#%"
+fn clamp {v,b,t:int | t > b} ( x:float v, bottom:float b, top:float t ): float = "sta#%"
+fn saturate {i: int} ( x:float i ): float = "sta#%"
+fn between {i,j,k:int | j != k} ( x:float i, bottom:float j, top:float k ): bool = "sta#%"
+fn between_or {i,j,k:int} ( x:float i, bottom:float j, top:float k ): bool = "sta#%"
 
-fun lerp ( p1: float, p2: float, amount: float ) : float = "sta#%"
-fun smoothstep ( p1: float, p2: float, amount: float ) : float = "sta#%"
-fun smootherstep ( p1: float, p2: float, amount: float ) : float = "sta#%"
-fun cosine_interp ( p1: float, p2: float, amount: float ) : float = "sta#%"
-fun cubic_interp ( p1: float, p2: float, p3: float, p4: float, amount: float ) : float = "sta#%"
-fun nearest_interp ( p1: float, p2: float, amount: float ) : float = "sta#%"
+fn lerp {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
+fn smoothstep {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
+fn smootherstep {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
+fn cosine_interp {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
+fn cubic_interp {i,j,k,l,m:int} ( p1: float i, p2: float j, p3: float k, p4: float l, amount: float m ) : float = "sta#%"
+fn nearest_interp {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
 
-fun binearest_interp ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
-fun bilinear_interp ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
-fun bicosine_interp ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
-fun bismoothstep_interp ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
-fun bismootherstep_interp ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
+fn binearest_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
+fn bilinear_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
+fn bicosine_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
+fn bismoothstep_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
+fn bismootherstep_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
 
 (*  ###  vector math  ###  *)
 
 //  vec2 type
 typedef vec2 = @{ x=float, y=float }
 
-fun vec2_new ( x: float, y: float ) : vec2 = "sta#%"
-fun vec2_zero () : void = "sta#%"
-fun vec2_one () : void = "sta#%"
+fn vec2_new {i,j:int} ( x: float i, y: float j ) : vec2 = "sta#%"
+fn vec2_zero () : vec2 = "sta#%"
+fn vec2_one () : vec2 = "sta#%"
 
-fun vec2_add ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
-fun vec2_sub ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
-fun vec2_mul ( v: vec2, fac: float ) : vec2 = "sta#%"
-fun vec2_mul_vec2 ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
-fun vec2_div ( v: vec2, fac: float ) : vec2 = "sta#%"
-fun vec2_div_vec2 ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
-fun vec2_pow ( v: vec2, exp: float ) : vec2 = "sta#%"
-fun vec2_neg ( v: vec2 ) : vec2 = "sta#%"
-fun vec2_abs ( v: vec2 ) : vec2 = "sta#%"
-fun vec2_floor ( v: vec2 ) : vec2 = "sta#%"
-fun vec2_fmod ( v: vec2, val: float ) : vec2 = "sta#%"
+fn vec2_add {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
+fn vec2_sub {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
+fn vec2_mul {} ( v: vec2, fac: float ) : vec2 = "sta#%"
+fn vec2_mul_vec2 {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
+fn vec2_div {} ( v: vec2, fac: float ) : vec2 = "sta#%"
+fn vec2_div_vec2 {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
+fn vec2_pow {} ( v: vec2, exp: float ) : vec2 = "sta#%"
+fn vec2_neg {} ( v: vec2 ) : vec2 = "sta#%"
+fn vec2_abs {} ( v: vec2 ) : vec2 = "sta#%"
+fn vec2_floor {} ( v: vec2 ) : vec2 = "sta#%"
+fn vec2_fmod {} ( v: vec2, vl: float ) : vec2 = "sta#%"
 
-fun vec2_max ( v: vec2, x: float ) : vec2 = "sta#%"
-fun vec2_min ( v: vec2, x: float ) : vec2 = "sta#%"
-fun vec2_clamp ( v: vec2, b: float, t: float ) : vec2 = "sta#%"
+fn vec2_max {} ( v: vec2, x: float ) : vec2 = "sta#%"
+fn vec2_min {} ( v: vec2, x: float ) : vec2 = "sta#%"
+fn vec2_clamp {} ( v: vec2, b: float, t: float ) : vec2 = "sta#%"
 
-fun vec2_equ ( v1: vec2, v2: vec2 ) : bool = "sta#%"
+fn vec2_equ {} ( v1: vec2, v2: vec2 ) : bool = "sta#%"
 
-fun vec2_dot ( v1: vec2, v2: vec2 ) : float = "sta#%"
-fun vec2_length_sqrd ( v: vec2 ) : float = "sta#%"
-fun vec2_length ( v: vec2 ) : float = "sta#%"
-fun vec2_dist_sqrd ( v1: vec2, v2: vec2 ) : float = "sta#%"
-fun vec2_dist ( v1: vec2, v2: vec2 ) : float = "sta#%"
-fun vec2_dist_manhattan ( v1: vec2, v2: vec2 ) : float = "sta#%"
-fun vec2_normalize ( v: vec2 ) : vec2 = "sta#%"
+fn vec2_dot {} ( v1: vec2, v2: vec2 ) : float = "sta#%"
+fn vec2_length_sqrd {} ( v: vec2 ) : float = "sta#%"
+fn vec2_length {} ( v: vec2 ) : float = "sta#%"
+fn vec2_dist_sqrd {} ( v1: vec2, v2: vec2 ) : float = "sta#%"
+fn vec2_dist {} ( v1: vec2, v2: vec2 ) : float = "sta#%"
+fn vec2_dist_manhattan {} ( v1: vec2, v2: vec2 ) : float = "sta#%"
+fn vec2_normalize {} ( v: vec2 ) : vec2 = "sta#%"
 
-fun vec2_reflect ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
+fn vec2_reflect {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
 
-fun vec2_from_string ( s: string ) : vec2 = "sta#%"
-fun vec2_print ( v: vec2 ) void = "sta#%"
+fn vec2_from_string {} ( s: string ) : vec2 = "sta#%"
+fn vec2_print {} ( v: vec2 ) void = "sta#%"
 
-fun vec2_to_array ( v: vec2, out: float ptr ) : void = "sta#%
+fn vec2_to_array {} ( v: vec2, out: float ptr ) : void = "sta#%
 
-fun vec2_hash ( v: vec2 ) : int = "sta#%"
-fun vec2_mix_hash ( v: vec2 ) : int = "sta#%"
+fn vec2_hash {} ( v: vec2 ) : int = "sta#%"
+fn vec2_mix_hash {} ( v: vec2 ) : int = "sta#%"
 
-fun vec2_saturate ( v: vec2 ) : vec2 = "sta#%"
-fun vec2_lerp ( v1: vec2, v2: vec2, amount: float ) : vec2 = "sta#%"
-fun vec2_smoothstep ( v1: vec2, v2: vec2, amount: float ) : vec2 = "sta#%"
-fun vec2_smootherstep ( v1: vec2, v2: vec2, amount: vec2 ) : vec2 "sta#%"
+fn vec2_saturate {} ( v: vec2 ) : vec2 = "sta#%"
+fn vec2_lerp {} ( v1: vec2, v2: vec2, amount: float ) : vec2 = "sta#%"
+fn vec2_smoothstep {} ( v1: vec2, v2: vec2, amount: float ) : vec2 = "sta#%"
+fn vec2_smootherstep {} ( v1: vec2, v2: vec2, amount: vec2 ) : vec2 "sta#%"
 
 //  vec3 type
 typedef vec3 = @{ x=float, y=float, z=float }

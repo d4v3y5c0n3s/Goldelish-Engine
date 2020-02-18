@@ -146,7 +146,7 @@ implement type_id_name ( id ) =
 )
 
 //  vector math
-fn rawcast ( x: float ): int = g0float2int(x)
+fn rawcast {i:int} ( x: float i ): int = g0float2int(x)
 
 implement clamp ( x, bottom, top ) = min(max(x, bottom), top)
 
@@ -154,7 +154,7 @@ implement between ( x, bottom, top ) = (x > bottom) && (x < top)
 
 implement between_or ( x, bottom, top ) = (x >= bottom) && (x <= top)
 
-implement saturate ( x ) = min(max(x, g0float2float_double_float(0.0)), g0float2float_double_float(1.0))
+implement saturate ( x ) = min(max(x, 0.0f), 1.0)
 
 implement lerp ( p1, p2, amount ) = (p2 * amount) + (p1 * (1 - amount))
 
@@ -166,17 +166,19 @@ in
 	lerp(p1, p2, scaled_amount)
 end
 
-//  need to implement cosine() before this function can be finished
 implement cosine_interp ( p1, p2, amount ) = let
-	  val mu2 =
+	  val mu2 = (1 - $MATH.cos(amount * g0float2float_double_float($MATH.M_PI))) / 2
 in
-	()
+	(p2 * (1 - mu2) + p1 * mu2)
 end
 
-//  need to implement roundf() to finish this
-implement nearest_interp ( p1, p2, amount ) =
-(
-)
+implement nearest_interp ( p1, p2, amount ) = let
+	  val rounded_amount = g0float2float_double_float($MATH.round(amount))
+in
+	if rounded_amount != 0.f
+	   then p2
+	else p1
+end
 
 implement cubic_interp ( p1, p2, p3, p4, amount ) = let
 	  val amount_sqrd = amount * amount
@@ -189,10 +191,16 @@ in
 	(a1 * amount_cubd) + (a2 * amount_sqrd) + (a3 * amount) + a4
 end
 
-//  need roundf()
-implement binearest_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+implement binearest_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
+	  val x_amount:float = $MATH.round(x_amount)
+	  val y_amount:float = $MATH.round(y_amount)
+in
+	if (x_amount != 0.f && y_amount = 0.f) then (br)
+	else if (x_amount = 0.f && y_amount != 0.f) then (tl)
+	else if (x_amount = 0.f && y_amount = 0.f) then (bl)
+	else if (x_amount != 0.f && y_amount != 0.f) then (tr)
+	else 0.0f
+end
 
 implement bilinear_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
 	  val left = lerp(tl, bl, y_amount)
@@ -201,10 +209,12 @@ in
 	lerp(right, left, x_amount)
 end
 
-//  need cosine_interp()
-implement bicosine_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+implement bicosine_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
+	  val left = cosine_interp(tl, bl, y_amount)
+	  val right = cosine_interp(tr, br, y_amount)
+in
+	cosine_interp(right, left, x_amount)
+end
 
 implement bismoothstep_interp ( tl, tr, bl, br, x_amount, y_amount ) = let
 	  val left = smoothstep(tl, bl, y_amount)
@@ -220,73 +230,39 @@ in
 	smootherstep(right, left, x_amount)
 end
 
-implement vec2_new ( x, y ) =
-(
-)
+implement vec2_new ( x, y ) = @{ x=x, y=y }:vec2
 
-implement vec2_zero () =
-(
-)
+implement vec2_zero () = vec2_new(0.f, 0.f)
 
-implement vec2_one () =
-(
-)
+implement vec2_one () = vec2_new(0.f, 0.f)
 
-implement vec2_add ( v1: vec2, v2: vec2 ) =
-(
-)
+implement vec2_add ( v1, v2 ) = @{ x=(v1.x + v2.x), y=(v1.y + v2.y) }:vec2
 
-implement vec2_sub ( v1, v2 ) =
-(
-)
+implement vec2_sub ( v1, v2 ) = @{ x=(v1.x - v2.x), y=(v1.y - v2.y) }:vec2
 
-implement vec2_div ( v, fac ) =
-(
-)
+implement vec2_div ( v, fac ) = @{ x=(v.x / fac), y=(v.y / fac) }:vec2
 
-implement vec2_div_vec2 ( v1, v2 ) =
-(
-)
+implement vec2_div_vec2 ( v1, v2 ) = @{ x=(v1.x / v2.x), y=(v1.y / v2.y) }:vec2
 
-implement vec2_mul ( v, fac ) =
-(
-)
+implement vec2_mul ( v, fac ) = @{ x=(v.x * fac), y=(v.y * fac) }:vec2
 
-implement vec2_mul_vec2 ( v1, v2 ) =
-(
-)
+implement vec2_mul_vec2 ( v1, v2 ) = @{ x=(v1.x * v2.x), y=(v1.y * v2.y) }:vec2
 
-implement vec2_pow ( v, exp ) =
-(
-)
+implement vec2_pow ( v, exp ) = @{ x=($MATH.pow(v.x, exp)), y=($MATH.pow(v.y, exp)) }:vec2
 
-implement vec2_neg ( v ) =
-(
-)
+implement vec2_neg ( v ) = @{ x=(~v.x), y=(~v.y) }:vec2
 
-implement vec2_abs ( v ) =
-(
-)
+implement vec2_abs ( v ) = @{ x=(abs(v.x)), y=(abs(v.y)) }:vec2
 
-implement vec2_floor ( v ) =
-(
-)
+implement vec2_floor ( v ) = @{ x=($MATH.floor(v.x)), y=($MATH.floor(v.y)) }:vec2
 
-implement vec2_fmod ( v, val ) =
-(
-)
+implement vec2_fmod ( v, vl ) = @{ x=($MATH.fmod(v.x, vl)), y=($MATH.fmod(v.y, vl)) }:vec2
 
-implement vec2_max ( v, x ) =
-(
-)
+implement vec2_max ( v, x ) = @{ x=(max(v.x, x)), y=(max(v.y, x)) }:vec2
 
-implement vec2_min ( v, x ) =
-(
-)
+implement vec2_min ( v, x ) = @{ x=(min(v.x, x)), y=(min(x.y, x)) }:vec2
 
-implement vec2_clamp ( v, b, t ) =
-(
-)
+implement vec2_clamp ( v, b, t ) = @{ x=(clamp(v.x, b, t)), y=(clamp(v.y, b, t)) }:vec2
 
 implement vec2_print ( v ) =
 (
