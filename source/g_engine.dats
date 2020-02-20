@@ -264,41 +264,34 @@ implement vec2_min ( v, x ) = @{ x=(min(v.x, x)), y=(min(x.y, x)) }:vec2
 
 implement vec2_clamp ( v, b, t ) = @{ x=(clamp(v.x, b, t)), y=(clamp(v.y, b, t)) }:vec2
 
-implement vec2_print ( v ) =
-(
-)
+implement vec2_print ( v ) = begin
+	  print("vec2 (");
+	  print_float();
+	  print(", ");
+	  print_float();
+	  print(")");
+end
 
-implement vec2_dot ( v1, v2 ) =
-(
-)
+implement vec2_dot ( v1, v2 ) = (v1.x * v2.x) + (v1.y * v2.y)
 
-implement vec2_length_sqrd ( v ) =
-(
-)
+implement vec2_length_sqrd ( v ) = (v.x * v.x) + (v.y * v.y)
 
-implement vec2_length ( v ) =
-(
-)
+implement vec2_length ( v ) = $MATH.sqrt(vec2_length_sqrd(v))
 
 implement vec2_dist_sqrd ( v1, v2 ) =
-(
-)
+	  (v1.x - v2.x) * (v1.x - v2.x) +
+	  (v1.y - v2.y) * (v1.y - v2.y);
 
-implement vec2_dist ( v1, v2 ) =
-(
-)
+implement vec2_dist ( v1, v2 ) = $MATH.sqrt(vec2_dist_sqrd(v1, v2))
 
 implement vec2_dist_manhattan ( v1, v2 ) =
-(
-)
+	  abs(v1.x - v2.x) + abs(v1.y - v2.y)
 
 implement vec2_normalize ( v ) =
-(
-)
+	  vec2_div(v, vec2_length(v))
 
 implement vec2_reflect ( v1, v2 ) =
-(
-)
+	  vec2_sub(v1, vec2_mul(v2, 2 * vec2_dot(v1, v2)))
 
 implement vec2_from_string ( s ) =
 (
