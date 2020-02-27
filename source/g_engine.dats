@@ -146,7 +146,7 @@ implement type_id_name ( id ) =
 )
 
 //  vector math
-fn rawcast {i:int} ( x: float i ): int = g0float2int(x)
+fn rawcast {} ( x: float ): int = g0float2int(x)
 
 implement clamp ( x, bottom, top ) = min(max(x, bottom), top)
 
@@ -298,50 +298,72 @@ implement vec2_from_string ( s ) =
 )
 
 implement vec2_equ ( v1, v2 ) =
-(
-)
+	  if (not(v1.x = v2.x)) then false
+	  else if (not(v1.y = v2.y)) then false
+	  else true
 
 implement vec2_to_array ( v, out ) =
 (
 )
 
-implement vec2_hash ( v ) =
-(
-)
+implement vec2_hash ( v ) = abs(rawcast(v.x) || rawcast(v.y))
 
-implement vec2_mix_hash ( v ) =
-(
-)
+implement vec2_mix_hash ( v ) = let
+	  val raw_vx = abs(rawcast(v.x))
+	  val raw_vy = abs(rawcast(v.y))
+
+	  val h1 = raw_vx << 1
+	  val h2 = raw_vy << 3
+	  val h3 = raw_vx >> 8
+
+	  val h4 = raw_vy << 7
+	  val h5 = raw_vx >> 12
+	  val h6 = raw_vy >> 15
+
+	  val h7 = raw_vx << 2
+	  val h8 = raw_vy << 6
+	  val h9 = raw_vx >> 2
+
+	  val h10 = raw_vy << 9
+	  val h11 = raw_vx >> 21
+	  val h12 = raw_vy >> 13
+
+	  val res1 = h1 || h2 || h3
+	  val res2 = h4 || h5 || h6
+	  val res3 = h7 || h8 || h9
+	  val res4 = h10 || h11 || h12
+in
+	(res1 * 10252247) || (res2 * 70209673) || (res3 * 104711) || (res4 * 63589)
+end
 
 implement vec2_saturate ( v ) =
-(
-)
+	  @{x=saturate(v.x), y=saturate(v.y)}:vec2
 
 implement vec2_lerp ( v1, v2, amount ) =
-(
-)
+	  @{x=lerp(v1.x, v2.x, amount), y=lerp(v1.y, v2.y, amount)}:vec2
 
-implement vec2_smoothstep ( v1, v2, amount ) =
-(
-)
+implement vec2_smoothstep ( v1, v2, amount ) = let
+	  val scaled_amount = amount * amount * (3 - 2 * amount);
+in
+	vec2_lerp(v1, v2, scaled_amount)
+end
 
-implement vec2_smootherstep  ( v1, v2, amount ) =
-(
-)
+implement vec2_smootherstep  ( v1, v2, amount ) = let
+	  val scaled_amount = amount * amount * amount * (amount * (amount * 6 - 15) + 10);
+in
+	vec2_lerp(v1, v2, scaled_amount)
+end
 
 //  vec3
 
 implement vec3_new ( x, y, z ) =
-(
-)
+	  @{x=x, y=y, z=z}:vec3
 
 implement vec3_zero () =
-(
-)
+	  vec3_new(0.f, 0.f, 0.f)
 
 implement vec3_one () =
-(
-)
+	  vec3_new(1.f, 1.f, 1.f)
 
 implement vec3_red () =
 (
