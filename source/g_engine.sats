@@ -201,7 +201,7 @@ fun vec3_pow ( v: vec3, fac: float ) : vec3 = "sta#%"
 fun vec3_neg ( v: vec3 ) : vec3 = "sta#%"
 fun vec3_abs ( v: vec3 ) : vec3 = "sta#%"
 fun vec3_floor ( v: vec3 ) : vec3 = "sta#%"
-fun vec3_fmod ( v: vec3, val: float ) : vec3 = "sta#%"
+fun vec3_fmod ( v: vec3, vl: float ) : vec3 = "sta#%"
 
 fun vec3_equ ( v1: vec3, v2: vec3 ) : bool = "sta#%"
 fun vec3_neg ( v1: vec3, v2: vec3 ) : bool = "sta#%"

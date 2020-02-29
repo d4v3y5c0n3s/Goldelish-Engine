@@ -266,9 +266,9 @@ implement vec2_clamp ( v, b, t ) = @{ x=(clamp(v.x, b, t)), y=(clamp(v.y, b, t))
 
 implement vec2_print ( v ) = begin
 	  print("vec2 (");
-	  print_float();
+	  print_float(v.x);
 	  print(", ");
-	  print_float();
+	  print_float(v.y);
 	  print(")");
 end
 
@@ -366,120 +366,104 @@ implement vec3_one () =
 	  vec3_new(1.f, 1.f, 1.f)
 
 implement vec3_red () =
-(
-)
+	  vec3_new(1.f, 0.f, 0.f)
 
 implement vec3_green () =
-(
-)
+	  vec3_new(0.f, 1.f, 0.f)
 
 implement vec3_blue () =
-(
-)
+	  vec3_new(0.f, 0.f, 1.f)
 
 implement vec3_white () =
-(
-)
+	  vec3_new(1.f, 1.f, 1.f)
 
 implement vec3_black () =
-(
-)
+	  vec3_new(0.f, 0.f, 0.f)
 
 implement vec3_grey () =
-(
-)
+	  vec3_new(0.5f, 0.5f, 0.5f)
 
 implement vec3_light_grey () =
-(
-)
+	  vec3_new(0.75f, 0.75f, 0.75f)
 
 implement vec3_dark_grey () =
-(
-)
+	  vec3_new(0.25f, 0.25f, 0.25f)
 
 implement vec3_up () =
-(
-)
+	  vec3_new(0.f, 1.f, 0.f)
 
 implement vec3_add ( v1, v2 ) =
-(
-)
+	  vec3_new(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z)
 
 implement vec3_sub ( v1, v2 ) =
-(
-)
+	  vec3_new(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z)
 
 implement vec3_div ( v, fac ) =
-(
-)
+	  vec3_new(v.x / fac, v.y / fac, v.z / fac)
 
 implement vec3_div_vec3 ( v1, v2 ) =
-(
-)
+	  vec3_new(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z)
 
 implement vec3_mul ( v, fac ) =
-(
-)
+	  vec3_new(v.x * fac, v.y * fac, v.z * fac)
 
 implement vec3_mul_vec3 ( v1, v2 ) =
-(
-)
+	  vec3_new(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z)
 
 implement vec3_pow ( v, exp ) =
-(
-)
+	  vec3_new($MATH.pow(v.x, exp), $MATH.pow(v.y, exp), $MATH.pow(v.z, exp))
 
 implement vec3_neg ( v ) =
-(
-)
+	  vec3_new(~v.x, ~v.y, ~v.z)
 
 implement vec3_abs ( v ) =
-(
-)
+	  vec3_new(abs(v.x), abs(v.y), abs(v.z))
 
 implement vec3_floor ( v ) =
-(
-)
+	  vec3_new($MATH.floor(v.x), $MATH.floor(v.y), $MATH.floor(v.z))
 
-implement vec3_fmod ( v, val ) =
-(
-)
+implement vec3_fmod ( v, vl ) =
+	  vec3_new($MATH.fmod(v.x, vl), $MATH.fmod(v.y, vl), $MATH.fmod(v.z, vl))
 
-implement vec3_print ( v ) =
-(
-)
+implement vec3_print ( v ) = begin
+	  print("vec3 (");
+	  print_float(v.x);
+	  print(", ");
+	  print_float(v.y);
+	  print(", ");
+	  print_float(v.z);
+	  print(")");
+end
 
 implement vec3_dot ( v1, v2 ) =
-(
-)
+	  (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z)
 
 implement vec3_cross ( v1, v2 ) =
-(
-)
+	  @{x=((v1.y * v2.z) - (v1.z * v2.y)), y=((v1.z * v2.x) - (v1.x * v2.z)), z=((v1.x * v2.y) - (v1.y * v2.x))}:vec3
 
 implement vec3_length_sqrd ( v ) =
-(
-)
+	  (v.x * v.x) + (v.y * v.y) + (v.z * v.z)
 
 implement vec3_length ( v ) =
-(
-)
+	  $MATH.sqrt(vec3_length_sqrd(v))
 
 implement vec3_dist_sqrd ( v1, v2 ) =
-(
-)
+	  (v1.x - v2.x) * (v1.x - v2.x) +
+	  (v1.y - v2.y) * (v1.y - v2.y) +
+	  (v1.z - v2.z) * (v1.z - v2.z);
 
 implement vec3_dist ( v1, v2 ) =
-(
-)
+	  $MATH.sqrt(vec3_dist_sqrd(v1, v2))
 
 implement vec3_dist_manhattan ( v1, v2 ) =
-(
-)
+	  abs(v1.x - v2.x) + abs(v1.y - v2.y) + abs(v1.z, v2.z)
 
-implement vec3_normalize ( v ) =
-(
-)
+implement vec3_normalize ( v ) = let
+	  val len = vec3_length(v);
+in
+	if (len = 0.0f) then vec3_zero()
+	else vec3_div(v, len)
+end
 
 implement vec3_reflect ( v1, v2 ) =
 (
