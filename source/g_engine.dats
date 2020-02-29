@@ -466,52 +466,55 @@ in
 end
 
 implement vec3_reflect ( v1, v2 ) =
-(
-)
+	  vec3_sub(v1, vec3_mul(v2, 2 * vec3_dot(v1, v2)))
 
 implement vec3_project ( v1, v2 ) =
-(
-)
+	  vec3_sub(v1, vec3_mul(v2, vec3_dot(v1, v2)))
 
 implement vec3_from_string ( s ) =
 (
 )
 
 implement vec3_equ ( v1, v2 ) =
-(
-)
+	  if (not(v1.x = v2.x)) then false
+	  else if (not(v1.y = v2.y)) then false
+	  else if (not(v1.z = v2.z)) then false
+	  else true
 
 implement vec3_neq ( v1, v2 ) =
-(
-)
+	  if (not(v1.x = v2.x)) then true
+	  else if (not(v1.y = v2.y)) then true
+	  else if (not(v1.z = v2.z)) then true
+	  else false
 
 implement vec3_to_array ( v, out ) =
 (
 )
 
 implement vec3_hash ( v ) =
-(
-)
+	  abs( rawcast(v.x) || rawcast(v.y) || rawcast(v.z) )
 
 implement vec3_to_homogeneous ( v ) =
 (
 )
 
 implement vec3_saturate ( v ) =
-(
-)
+	  @{x=saturate(v.x), y=saturate(v.y), z=saturate(v.z)}:vec3
 
 implement vec3_lerp ( v1, v2, amount ) =
-(
-)
+	  @{x=lerp(v1.x, v2.x, amount), y=lerp(v1.y, v2.y, amount), z=lerp(v1.z, v2.z, amount)}:vec3
 
-implement vec3_smoothstep ( v1, v2, amount ) =
-(
-)
+implement vec3_smoothstep ( v1, v2, amount ) = let
+	  val scaled_amount = amount * amount * (3 - 2 * amount)
+in
+	vec3_lerp(v1, v2, scaled_amount)
+end
 
-implement vec3_smootherstep ( v1, v2, amount ) =
-(
-)
+implement vec3_smootherstep ( v1, v2, amount ) = let
+	  val scaled_amount = amount*amount*amount*(amount*(amount*6 - 15) + 10)
+in
+	vec3_lerp(v1, v2, scaled_amount)
+end
 
 //  vec4
 implement vec4_new ( x, y, z, w ) =
