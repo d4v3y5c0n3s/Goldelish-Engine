@@ -495,8 +495,7 @@ implement vec3_hash ( v ) =
 	  abs( rawcast(v.x) || rawcast(v.y) || rawcast(v.z) )
 
 implement vec3_to_homogeneous ( v ) =
-(
-)
+	  vec4_new(v.x, v.y, v.z, 1.0f)
 
 implement vec3_saturate ( v ) =
 	  @{x=saturate(v.x), y=saturate(v.y), z=saturate(v.z)}:vec3
@@ -518,144 +517,130 @@ end
 
 //  vec4
 implement vec4_new ( x, y, z, w ) =
-(
-)
+	  @{x=x, y=y, z=z, w=w}:vec4
 
 implement vec4_zero () =
-(
-)
+	  vec4_new(0.f, 0.f, 0.f, 0.f)
 
 implement vec4_one () =
-(
-)
+	  vec4_new(1.f, 1.f, 1.f, 1.f)
 
 implement vec4_red () =
-(
-)
+	  vec4_new(1.f, 0.f, 0.f, 1.f)
 
 implement vec4_green () =
-(
-)
+	  vec4_new(0.f, 1.f, 0.f, 1.f)
 
 implement vec4_blue () =
-(
-)
+	  vec4_new(0.f, 0.f, 1.f, 1.f)
 
 implement vec4_white () =
-(
-)
+	  vec4_new(1.f, 1.f, 1.f, 1.f)
 
 implement vec4_black () =
-(
-)
+vec4_new(0.f, 0.f, 0.f, 1.f)
 
 implement vec4_grey () =
-(
-)
+	  vec4_new(0.5f, 0.5f, 0.5f, 1.f)
 
 implement vec4_light_grey () =
-(
-)
+	  vec4_new(0.75f, 0.75f, 0.75f, 1.f)
 
 implement vec4_dark_grey () =
-(
-)
+	  vec4_new(0.25f, 0.25f, 0.25f, 1.f)
 
 implement vec4_add ( v1, v2 ) =
-(
-)
+	  @{x=(v1.x + v2.x), y=(v1.y + v2.y), z=(v1.z + v2.z), w=(v1.w + v2.w)}:vec4
 
 implement vec4_sub ( v1, v2 ) =
-(
-)
+	  @{x=(v1.x - v2.x), y=(v1.y - v2.y), z=(v1.z - v2.z), w=(v1.w - v2.w)}:vec4
 
 implement vec4_div ( v, fac ) =
-(
-)
+	  @{x=(v.x / fac), y=(v.y / fac), z=(v.z / fac), w=(v.w / fac)}:vec4
 
 implement vec4_mul ( v, fac ) =
-(
-)
+	  @{x=(v.x * fac), y=(v.y * fac), z=(v.z * fac), w=(v.w * fac)}:vec4
 
 implement vec4_mul_vec4 ( v1, v2 ) =
-(
-)
+	  @{x=(v1.x * v2.x), y=(v1.y * v2.y), z=(v1.z * v2.z), w=(v1.w * v2.w)}:vec4
 
 implement vec4_pow ( v, exp ) =
-(
-)
+	  @{x=$MATH.pow(v.x, exp), y=$MATH.pow(v.y, exp), z=$MATH.pow(v.z, exp), w=$MATH.pow(v.w, exp)}:vec4
 
 implement vec4_neg ( v ) =
-(
-)
+	  @{x=~v.x, y=~v.y, z=~v.z, w=~v.w}:vec4
 
 implement vec4_abs ( v ) =
-(
-)
+	  @{x=abs(v.x), y=abs(v.y), z=abs(v.z), w=abs(v.w)}:vec4
 
 implement vec4_floor ( v ) =
-(
-)
+	  @{x=$MATH.floor(v.x), y=$MATH.floor(v.y), z=$MATH.floor(v.z), w=$MATH.floor(v.w)}:vec4
 
-implement vec4_fmod ( v, val ) =
-(
-)
+implement vec4_fmod ( v, vl ) =
+	  @{x=$MATH.fmod(v.x, vl), y=$MATH.fmod(v.y, vl), z=$MATH.fmod(v.z, vl), w=$MATH.fmod(v.w, vl)}:vec4
 
 implement vec4_sqrt ( v ) =
-(
-)
+	  @{x=$MATH.sqrt(v.x), y=$MATH.sqrt(v.y), z=$MATH.sqrt(v.z), $MATH.sqrt(v.w)}:vec4
 
-implement vec4_print ( v ) =
-(
-)
+implement vec4_print ( v ) = begin
+	  print("vec4 (");
+	  print_float(v.x);
+	  print(", ");
+	  print_float(v.y);
+	  print(", ");
+	  print_float(v.z);
+	  print(", ");
+	  print_float(v.w);
+	  print(")");
+end
 
 implement vec4_dot ( v1, v2 ) =
-(
-)
+	  (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z) + (v1.w * v2.w)
 
 implement vec4_length_sqrd ( v ) =
-(
-)
+	  (v.x * v.x) + (v.y * v.y) + (v.z * v.z) + (v.w * v.w)
 
 implement vec4_length ( v ) =
-(
-)
+	  $MATH.sqrt(vec4_length_sqrd(v))
 
 implement vec4_dist_sqrd ( v1, v2 ) =
-(
-)
+	  (v1.x - v2.x) * (v1.x - v2.x) +
+	  (v1.y - v2.y) * (v1.y - v2.y) +
+	  (v1.z - v2.z) * (v1.z - v2.z) +
+	  (v1.w - v2.w) * (v1.w - v2.w);
 
 implement vec4_dist ( v1, v2 ) =
-(
-)
+	  $MATH.sqrt(vec4_dist_sqrd(v1, v2))
 
 implement vec4_dist_manhattan ( v1, v2 ) =
-(
-)
+	  abs(v1.x - v2.x) + abs(v1.y - v2.y) + abs(v1.z - v2.z) + abs(v1.w - v2.w)
 
-implement vec4_normalize ( v ) =
-(
-)
+implement vec4_normalize ( v ) = let
+	  val len = vec4_length(v)
+in
+	  if (len = 0.0f) then vec4_zero()
+	  else vec4_div(v, len)
+end
 
 implement vec4_reflect ( v1, v2 ) =
-(
-)
+	  vec4_sub(v1, vec4_mul(v2, 2 * vec4_dot(v1, v2)))
 
 implement vec4_from_string ( s ) =
 (
 )
 
 implement vec4_max ( v1, v2 ) =
-(
-)
+	  @{x=max(v1.x, v2,x), y=max(v1.y, v2.y), z=max(v1.z, v2,z), w=max(v1.w, v2.w)}:vec4
 
 implement vec4_min ( v1, v2 ) =
-(
-)
+	  @{x=min(v1.x, v2.x), y=min(v1.y, v2.y), z=min(v1.z, v2.z), w=min(v1.w, v2.w)}:vec4
 
 implement vec4_equ ( v1, v2 ) =
-(
-)
+	  if (not(v1.x = v2.x)) then false
+	  else if (not(v1.y = v2.y)) then false
+	  else if (not(v1.z = v2.z)) then false
+	  else if (not(v1.w = v2.w)) then false
+	  else true
 
 implement vec4_to_array ( v, out ) =
 (

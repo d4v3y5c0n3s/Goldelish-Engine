@@ -255,7 +255,7 @@ fun vec4_pow ( v: vec4, fac: float ) : vec4 = "sta#%"
 fun vec4_neg ( v: vec4 ) : vec4 = "sta#%"
 fun vec4_abs ( v: vec4 ) : vec4 = "sta#%"
 fun vec4_floor ( v: vec4 ) : vec4 = "sta#%"
-fun vec4_fmod ( v: vec4, val: float ) : vec4 = "sta#%"
+fun vec4_fmod ( v: vec4, vl: float ) : vec4 = "sta#%"
 fun vec4_sqrt ( v: vec4 ) : vec4 = "sta#%"
 
 fun vec4_max ( v1: vec4, v2: vec4 ) : vec4 = "sta#%"
