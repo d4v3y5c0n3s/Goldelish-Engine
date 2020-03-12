@@ -302,7 +302,7 @@ fun quat_rotation_x ( angle: float ) : quat = "sta#%"
 fun quat_rotation_y ( angle: float ) : quat = "sta#%"
 fun quat_rotation_z ( angle: float ) : quat = "sta#%"
 
-fun quat_at ( q: quat, i: int ) : float = "sta#%"
+fun quat_at {q:int}{i:int | i >= 0 && i <= 3} ( q: quat q, i: int i ) : float = "sta#%"
 fun quat_real ( q: quat ) : float = "sta#%"
 fun quat_imaginaries ( q: quat ) : vec3 = "sta#%"
 

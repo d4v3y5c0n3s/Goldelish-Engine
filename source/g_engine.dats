@@ -647,156 +647,254 @@ implement vec4_to_array ( v, out ) =
 )
 
 implement vec4_from_homogeneous ( v ) =
-(
-)
+	  vec3_div(vec3_new(v.x, v.y, v.z), v.w)
 
 implement vec4_hash ( v ) =
-(
-)
+	  abs( rawcast(v.x) || rawcast(v.y) || rawcast(v.z) || rawcast(v.w) )
 
 implement vec4_saturate ( v ) =
-(
-)
+	  @{x=saturate(v.x), y=saturate(v.y), z=saturate(v.z), w=saturate(v.w)}:vec4
 
 implement vec4_lerp ( v1, v2, amount ) =
-(
-)
+	  @{x=lerp(v1.x, v2.x, amount), y=lerp(v1.y, v2.y, amount), z=lerp(v1.z, v2.z, amount), w=lerp(v1.w, v2.w, amount)}:vec4
 
-implement vec4_smoothstep ( v1, v2, amount ) =
-(
-)
+implement vec4_smoothstep ( v1, v2, amount ) = let
+	  val scaled_amount = amount * amount * (3 - 2 * amount)
+in
+	vec4_lerp( v1, v2, scaled_amount )
+end
 
-implement vec4_smootherstep ( v1, v2, amount ) =
-(
-)
+implement vec4_smootherstep ( v1, v2, amount ) = let
+	  val scaled_amount = amount * amount * amount * ( amount * ( amount * 6 - 15 ) + 10 )
+in
+	vec4_lerp(v1, v2, scaled_amount)
+end
 
 implement vec4_nearest_interp ( v1, v2, amount ) =
-(
-)
+	  @{x=nearest_interp(v1.x, v2.x, amount), y=nearest_interp(v1.y, v2.y, amount), z=nearest_interp(v1.z, v2.z, amount), w=nearest_interp(v1.w, v2.w, amount)}:vec4
 
 implement vec4_binearest_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+	  @{x=binearest_interp(tl.x, tr.x, bl.x, br.x, x_amount, y_amount), y=binearest_interp(tl.y, tr.y, bl.y, br.y, x_amount, y_amount), z=binearest_interp(tl.z, tr.z, bl.z, br.z, x_amount, y_amount), w=binearest_interp(tl.w, tr.w, bl.w, br.w, x_amount, y_amount)}:vec4
 
 implement vec4_bilinear_interp ( tl, tr, bl, br, x_amount, y_amount ) =
-(
-)
+	  @{x=bilinear_interp(tl.x, tr.x, bl.x, br.x, x_amount, y_amount), y=bilinear_interp(tl.y, tr.y, bl.y, br.y, x_amount, y_amount), z=bilinear_interp(tl.z, tr.z, bl.z, br.z, x_amount, y_amount), w=bilinear_interp(tl.w, tr.w, bl.w, br.w, x_amount, y_amount)}:vec4
 
 implement quat_id () =
-(
-)
+	  quat_new(0.f, 0.f, 0.f, 1.f)
 
 implement quat_new ( x, y, z, w ) =
-(
-)
+	  @{x=x, y=y, z=z, w=w}:vec4
 
-implement quat_at ( q, i ) =
-(
-)
+implement quat_at ( q, i ) = let
+	  var values = arrszref(float);
+	  values[0] := q.x;
+	  values[1] := q.y;
+	  values[2] := q.z;
+	  values[3] := q.w;
+in
+	values[i]
+end
 
-implement quat_real ( q ) =
-(
-)
+implement quat_real ( q ) = q.w
 
 implement quat_imaginaries ( q ) =
-(
-)
+	  vec3_new(q.x, q.y, q.z)
 
-implement quat_from_euler ( r ) =
-(
-)
+implement quat_from_euler ( r ) = let
+	  val fc1 = $MATH.cos(r.z / 2.0f)
+	  val fc2 = $MATH.cos(r.x / 2.0f)
+	  val fc3 = $MATH.cos(r.y / 2.0f)
+	  val fs1 = $MATH.sin(r.z / 2.0f)
+	  val fs2 = $MATH.sin(r.x / 2.0f)
+	  val fs3 = $MATH.sin(r.y / 2.0f)
+in
+	quat_new(
+	fc1 * fc2 * fs3 - fs1 * fs2 * fc3,
+	fc1 * fs2 * fc3 + fs1 * fc2 * fs3,
+	fs1 * fc2 * fc3 - fc1 * fs2 * fs3,
+	fc1 * fc2 * fc3 + fs1 * fs2 * fs3
+	)
+end
 
-implement quat_angle_axis ( angle, axis ) =
-(
-)
+implement quat_angle_axis ( angle, axis ) = let
+	  val sine = $MATH.sin(angle / 2.0f)
+	  val cosine = $MATH.cos(angle / 2.0f)
+in
+	quat_normalize(quat_new(
+	axis.x * sine,
+	axis.y * sine,
+	axis.z * sine,
+	cosine
+	))
+end
 
 implement quat_rotation_x ( angle ) =
-(
-)
+	  quat_angle_axis(angle, vec3_new(1.f,0.f,0.f))
 
 implement quat_rotation_y ( angle ) =
-(
-)
+	  quat_angle_axis(angle, vec3_new(0.f,1.f,0.f))
 
 implement quat_rotation_z ( angle ) =
-(
-)
+	  quat_angle_axis(angle, vec3_new(0.f,0.f,1.f))
 
 implement quat_to_angle_axis ( q, axis, angle ) =
 (
 )
 
-implement quat_to_euler ( q ) =
-(
-)
+implement quat_to_euler ( q ) = let
+	  val sqrx = q.x * q.x
+	  val sqry = q.y * q.y
+	  val sqrz = q.z * q.z
+	  val sqrw = q.w * q.w
+in
+	vec3_new(
+	$MATH.asin(-2.0f * (q.x * q.z - q.y * q.w))
+	$MATH.atan2(-2.0f * (q.y * q.z + q.x * q.w), (~sqrx - sqry + sqrz + sqrw))
+	$MATH.atan2(-2.0f * (q.x * q.y + q.z * q.w), (sqrx - sqry - sqrz + sqrw))
+	)
+end
 
 implement quat_mul_quat ( q1, q2 ) =
-(
-)
+	  quat_new(
+	  (q1.w * q2.x) + (q1.x * q2.w) + (q1.y * q2.z) - (q1.z * q2.y),
+	  (q1.w * q2.y) - (q1.x * q2.z) + (q1.y * q2.w) + (q1.z * q2.x),
+	  (q1.w * q2.z) + (q1.x * q2.y) - (q1.y * q2.x) + (q1.z * q2.w),
+	  (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z)
+	  )
 
-implement quat_mul_vec3 ( q, v ) =
-(
-)
+implement quat_mul_vec3 ( q, v ) = let
+	  val work = quat_mul_quat(
+	  quat_mul_quat( q, quat_normalize(quat_new(v.x, v.y, v.z, 0.0f)) ),
+	  quat_inverse(q)
+	  )
+	  val res = vec3_new(work.x, work.y, work.z)
+in
+	vec3_mul(res, vec3_length(v))
+end
 
-implement quat_inverse ( q ) =
-(
-)
+implement quat_inverse ( q ) = let
+	  val scale = quat_length(q)
+	  val result = quat_unit_inverse(q)
+in
+	if ( scale > FLT_EPSILON ) then
+	   @{
+	   x=result.x / scale,
+	   y=result.y / scale,
+	   z=result.z / scale,
+	   w=result.w / scale
+	   }:quat
+	else
+		result
+end
 
 implement quat_unit_inverse ( q ) =
-(
-)
+	  quat_new(~q.x, ~q.y, ~q.z, ~q.w)
 
 implement quat_length ( q ) =
-(
-)
+	  $MATH.sqrt(q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w)
 
-implement quat_normalize ( q ) =
-(
-)
+implement quat_normalize ( q ) = let
+	  val scale = quat_length(q)
+in
+	if (scale > FLT_EPSILON)
+	   then quat_new(q.x/scale, q.y/scale, q.z/scale, q.w/scale)
+	else
+		quat_new(0.f,0.f,0.f,0.f)
+end
 
-implement quat_slerp ( from, to, amount ) =
-(
-)
+implement quat_slerp ( from, to, amount ) = let
+	  val cosom0 = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w
+	  val cosom = if (cosom0 < 0.0f) then ~cosom0 else cosom0
+	  val omega = $MATH.acos(cosom)
+	  val sinom = $MATH.sin(omega)
+	  val QUATERNION_DELTA_COS_MIN = 0.01f
+	  val afto1 = if (cosom0 < 0.0f) then quat_new(~to.x, ~to.y, ~to.z, ~to.w) else to
+	  val scale0 = if ((1.0f - cosom) > QUATERNION_DELTA_COS_MIN)
+	      then ($MATH.sin((1.0f - amount) * omega) / sinom)
+	      else 1.0f - amount
+	  val scale1 = if ((1.0f - cosom) > QUATERNION_DELTA_COS_MIN)
+	      then ($MATH.sin(amount * omega) / sinom)
+	      else amount
+in
+	quat_new(
+	(scale0 * from.x) + (scale1 * afto1.x),
+	(scale0 * from.y) + (scale1 * afto1.y),
+	(scale0 * from.z) + (scale1 * afto1.z),
+	(scale0 * from.w) + (scale1 * afto1.w)
+	)
+end
 
 implement quat_dot ( q1, q2 ) =
-(
-)
+	  q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w
 
-implement quat_exp ( w ) =
-(
-)
+implement quat_exp ( w ) = let
+	  val theta = $MATH.sqrt(vec3_dot(w, w))
+	  val len = if (theta < FLT_EPSILON) then 1.f else $MATH.sin(theta)/theta
+	  val v = vec3_mul(w, len)
+in
+	quat_new(v.x, v.y, v.z, $MATH.cos(theta))
+end
 
-implement quat_log ( q ) =
-(
-)
+implement quat_log ( q ) = let
+	  val len0 = vec3_length(quat_imaginaries(q))
+	  val angle = atan2(len, q.w)
+	  val len = if (len0 > FLT_EPSILON) then (angle/len) else 1.f
+in
+	vec3_mul(quat_imaginaries(q), len)
+end
 
 implement quat_get_value ( t, axis ) =
-(
-)
+	  quat_exp( vec3_mul(axis, t / 2.0f) )
 
-implement quat_constrain ( q, axis ) =
-(
-)
+implement quat_constrain ( q, axis ) = let
+	  val orient = quat_net(0.f, 0.f, 0.f, 1.f)
+	  val vs = quat_imaginaries(q)
+	  val v0 = quat_imaginaries(orient)
+	  val a = q.w * orient.w + vec3_dot(vs, v0)
+	  val b = orient.w * vec3_dot(axis, vs) - q.w * vec3_dot(axis, v0) + vec3_dot(vs, vec3_mul_vec3(axis, v0))
+	  val alpha = $MATH.atan2(a, b)
+	  val t1 = ~2 * alpha + M_PI
+	  val t2 = ~2 * alpha - M_PI
+in
+	if (quat_dot(q, quat_get_value(t1, axis)) > quat_dot(q, quat_get_value(t2, axis)))
+	   then quat_get_value(t1, axis)
+	else quat_get_value(t2, axis)
+end
 
 implement quat_constrain_y ( q ) =
-(
-)
+	  quat_constrain(q, vec3_new(0.f, 1.f, 0.f))
 
-implement quat_distance ( q0, q1 ) =
-(
-)
+implement quat_distance ( q0, q1 ) = let
+	  val comb = quat_mul_quat(quat_inverse(q0), q1)
+in
+	sin(vec3_length(quat_log(comb)))
+end
 
 implement quat_neg ( q ) =
-(
-)
+	  @{x=~q.x, y=~q.y, z=~q.z, w=~q.w}:quat
 
 implement quat_scale ( q, f ) =
-(
-)
+	  @{x=q.x * f, y=q.y * f, z=q.z * f, w=q.w * f}:quat
 
-implement quat_interpolate ( qs, ws, count ) =
-(
-)
+implement quat_interpolate ( qs, ws, count ) = let
+	  val ref = quat_id()
+	  val ref_inv = quat_inverse(ref)
+	  val acc = vec3_zero()
+	  fun loop (i:int, acc1: vec3) .<i>. : vec3 = let
+	      val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[i]))
+	      val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[i])))
+	  in
+		if i >= count
+		   then acc1
+		else
+			if (vec3_length(qlog0) < vec3_length(qlog1)) then
+			   loop(i-1, vec3_add(acc1, vec3_mul(qlog0, ws[i])))
+			else
+				loop(i-1, vec3_add(acc1, vec3_mul(qlog1, ws[i])))
+	  end
+in
+	quat_normalize(quat_mul_quat(ref, quat_exp( loop(count, acc) )))
+end
 
 implement quat_dual_new ( real, dual ) =
 (
