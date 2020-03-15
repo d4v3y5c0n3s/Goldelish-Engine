@@ -897,65 +897,102 @@ in
 end
 
 implement quat_dual_new ( real, dual ) =
-(
-)
+	  @{real=real, dual=dual}:quat_dual
 
 implement quat_dual_id () =
-(
-)
+	  quat_dual_new(quat_id(), vec4_zero())
 
 implement quat_dual_transform ( q, t ) =
-(
-)
+	  quat_dual_new(
+	  q,
+	  quat_new(
+		0.5f * (t.x * q.w + t.y * q.z - t.z * q.y),
+		0.5f * (~t.x * q.z + t.y * q.w + t.z * q.x),
+		0.5f * (t.x * q.y - t.y * q.x + t.z * q.w),
+		~0.5f * (t.x * q.x + t.y * q.y + t.z * q.z)
+	  ))
 
 implement quat_dual_mul ( q0, q1 ) =
-(
-)
+	  quat_dual_new(
+		quat_mul_quat(q0.real, q1.real),
+		vec4_add(
+			quat_mul_quat(q0.real, q1.dual),
+			quat_mul_quat(q0.dual, q1.real)
+		)
+	  )
 
-implement quat_dual_normalize ( q ) =
-(
-)
+implement quat_dual_normalize ( q ) = let
+	  val l = quat_length(q.real)
+	  val real = vec4_mul(q.real, 1.0f / l)
+	  val dual = vec4_mul(q.dual, 1.0f / l)
+in
+	quat_dual_new(real, vec4_sub(dual, vec4_mul(real, quat_dot(real, dual))))
+end
 
-implement quat_dual_mul_vec3 ( q, v ) =
-(
-)
+implement quat_dual_mul_vec3 ( q, v ) = let
+	  val rvc = vec3_cross(quat_imaginaries(q.real), v)
+	  val real = vec3_cross(quat_imaginaries(q.real), vec3_add(rvc, vec3_mul(v, q.real.w)))
+	  val rdc = vec3_cross(quat_imaginaries(q.real), quat_imaginaries(q.dual))
+	  val rimg = vec3_mul(quat_imaginaries(q.real), q.dual.w)
+	  val dimg = vec3_mul(quat_imaginaries(q.dual), q.real.w)
+	  val dual = vec3_sub(rimg, vec3_add(dimg, rdc))
+in
+	vec3_add(v, vec3_add(vec3_mul(real, 2), vec3_mul(dual, 2)))
+end
 
-implement quat_dual_mul_vec3_rot ( q, v ) =
-(
-)
+implement quat_dual_mul_vec3_rot ( q, v ) = let
+	  val rvc = vec3_cross(quat_imaginaries(q.real), v)
+	  val real = vec3_cross(quat_imaginaries(q.real), vec3_add(rvc, vec3_mul(v. q.real.w)))
+in
+	vec3_add(v, vec3_mul(real, 2.0f))
+end
 
 //  matrix functions
 implement mat2_id () =
-(
-)
+	  @{xx=1.0f, xy=0.0f, yx=0.0f, yy=1.0f}:mat2
 
 implement mat2_zero () =
-(
-)
+	  @{xx=0.0f, xy=0.0f, yx=0.0f, yy=0.0f}:mat2
 
 implement mat2_new ( xx, xy, yx, yy ) =
-(
-)
+	  @{xx=xx, xy=xy, yx=yx, yy=yy}:mat2
 
 implement mat2_mul_mat2 ( m1, m2 ) =
-(
-)
+	  mat2_new(
+	  xx=m1.xx * m2.xx + m1.xy * m2.yx,
+	  xy=m1.xx * m2.xy + m1.xy * m2.yy,
+	  yx=m1.yx * m2.xx + m1.yy * m2.yx,
+	  yy=m1.yx * m2.xy + m1.yy * m2.yy
+	  )
 
 implement mat2_mul_vec2 ( m, v ) =
-(
-)
+	  vec2_new(
+	  x=v.x * m.xx + v.y * m.xy,
+	  y=v.x * m.yx + v.y * m.yy
+	  )
 
 implement mat2_transpose ( m ) =
-(
-)
+	  mat2_new(
+	  xx=m.xx,
+	  xy=m.yx,
+	  yx=m.xy,
+	  yy=m.yy.xs
+	  )
 
 implement mat2_det ( m ) =
-(
-)
+	  m.xx * m.yy - m.xy * m.yx
 
-implement mat2_inverse ( m ) =
-(
-)
+implement mat2_inverse ( m ) = let
+	  val det = mat2_det(m)
+	  val fac = 1.0f/det
+in
+	mat2_new(
+	xx=fac * m.yy,
+	xy=fac * ~m.xy,
+	yx=fac * ~m.yx,
+	yy=fac * m.xx
+	)
+end
 
 implement mat2_to_array ( m, out ) =
 (
@@ -966,17 +1003,39 @@ implement mat2_print ( m ) =
 )
 
 implement mat2_rotation ( a ) =
-(
-)
+	  mat2_new(
+	  xx=$MATH.cos(a),
+	  xy=~$MATH.sin(a),
+	  yx=$MATH.sin(a),
+	  yy=$MATH.cos(a)
+	  )
 
 //  matrix 3 by 3
 implement mat3_zero (  ) =
-(
-)
+	  @{
+	  xx=0.0f,
+	  xy=0.0f,
+	  xz=0.0f,
+	  yx=0.0f,
+	  yy=0.0f,
+	  yz=0.0f,
+	  zx=0.0f,
+	  zy=0.0f,
+	  zz=0.0f
+	  }:mat3
 
 implement mat3_id (  ) =
-(
-)
+	  @{
+	  xx=1.0f,
+	  xy=0.0f,
+	  xz=0.0f,
+	  yx=0.0f,
+	  yy=1.0f,
+	  yz=0.0f,
+	  zx=0.0f,
+	  zy=0.0f,
+	  zz=1.0f
+	  }:mat3
 
 implement mat3_new
 (
@@ -984,12 +1043,30 @@ xx, xy, xz,
 yx, yy, yz,
 zx, zy, zz
 ) =
-(
-)
+  @{
+  xx=xx,
+  xy=xy,
+  xz=xz,
+  yx=yx,
+  yy=yy,
+  yz=yz,
+  zx=zx,
+  zy=zy,
+  zz=zz
+  }:mat3
 
 implement mat3_mul_mat3 ( m1, m2 ) =
-(
-)
+  @{
+  xx=xx,
+  xy=xy,
+  xz=xz,
+  yx=yx,
+  yy=yy,
+  yz=yz,
+  zx=zx,
+  zy=zy,
+  zz=zz
+  }:mat3
 
 implement mat3_mul_vec3 ( m, v ) =
 (
