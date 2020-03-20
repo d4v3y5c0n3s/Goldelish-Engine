@@ -44,13 +44,13 @@ $(DYNAMIC): $(SOURCES_OBJ)
 $(STATIC): $(SOURCES_OBJ)
 	$(AR) rcs $@ $(SOURCES_OBJ)
 obj/%_sats.o: source/%.sats | obj
-	$(PATSCC) -cleanaft - $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj/%_sats.o: source/*/%.sats | obj
-	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj/%_dats.o: source/%.dats | obj
-	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
 obj/%_dats.o: source/*/%.dats | obj
-	$(PATSCC) -cleanaft $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
 obj:
 	mkdir obj
 

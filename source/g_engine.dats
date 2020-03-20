@@ -1057,32 +1057,57 @@ zx, zy, zz
 
 implement mat3_mul_mat3 ( m1, m2 ) =
   @{
-  xx=xx,
-  xy=xy,
-  xz=xz,
-  yx=yx,
-  yy=yy,
-  yz=yz,
-  zx=zx,
-  zy=zy,
-  zz=zz
+  xx=(m1.xx * m2.xx) + (m1.xy * m2.yx) + (m1.xz * m2.zx),
+  xy=(m1.xx * m2.xy) + (m1.xy * m2.yy) + (m1.xz * m2.zy),
+  xz=(m1.xx * m2.xz) + (m1.xy * m2.yz) + (m1.xz * m2.zz),
+  yx=(m1.yx * m2.xx) + (m1.yy * m2.yx) + (m1.yz * m2.zx),
+  yy=(m1.yx * m2.xy) + (m1.yy * m2.yy) + (m1.yz * m2.zy),
+  yz=(m1.yx * m2.xz) + (m1.yy * m2.yz) + (m1.yz * m2.zz),
+  zx=(m1.zx * m2.xx) + (m1.zy * m2.yx) + (m1.zz * m2.zx),
+  zy=(m1.zx * m2.xy) + (m1.zy * m2.yy) + (m1.zz * m2.zy),
+  zz=(m1.zx * m2.xz) + (m1.zy * m2.yz) + (m1.zz * m2.zz)
   }:mat3
 
 implement mat3_mul_vec3 ( m, v ) =
-(
-)
+	  @{
+	  x= (m.xx * v.x) + (m.xy * v.y) + (m.xz * v.z),
+	  y= (m.yx * v.x) + (m.yy * v.y) + (m.yz * v.z),
+	  z= (m.zx * v.x) + (m.zy * v.y) + (m.zz * v.z)
+	  }:vec3
 
 implement mat3_transpose ( m ) =
-(
-)
+	  @{
+	  xx= m.xx,
+	  xy= m.yx,
+	  xz= m.zx,
+	  yx= m.xy,
+	  yy= m.yy,
+	  yz= m.zy,
+	  zx= m.xz,
+	  zy= m.yz,
+	  zz= m.zz
+	  }:mat3
 
 implement mat3_det ( m ) =
-(
-)
+	  (m.xx * m.yy * m.zz) + (m.xy * m.yz * m.zx) + (m.xz * m.yz * m.zy) -
+	  (m.xz * m.yy * m.zx) - (m.xy * m.yx * m.zz) - (m.xx * m.yz * m.zy);
 
-implement mat3_inverse ( m ) =
-(
-)
+implement mat3_inverse ( m ) = let
+	  val det = mat3_det(m)
+	  val fac = 1.0f / det
+in
+	@{
+	xx= fac * mat2_det(mat2_new(m,yy, m,yz, m.zy, m.zz)),
+	xy= fac * mat2_det(mat2_new(m.xz, m.xy, m.zz, m.zy)),
+	xz= fac * mat2_det(mat2_new(m.xy, m.xz, m.yy, m.yz)),
+	yx= fac * mat2_det(mat2_new(m.yz, m.yx, m.zz, m.zx)),
+	yy= fac * mat2_det(mat2_new(m.xx, m.xz, m.zx, m.zz)),
+	yz= fac * mat2_det(mat2_new(m.xz, m.xx, m.yz, m.yx)),
+	zx= fac * mat2_det(mat2_new(m.yx, m.yy, m.zx, m.zy)),
+	zy= fac * mat2_det(mat2_new(m.xy, m.xx, m.zy, m.zx)),
+	zz= fac * mat2_det(mat2_new(m.xx, m.xy, m.yx, m.yy))
+	}:mat3
+end
 
 implement mat3_to_array ( m, out ) =
 (
@@ -1093,24 +1118,74 @@ implement mat3_print ( m ) =
 )
 
 implement mat3_rotation_x ( a ) =
-(
-)
+	  @{
+	  xx=1.0f,
+	  xy=0.0f,
+	  xz=0.0f,
+	  yx=0.0f,
+	  yy=$MATH.cos(a),
+	  yz=~$MATH.sin(a),
+	  zx=0.0f,
+	  zy=$MATH.sin(a),
+	  zz=$MATH.cos(a)
+	  }:mat3
 
 implement mat3_scale ( s ) =
-(
-)
+	  @{
+	  xx=s.x,
+	  xy=0.0f,
+	  xz=0.0f,
+	  yx=0.0f,
+	  yy=s.y,
+	  yz=0.0f,
+	  zx=0.0f,
+	  zy=0.0f,
+	  zz=s.z
+	  }:mat3
 
 implement mat3_rotation_y ( a ) =
-(
-)
+	  @{
+	  xx=$MATH.cos(a),
+	  xy=0.0f,
+	  xz=$MATH.sin(a),
+	  yx=0.0f,
+	  yy=1.0f,
+	  yz=0.0f,
+	  zx=~$MATH.sin(a),
+	  zy=0.0f,
+	  zz=$MATH.cos(a)
+	  }:mat3
 
 implement mat3_rotation_z ( a ) =
-(
-)
+	  @{
+	  xx=$MATH.cos(a),
+	  xy=~$MATH.sin(a),
+	  xz=0.0f,
+	  yx=$MATH.sin(a),
+	  yy=$MATH.cos(a),
+	  yz=0.0f,
+	  zx=0.0f,
+	  zy=0.0f,
+	  zz=1.0f
+	  }:mat3
 
-implement mat3_rotation_angle_axis ( a, v ) =
-(
-)
+implement mat3_rotation_angle_axis ( a, v ) = let
+	  val c = $MATH.cos(a)
+	  val s = $MATH.sin(a)
+	  val nc = 1 - c
+in
+	@{
+	xx=v.x * v.x * nc + c,
+	xy=v.x * v.y * nc - v.z * s,
+	xz=v.x * v.z * nc + v.y * s,
+	yx=v.y * v.x * nc * v.z * s,
+	yy=v.y * v.y * nc + c,
+	yz=v.y * v.z * nc - v.x * s,
+	zx=v.z * v.x * nc - v.y * s,
+	zy=v.z * v.y * nc + v.x * s,
+	zz=v.z * v.z * nc + c
+	}:mat3
+end
 
 //  matrix 4 by 4
 implement mat4_zero (  ) =
