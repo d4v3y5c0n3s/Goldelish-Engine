@@ -174,7 +174,7 @@ fn vec2_mix_hash {} ( v: vec2 ) : int = "sta#%"
 fn vec2_saturate {} ( v: vec2 ) : vec2 = "sta#%"
 fn vec2_lerp {} ( v1: vec2, v2: vec2, amount: float ) : vec2 = "sta#%"
 fn vec2_smoothstep {} ( v1: vec2, v2: vec2, amount: float ) : vec2 = "sta#%"
-fn vec2_smootherstep {} ( v1: vec2, v2: vec2, amount: vec2 ) : vec2 "sta#%"
+fn vec2_smootherstep {} ( v1: vec2, v2: vec2, amount: vec2 ) : vec2 = "sta#%"
 
 //  vec3 type
 typedef vec3 = @{ x=float, y=float, z=float }
