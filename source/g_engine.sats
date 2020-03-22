@@ -76,7 +76,10 @@ fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
 
 (*  ###  timing  ###  *)
 typedef
-timer = @{ id=int, start=ulint, end=ulint, split=ulint }
+timer = @{ id=int,
+      start_time=ulint,
+      end_time=ulint,
+      split=ulint }
 
 fun timer_start {i:int | i > 0}{s:int | s > 0} (id: int i, tag: string s) : timer = "sta#"
 fun timer_split {s:int | s > 0} (t: timer, tag: string s) : timer = "sta#timer_split"
@@ -97,7 +100,7 @@ fun frame_rate_string () : string = "sta#"
 typedef type_id = int
 
 //  WILL NEED REVISION
-#define typeid(TYPE) type_find(#TYPE, sizeof(TYPE))
+//#define typeid(TYPE) type_find(#TYPE, sizeof(TYPE))
 fun type_find( type: string, size: size_t ) : type_id = "sta#%"
 fun type_id_name ( id: int ) : string = "sta#%"
 
@@ -161,9 +164,9 @@ fn vec2_normalize {} ( v: vec2 ) : vec2 = "sta#%"
 fn vec2_reflect {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
 
 fn vec2_from_string {} ( s: string ) : vec2 = "sta#%"
-fn vec2_print {} ( v: vec2 ) void = "sta#%"
+fn vec2_print {} ( v: vec2 ) : void = "sta#%"
 
-fn vec2_to_array {} ( v: vec2, out: float ptr ) : void = "sta#%
+fn vec2_to_array {} ( v: vec2, out: ptr ) : void = "sta#%
 
 fn vec2_hash {} ( v: vec2 ) : int = "sta#%"
 fn vec2_mix_hash {} ( v: vec2 ) : int = "sta#%"
@@ -233,7 +236,7 @@ fun vec3_smootherstep ( v1: vec3, v2: vec3, amount: float ) : vec3 = "sta#%"
 //  vec4 type
 typedef vec4 = @{ x=float, y=float, z=float, w=float }
 
-fun vec4_new ( float x, float y, float z ) : vec4 = "sta#%"
+fun vec4_new ( x: float, y: float, z: float ) : vec4 = "sta#%"
 fun vec4_zero () : vec4 = "sta#%"
 fun vec4_one () : vec4 = "sta#%"
 

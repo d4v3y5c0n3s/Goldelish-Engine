@@ -1189,12 +1189,44 @@ end
 
 //  matrix 4 by 4
 implement mat4_zero (  ) =
-(
-)
+	  @{
+	  xx=0.0f,
+	  xy=0.0f,
+	  xz=0.0f,
+	  xw=0.0f,
+	  yx=0.0f,
+	  yy=0.0f,
+	  yz=0.0f,
+	  yw=0.0f,
+	  zx=0.0f,
+	  zy=0.0f,
+	  zz=0.0f,
+	  zw=0.0f,
+	  wx=0.0f,
+	  wy=0.0f,
+	  wz=0.0f,
+	  ww=0.0f
+	  }:mat4
 
 implement mat4_id (  ) =
-(
-)
+	  @{
+	  xx=1.0f,
+	  xy=0.0f,
+	  xz=0.0f,
+	  xw=0.0f,
+	  yx=0.0f,
+	  yy=1.0f,
+	  yz=0.0f,
+	  yw=0.0f,
+	  zx=0.0f,
+	  zy=0.0f,
+	  zz=1.0f,
+	  zw=0.0f,
+	  wx=0.0f,
+	  wy=0.0f,
+	  wz=0.0f,
+	  ww=1.0f
+	  }:mat4
 
 implement mat4_at ( m, x, y ) =
 (
