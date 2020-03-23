@@ -4,8 +4,8 @@
 allows the usage of text in the ui
 *)
 
-#include "./g_engine.sats"
-#include "./g_asset.sats"
+#include "./../g_engine.sats"
+#include "./../g_asset.sats"
 
 datatype TEXT_HORIZ_ALIGN =
 | TEXT_ALIGN_LEFT of ()

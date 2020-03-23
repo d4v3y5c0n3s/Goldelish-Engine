@@ -14,7 +14,7 @@ typedef asset_hndl = @{ path=fpath, asset_ptr=ptr, timestamp=usint }
 fun asset_hndl_null () : asset_hndl = "sta#"
 fun asset_hndl_new ( path: fpath ) : asset_hndl = "sta#"
 fun asset_hndl_new_load ( path: fpath ) : asset_hndl = "sta#"
-fun asset_hndl_new_ptr ( as: ptr ) : asset_hndl = "sta#"
+fun asset_hndl_new_ptr ( asset: ptr ) : asset_hndl = "sta#"
 
 fun asset_hndl_isnull ( ah: ptr ) : bool = "sta#"
 fun asset_hndl_path ( ah: ptr ) : fpath = "sta#"
@@ -35,7 +35,7 @@ fun asset_unmap_filename ( filename: fpath ) : fpath = "sta#"
 
 //  create handler for asset type
 fun asset_handerler_cast ( type: type_id, extension: string, asset_loader: string -<cloref1> ptr, asset_deleter: ptr -<cloref1> void ) : void = "sta#"
-fun{a,b,c,cc,d,dd:t@ype} asset_handler ( type: a, extension: b, loader: c -<cloref1> cc, deleter: d -<cloref1> dd ) : void = asset_handler_cast ( type, extension, loader, deleter )
+fun{a,b,c,cc,d,dd:t@ype} asset_handler ( type: a, extension: b, loader: c -<cloref1> cc, deleter: d -<cloref1> dd ) : void = "sta#"//asset_handler_cast ( type, extension, loader, deleter )
 
 //  load/reload/unload assets at path or folder
 fun file_load ( filename: fpath ) : void = "sta#"
@@ -53,11 +53,11 @@ fun asset_get_load ( path: fpath ) : ptr = "sta#"
 fun asset_get ( path: fpath ) : ptr = "sta#"
 
 fun asset_get_as_type ( path: fpath, type: type_id ) : ptr = "sta#"
-fun{p,t:t@ype} asset_get_as ( path: p, type: t ) : ptr = asset_get_as_type ( path, type )
+fun{p,t:t@ype} asset_get_as ( path: p, type: t ) : ptr = "sta#"//asset_get_as_type ( path, type )
 
 //  reload all assets of a given type
 fun asset_reload_type_id ( type: type_id ) : void = "sta#"
-fun{a:t@ype} asset_reload_type ( type: a ) : void = asset_reload_type_id ( type )
+fun{a:t@ype} asset_reload_type ( type: a ) : void = "sta#"//asset_reload_type_id ( type )
 fun asset_reload_all () : void = "sta#"
 
 //  get path or typename of asset at ptr

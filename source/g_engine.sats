@@ -16,7 +16,7 @@ This file has code for general things & math operations in the engine.
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_net.h>
 %}
-staload SDL2_LOCAL = "SDL2/SDL_local.sats"
+staload SDL2_LOCAL = "./SDL2/SDL_local.sats"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512
@@ -166,7 +166,7 @@ fn vec2_reflect {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
 fn vec2_from_string {} ( s: string ) : vec2 = "sta#%"
 fn vec2_print {} ( v: vec2 ) : void = "sta#%"
 
-fn vec2_to_array {} ( v: vec2, out: ptr ) : void = "sta#%
+fn vec2_to_array {} ( v: vec2, out: ptr ) : void = "sta#%"
 
 fn vec2_hash {} ( v: vec2 ) : int = "sta#%"
 fn vec2_mix_hash {} ( v: vec2 ) : int = "sta#%"
@@ -338,7 +338,7 @@ typedef quat_dual = @{ real=quat, dual=quat }
 
 fun quat_dual_id () : quat_dual = "sta#%"
 fun quat_dual_new ( real: quat, dual: quat ) : quat_dual = "sta#%"
-fun quat_dual_transform ( q: quat, t: vec3 ) quat_dual = "sta#%"
+fun quat_dual_transform ( q: quat, t: vec3 ) : quat_dual = "sta#%"
 fun quat_dual_mul ( q0: quat_dual, q1: quat_dual ) : quat_dual = "sta#%"
 fun quat_dual_mul_vec3 ( q: quat_dual, v: vec3 ) : vec3 = "sta#%"
 fun quat_dual_mul_vec3_rot ( q: quat_dual, v: vec3 ) : vec3 = "sta#%"
@@ -351,11 +351,11 @@ fun mat2_id () : mat2 = "sta#%"
 fun mat2_zero () : mat2 = "sta#%"
 fun mat2_new ( xx: float, xy: float, yx: float, yy: float ) : mat2 = "sta#%"
 fun mat2_mul_mat2 ( m1: mat2, m2: mat2 ) : mat2 = "sta#%"
-fun mat2_mul_vec2 ( m: mat2, v: vec2 ) : = "sta#%"
+fun mat2_mul_vec2 ( m: mat2, v: vec2 ) : mat2 = "sta#%"
 
 fun mat2_transpose ( m: mat2 ) : mat2 = "sta#%"
 fun mat2_det ( m: mat2 ) : float = "sta#%"
-fun mat2_inverse ( m: mat2 ) mat2 = "sta#%"
+fun mat2_inverse ( m: mat2 ) : mat2 = "sta#%"
 
 fun mat2_to_array ( m: mat2, out: float ptr ) : void = "sta#%"
 fun mat2_print ( m: mat2 ) : void = "sta#%"
@@ -423,7 +423,7 @@ fun mat4_rotation_euler (  x: float, y: float, z: float ) : mat4 = "sta#%"
 fun mat4_rotation_quat ( q: quat ) : mat4 = "sta#%"
 fun mat4_rotation_quat_dual ( q: quat_dual ) : mat4 = "sta#%"
 
-fun mat4_view_look_at ( position: vec3, target: vec3, up: vec3 ) : mat4 = "sta#%
+fun mat4_view_look_at ( position: vec3, target: vec3, up: vec3 ) : mat4 = "sta#%"
 fun mat4_perspective ( fov: float, near_clip: float, far_clip: float, ratio: float ) : mat4 = "sta#%"
 fun mat4_orthographic ( left: float, right: float, bottom: float, top: float, near: float, far: float ) : mat4 = "sta#%"
 
@@ -475,7 +475,7 @@ typedef frustum = @{ ntr=vec3, ntl=vec3, nbr=vec3, nbl=vec3, ftr=vec3, ftl=vec3,
 fun frustum_new ( ntr: vec3, ntl: vec3, nbr: vec3, nbl: vec3, ftr: vec3, ftl: vec3, fbr: vec3, fbl: vec3 ) : frustum = "sta#%"
 fun frustum_new_clipbox () : frustum = "sta#%"
 fun frustum_new_camera ( view: mat4, proj: mat4 ) : frustum = "sta#%"
-fun frustum_slice ( f: frustum, start: float, end: float ) : frustum = "sta#%"
+fun frustum_slice ( f: frustum, f_start: float, f_end: float ) : frustum = "sta#%"
 fun frustum_transform ( f: frustum, m: mat4 ) : frustum = "sta#%"
 fun frustum_translate ( f: frustum, v: vec3 ) : frustum = "sta#%"
 
@@ -519,9 +519,9 @@ fun point_inside_sphere ( s: sphere, point: vec3 ) : bool = "sta#%"
 fun point_outside_sphere ( s: sphere, point: vec3 ) : bool = "sta#%"
 fun point_intersects_sphere ( s: sphere, point: vec3 ) : bool = "sta#%"
 
-fun line_inside_sphere ( s: sphere, start: vec3, end: vec3 ) : bool = "sta#%"
-fun line_outside_sphere ( s: sphere, start: vec3, end: vec3 ) : bool = "sta#%"
-fun line_intersects_sphere ( s: sphere, start: vec3, end: vec3 ) : bool = "sta#%"
+fun line_inside_sphere ( s: sphere, l_start: vec3, l_end: vec3 ) : bool = "sta#%"
+fun line_outside_sphere ( s: sphere, l_start: vec3, l_end: vec3 ) : bool = "sta#%"
+fun line_intersects_sphere ( s: sphere, l_start: vec3, l_end: vec3 ) : bool = "sta#%"
 
 fun sphere_inside_plane ( s: sphere, p: plane ) : bool = "sta#%"
 fun sphere_outside_plane ( s: sphere, p: plane ) : bool = "sta#%"
@@ -550,9 +550,9 @@ fun ellipsoid_space ( e: ellipsoid ) : mat3 = "sta#%"
 fun ellipsoid_inv_space ( e: ellipsoid ) : mat3 = "sta#%"
 
 //  capsule shape type
-typedef capsule = @{ start=vec3, end=vec3, radius=float }
+typedef capsule = @{ c_start=vec3, c_end=vec3, radius=float }
 
-fun capsule_new ( start: vec3, end: vec3, radius: float ) : capsule = "sta#%"
+fun capsule_new ( c_start: vec3, c_end: vec3, radius: float ) : capsule = "sta#%"
 fun capsule_transform ( c: capsule, m: mat4 ) : capsule = "sta#%"
 
 fun capsule_inside_plane ( c: capsule, p: plane ) : bool = "sta#%"
@@ -569,40 +569,40 @@ fun vertex_print ( v: vertex ) : void = "sta#%"
 //  mesh type
 typedef mesh = @{ num_verts=int, num_triangles=int, verticies=vertex ptr, triangles=uint32_t ptr }
 
-fun mesh_new () mesh ptr = "str#%"
-fun mesh_delete ( mesh ptr ) : void = "sta#%"
+fun mesh_new () : ptr = "str#%"
+fun mesh_delete ( ptr ) : void = "sta#%"
 
-fun mesh_generate_normals ( m: mesh ptr ) : void = "sta#%"
-fun mesh_generate_tangents ( m: mesh ptr ) : void = "sta#%"
-fun mesh_generate_orthagonal_tangents ( m: mesh ptr ) : void = "sta#%"
-fun mesh_generate_texcoords_cylinder ( m: mesh ptr ) : void = "sta#%"
+fun mesh_generate_normals ( m: ptr ) : void = "sta#%"
+fun mesh_generate_tangents ( m: ptr ) : void = "sta#%"
+fun mesh_generate_orthagonal_tangents ( m: ptr ) : void = "sta#%"
+fun mesh_generate_texcoords_cylinder ( m: ptr ) : void = "sta#%"
 
-fun mesh_print ( m: mesh ptr ) : void = "sta#%"
-fun mesh_surface_area ( m: mesh ptr ) : float = "sta#%"
+fun mesh_print ( m: ptr ) : void = "sta#%"
+fun mesh_surface_area ( m: ptr ) : float = "sta#%"
 
-fun mesh_transform ( m: mesh ptr, transform: mat4 ) : void = "sta#%"
-fun mesh_translate ( m: mesh ptr, translation: vec3 ) : void = "sta#%"
-fun mesh_scale ( m: mesh ptr, scale: float ) : void = "sta#%"
+fun mesh_transform ( m: ptr, transform: mat4 ) : void = "sta#%"
+fun mesh_translate ( m: ptr, translation: vec3 ) : void = "sta#%"
+fun mesh_scale ( m: ptr, scale: float ) : void = "sta#%"
 
-fun mesh_bounding_sphere ( m: mesh ptr ) : sphere = "sta#%"
+fun mesh_bounding_sphere ( m: ptr ) : sphere = "sta#%"
 
 //  model type
-typedef model = @{ num_meshes=int, meshes=mesh ptr ptr }//  look up exactly what '**' means in C later to get this working
+typedef model = @{ num_meshes=int, meshes=ptr }//  look up exactly what '**' means in C later to get this working
 
-fun model_new () : model ptr = "sta#%:
-fun model_delete ( m: model ptr ) : void = "sta#%"
+fun model_new () : ptr = "sta#%"
+fun model_delete ( m: ptr ) : void = "sta#%"
 
-fun model_generate_normals ( m: model ptr ) : void = "sta#%"
-fun model_generate_tangents ( m: model ptr ) : void = "sta#%"
-fun model_generate_orthagonal_tangents ( m: model ptr ) : void = "sta#%"
-fun model_generate_texcoords_cylinder ( m: model ptr ) : void = "sta#%"
+fun model_generate_normals ( m: ptr ) : void = "sta#%"
+fun model_generate_tangents ( m: ptr ) : void = "sta#%"
+fun model_generate_orthagonal_tangents ( m: ptr ) : void = "sta#%"
+fun model_generate_texcoords_cylinder ( m: ptr ) : void = "sta#%"
 
-fun model_print ( m: model ptr ) : void = "sta#%"
-fun model_surface_area ( m: model ptr ) : float = "sta#%"
+fun model_print ( m: ptr ) : void = "sta#%"
+fun model_surface_area ( m: ptr ) : float = "sta#%"
 
-fun model_transform ( m: model ptr, transform: mat4 ) : void = "sta#%"
-fun model_translate ( m: model ptr, translation: vec3 ) : void = "sta#%"
-fun model_scale ( m: model ptr, scale: float ) : void = "sta#%"
+fun model_transform ( m: ptr, transform: mat4 ) : void = "sta#%"
+fun model_translate ( m: ptr, translation: vec3 ) : void = "sta#%"
+fun model_scale ( m: ptr, scale: float ) : void = "sta#%"
 
 //  triangle
 fun triangle_tangent ( v1: vertex, v2: vertex, v3: vertex ) : vec3 = "sta#%"
@@ -612,13 +612,13 @@ fun triangle_random_position (  v1: vertex, v2: vertex, v3: vertex ) : vec3 = "s
 fun triangle_area ( v1: vertex, v2: vertex, v3: vertex ) : float = "sta#%"
 
 fun triangle_difference_u ( v1: vertex, v2: vertex, v3: vertex ) : float = "sta#%"
-fun triangle_difference_v ( v1: vertex, v2: vertex, v3: vertex ) float = "sta#%"
+fun triangle_difference_v ( v1: vertex, v2: vertex, v3: vertex ) : float = "sta#%"
 
 fun triangle_random_position_interpolation ( v1: vertex, v2: vertex, v3: vertex ) : vertex = "sta#%"
 
 //  tweening
 fun tween_approach ( curr: float, target: float, timestep: float, steepness: float ) : float = "sta#%"
-fun tween_linear ( curr: float, target: float, timestep: float, max: float ) : float = "sta#%:
+fun tween_linear ( curr: float, target: float, timestep: float, max: float ) : float = "sta#%"
 
 fun vec3_tween_approach ( curr: vec3, target: vec3, timestep: float, steepness: float ) : vec3 = "sta#%"
 fun vec3_tween_linear ( curr: vec3, target: vec3, timestep: float, max: float ) : vec3 = "sta#%"
