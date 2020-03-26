@@ -108,30 +108,30 @@ fun type_id_name ( id: int ) : string = "sta#%"
 
 //  min(x, y) & max(x, y) are already implemented in the ATS prelude
 
-fn clamp {v,b,t:int | t > b} ( x:float v, bottom:float b, top:float t ): float = "sta#%"
-fn saturate {i: int} ( x:float i ): float = "sta#%"
-fn between {i,j,k:int | j != k} ( x:float i, bottom:float j, top:float k ): bool = "sta#%"
-fn between_or {i,j,k:int} ( x:float i, bottom:float j, top:float k ): bool = "sta#%"
+fn clamp {} ( x:float, bottom:float, top:float ): float = "sta#%"
+fn saturate {} ( x:float ): float = "sta#%"
+fn between {} ( x:float, bottom:float, top:float ): bool = "sta#%"
+fn between_or {} ( x:float, bottom:float, top:float ): bool = "sta#%"
 
-fn lerp {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
-fn smoothstep {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
-fn smootherstep {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
-fn cosine_interp {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
-fn cubic_interp {i,j,k,l,m:int} ( p1: float i, p2: float j, p3: float k, p4: float l, amount: float m ) : float = "sta#%"
-fn nearest_interp {i,j,k:int} ( p1: float i, p2: float j, amount: float k ) : float = "sta#%"
+fn lerp {} ( p1: float, p2: float, amount: float ) : float = "sta#%"
+fn smoothstep {} ( p1: float, p2: float, amount: float ) : float = "sta#%"
+fn smootherstep {} ( p1: float, p2: float, amount: float ) : float = "sta#%"
+fn cosine_interp {} ( p1: float, p2: float, amount: float ) : float = "sta#%"
+fn cubic_interp {} ( p1: float, p2: float, p3: float, p4: float, amount: float ) : float = "sta#%"
+fn nearest_interp {} ( p1: float, p2: float, amount: float ) : float = "sta#%"
 
-fn binearest_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
-fn bilinear_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
-fn bicosine_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
-fn bismoothstep_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
-fn bismootherstep_interp {i,j,k,l,m,n:int} ( tl: float i, tr: float j, bl: float k, br: float l, x_amount: float m, y_amount: float n ) : float = "sta#%"
+fn binearest_interp {} ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
+fn bilinear_interp {} ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
+fn bicosine_interp {} ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
+fn bismoothstep_interp {} ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
+fn bismootherstep_interp {} ( tl: float, tr: float, bl: float, br: float, x_amount: float, y_amount: float ) : float = "sta#%"
 
 (*  ###  vector math  ###  *)
 
 //  vec2 type
 typedef vec2 = @{ x=float, y=float }
 
-fn vec2_new {i,j:int} ( x: float i, y: float j ) : vec2 = "sta#%"
+fn vec2_new {} ( x: float, y: float ) : vec2 = "sta#%"
 fn vec2_zero () : vec2 = "sta#%"
 fn vec2_one () : vec2 = "sta#%"
 
@@ -224,7 +224,7 @@ fun vec3_project ( v1: vec3, v2: vec3 ) : vec3 = "sta#%"
 fun vec3_from_string ( s: string ) : vec3 = "sta#%"
 fun vec3_print ( v: vec3 ) : void = "sta#%"
 
-fun vec3_to_array ( v: vec3, out: float ptr ) : void = "sta#%"
+fun vec3_to_array ( v: vec3, out: ptr ) : void = "sta#%"
 
 fun vec3_hash ( v: vec3 ) : int = "sta#%"
 
@@ -278,7 +278,7 @@ fun vec4_reflect ( v1: vec4, v2: vec4 ) : vec4 = "sta#%"
 fun vec4_from_string ( s: string ) : vec4 = "sta#%"
 fun vec4_print ( v: vec4 ) : void = "sta#%"
 
-fun vec4_to_array ( v: vec4, out: float ptr ) : void = "sta#%"
+fun vec4_to_array ( v: vec4, out: ptr ) : void = "sta#%"
 
 fun vec3_to_homogeneous ( v: vec3 ) : vec4 = "sta#%"
 fun vec4_from_homogeneous ( v: vec4 ) : vec3 = "sta#%"
@@ -305,11 +305,11 @@ fun quat_rotation_x ( angle: float ) : quat = "sta#%"
 fun quat_rotation_y ( angle: float ) : quat = "sta#%"
 fun quat_rotation_z ( angle: float ) : quat = "sta#%"
 
-fun quat_at {q:int}{i:int | i >= 0 && i <= 3} ( q: quat q, i: int i ) : float = "sta#%"
+fun quat_at {} ( q: quat, i: int ) : float = "sta#%"
 fun quat_real ( q: quat ) : float = "sta#%"
 fun quat_imaginaries ( q: quat ) : vec3 = "sta#%"
 
-fun quat_to_angle_axis ( q: quat, axis: vec3 ptr, angle: float ptr ) : void = "sta#%"
+fun quat_to_angle_axis ( q: quat, axis: ptr, angle: ptr ) : void = "sta#%"
 fun quat_to_euler ( q: quat ) : vec3 = "sta#%"
 
 fun quat_neg ( q: quat ) : quat = "sta#%"
@@ -332,7 +332,7 @@ fun quat_constraint ( q: quat, axis: vec3 ) : quat = "sta#%"
 fun quat_constrain_y ( q: quat ) : quat = "sta#%"
 
 fun quat_distance ( q0: quat, q1: quat ) : float = "sta#%"
-fun quat_interpolate ( qs: quat ptr, ws: float ptr, count: int ) : quat = "sta#%"
+fun quat_interpolate ( qs: ptr, ws: ptr, count: int ) : quat = "sta#%"
 
 typedef quat_dual = @{ real=quat, dual=quat }
 
@@ -357,7 +357,7 @@ fun mat2_transpose ( m: mat2 ) : mat2 = "sta#%"
 fun mat2_det ( m: mat2 ) : float = "sta#%"
 fun mat2_inverse ( m: mat2 ) : mat2 = "sta#%"
 
-fun mat2_to_array ( m: mat2, out: float ptr ) : void = "sta#%"
+fun mat2_to_array ( m: mat2, out: ptr ) : void = "sta#%"
 fun mat2_print ( m: mat2 ) : void = "sta#%"
 fun mat2_rotation ( a: float ) : mat2 = "sta#%"
 
@@ -374,7 +374,7 @@ fun mat3_transpose ( m: mat3 ) : mat3 = "sta#%"
 fun mat3_det ( m: mat3 ) : float = "sta#%"
 fun mat3_inverse ( m: mat3 ) : mat3 = "sta#%"
 
-fun mat3_to_array ( m: mat3, out: float ptr ) : void = "sta#%"
+fun mat3_to_array ( m: mat3, out: ptr ) : void = "sta#%"
 fun mat3_print ( m: mat3 ) : mat3 = "sta#%"
 
 fun mat3_scale ( s: vec3 ) : mat3 = "sta#%"
@@ -406,8 +406,8 @@ fun mat4_to_mat3 ( m: mat4 ) : mat3 = "sta#%"
 fun mat4_to_quat ( m: mat4 ) : quat = "sta#%"
 fun mat4_to_quat_dual ( m: mat4 ) : quat_dual = "sta#%"
 
-fun mat4_to_array ( m: mat4, out: float ptr ) : void = "sta#%"
-fun mat4_to_array_trans ( m: mat4, out: float ptr ) : void = "sta#%"
+fun mat4_to_array ( m: mat4, out: ptr ) : void = "sta#%"
+fun mat4_to_array_trans ( m: mat4, out: ptr ) : void = "sta#%"
 
 fun mat4_print ( m: mat4 ) : void = "sta#%"
 
@@ -494,7 +494,7 @@ fun sphere_unit () : sphere = "sta#%"
 fun sphere_point () : sphere = "sta#%"
 fun sphere_new ( center: vec3, radius: float ) : sphere = "sta#%"
 fun sphere_merge ( s1: sphere, s2: sphere ) : sphere = "sta#%"
-fun sphere_merge_many ( s: sphere ptr, count: int ) : sphere = "sta#%"
+fun sphere_merge_many ( s: ptr, count: int ) : sphere = "sta#%"
 fun sphere_transform ( s: sphere, world: mat4 ) : sphere = "sta#%"
 fun sphere_translate ( s: sphere, x: vec3 ) : sphere = "sta#%"
 fun sphere_scale ( s: sphere, x: float ) : sphere = "sta#%"
@@ -526,7 +526,7 @@ fun line_intersects_sphere ( s: sphere, l_start: vec3, l_end: vec3 ) : bool = "s
 fun sphere_inside_plane ( s: sphere, p: plane ) : bool = "sta#%"
 fun sphere_outside_plane ( s: sphere, p: plane ) : bool = "sta#%"
 fun sphere_intersects_plane ( s: sphere, p: plane ) : bool = "sta#%"
-fun sphere_intersects_plane_point ( s: sphere, p: plane, point: vec3 ptr, radius: float ptr ) : bool = "sta#%"
+fun sphere_intersects_plane_point ( s: sphere, p: plane, point: ptr, radius: ptr ) : bool = "sta#%"
 
 fun point_swept_inside_sphere ( s: sphere, v: vec3, point: vec3 ) : bool = "sta#%"
 fun point_swept_outside_sphere ( s: sphere, v: vec3, point: vec3 ) : bool = "sta#%"
@@ -567,7 +567,7 @@ fun vertex_equal ( v1: vertex, v2: vertex ) : bool = "sta#%"
 fun vertex_print ( v: vertex ) : void = "sta#%"
 
 //  mesh type
-typedef mesh = @{ num_verts=int, num_triangles=int, verticies=vertex ptr, triangles=uint32_t ptr }
+typedef mesh = @{ num_verts=int, num_triangles=int, verticies=ptr, triangles=ptr }
 
 fun mesh_new () : ptr = "str#%"
 fun mesh_delete ( ptr ) : void = "sta#%"

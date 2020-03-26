@@ -26,8 +26,8 @@ fun SDL_PathParentDirectory ( dst: string, path: string ) : void = "mac#%"
 fun SDL_GetWorkingDir () : string = "mac#%"
 fun SDL_SetWorkingDir ( dir: string ) : int = "mac#%"
 
-fun SDL_GL_FrameBufferErrorString ( error: GLenum ) : string = "mac#%"
-fun SDL_GL_ErrorString ( error: GLenum ) : string = "mac#%"
+fun SDL_GL_FrameBufferErrorString ( error: $extype"GLenum" ) : string = "mac#%"
+fun SDL_GL_ErrorString ( error: $extype"GLenum" ) : string = "mac#%"
 
 fun SDL_GL_PrintInfo () : void = "mac#%"
 fun SDL_GL_PrintExtensions () : void = "mac#%"
