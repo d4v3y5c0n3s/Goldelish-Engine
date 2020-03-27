@@ -16,7 +16,8 @@ datatype TEXT_VERT_ALIGN =
 | TEXT_ALIGN_TOP of ()
 | TEXT_ALIGN_BOTTOM of ()
 
-typedef ui_text = @{
+//  changed to "viewtypedef" because it wouldn't accept "typedef" with the $extype"GLuint" values, come back to this later
+viewtypedef ui_text = @{
 	string=string,
 	positions_buffer=$extype"GLuint",
 	texcoords_buffer=$extype"GLuint",
@@ -51,7 +52,7 @@ fun ui_text_align ( text: ptr, halign: int, valign: int ) : void = "sta#%"
 fun ui_text_draw ( text: ptr ) : void = "sta#%"
 fun ui_text_draw_string ( text: ptr, string: string ) : void = "sta#%"
 
-fun ui_text_event ( text: ptr, e: extype"SDL_Event" ) : void = "sta#%"
+fun ui_text_event ( text: ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_text_update ( text: ptr ) : void = "sta#%"
 fun ui_text_render ( text: ptr ) : void = "sta#%"
 

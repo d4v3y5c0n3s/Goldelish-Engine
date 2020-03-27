@@ -11,9 +11,9 @@ typedef ui_elem = ()//  defined as void, perhaps revise this
 
 fun ui_init () : void = "sta#%"
 fun ui_finish () : void = "sta#%"
-fun ui_set_style ( s: ui_style ptr ) : void = "sta#%"
+fun ui_set_style ( s: ptr ) : void = "sta#%"
 
-fun ui_event ( e: SDL_Event ) : void = "sta#%"
+fun ui_event ( e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_update () : void = "sta#%"
 fun ui_render () : void = "sta#%"
 
@@ -38,13 +38,13 @@ void ui_handler_cast(int type_id,
 *)
 
 fun ui_elem_exists ( fmt: string ) : bool = "sta#%"
-fun ui_elem_get ( fmt: string ) : ui_elem ptr = "sta#%"
-fun ui_elem_get_as_type_id ( fmt: string, type_id: int ) : ui_elem ptr = "sta#%"
-fun ui_elem_new_type_id ( fmt: string, type_id: int ) : ui_elem ptr = "sta#%"
+fun ui_elem_get ( fmt: string ) : ptr = "sta#%"
+fun ui_elem_get_as_type_id ( fmt: string, type_id: int ) : ptr = "sta#%"
+fun ui_elem_new_type_id ( fmt: string, type_id: int ) :  ptr = "sta#%"
 fun ui_elem_delete ( fmt: string ) : void = "sta#%"
 fun ui_elem_event ( fmt: string ) : void = "sta#%"
 fun ui_elem_update ( fmt: string ) : void = "sta#%"
 fun ui_elem_render ( fmt: string ) : void = "sta#%"
 
-fun ui_elem_name ( e: ui_elem ptr ) : string = "sta#%"
-fun ui_elem_typename ( e: ui_elem ptr ) : string = "sta#%"
+fun ui_elem_name ( e: ptr ) : string = "sta#%"
+fun ui_elem_typename ( e: ptr ) : string = "sta#%"

@@ -10,7 +10,7 @@ LDFLAGS0 = $(LDFLAGS)
 CFLAGS0 += -I ./include -std=gnu99 -Wall -Werror -Who-unused -03 -g
 LDFLAGS0 += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 
-SOURCES_C += $(wildcard source/*.c) $(wildcard source/*/*.c)#  the C files in the project
+SOURCES_C += $(wildcard source/*.c) $(wildcard source/*/*.c)#  the ".c" files in the project
 SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)#  the static files in the project
 SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)#  the dynamic files in the project
 SOURCES_OBJ = $(addprefix obj/,$(notdir $(SOURCES_C:.c=.o))) $(addprefix obj/,$(notdir $(SOURCES_SATS:.sats=_sats.o))) $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
@@ -38,19 +38,23 @@ INCLUDE += $(LDFLAGS0)
 
 include $(PATSHOME)/share/atsmake-post.mk
 
-all:: $(SOURCES_OBJ) $(DYNAMIC) $(STATIC)
+all:: $(SOURCES_OBJ) $(say) $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(SOURCES_OBJ)
 	$(CC) $(SOURCES_OBJ) $(LDFLAGS0) -o $@
 $(STATIC): $(SOURCES_OBJ)
 	$(AR) rcs $@ $(SOURCES_OBJ)
 obj/%_sats.o: source/%.sats | obj
-	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj/%_sats.o: source/*/%.sats | obj
-	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj/%_dats.o: source/%.dats | obj
-	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
 obj/%_dats.o: source/*/%.dats | obj
-	$(PATSCC) -cleanaft --depgen --taggen --debug2 $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
+	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
+obj/%.o: source/%.c | obj
+	$(CC) $(LDFLAGS0) -o $@
+obj/%.o: source/*/%.c | obj
+	$(CC) $(LDFLAGS0) -o $@
 obj:
 	mkdir obj
 

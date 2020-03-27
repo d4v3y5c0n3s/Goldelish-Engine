@@ -14,7 +14,7 @@ typedef ui_style = @{
 	spinner_image=fpath, spinner_speed=float
 }
 
-fun ui_style_current () : ui_style ptr
+fun ui_style_current () : ptr
 
 fun ui_style_goldelish () : ui_style
 fun ui_style_hunt () : ui_style
