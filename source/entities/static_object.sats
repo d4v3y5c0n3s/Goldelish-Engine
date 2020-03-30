@@ -4,8 +4,8 @@
 an unmovable object that interacts with physics-affected objects\
 *)
 
-#include "./g_engine.sats"
-#include "./g_asset.sats"
+#include "./../g_engine.sats"
+#include "./../g_asset.sats"
 
 typedef static_object = @{
 	position=vec3,

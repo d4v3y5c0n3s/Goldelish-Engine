@@ -1,11 +1,11 @@
-p(*
+(*
 ###  instance_object.sats  ###
 
 a collection of static objects; supports instanced rendering
 *)
 
-#include "./g_engine.sats"
-#include "./g_asset.sats"
+#include "./../g_engine.sats"
+#include "./../g_asset.sats"
 
 typedef instance_data = @{
 	position=vec3,
@@ -24,11 +24,11 @@ typedef instance_object = @{
 	collision_body=asset_hndl
 }
 
-fun instance_object_new () : instance_object ptr = "sta#%"
-fun instance_object_delete ( io: instance_object ptr ) : void = "sta#%"
+fun instance_object_new () : (*instance_object*) ptr = "sta#%"
+fun instance_object_delete ( io: (*instance_object*) ptr ) : void = "sta#%"
 
-fun instance_object_update ( io: instance_object ptr ) : void = "sta#%"
-fun instance_object_add_instance ( io: instance_object ptr, position: vec3, scale: vec3, rotation: quat ) : void = "sta#%"
-fun instance_object_rem_instance ( io: instance_object ptr, i: int ) : void = "sta#%"
-fun instance_object_world ( io: instance_object ptr, i: int ) : mat4 = "sta#%"
-fun instance_object_world_normal ( io: instance_object ptr, i: int ) : mat3 = "sta#%"
+fun instance_object_update ( io: (*instance_object*) ptr ) : void = "sta#%"
+fun instance_object_add_instance ( io: (*instance_object*) ptr, position: vec3, scale: vec3, rotation: quat ) : void = "sta#%"
+fun instance_object_rem_instance ( io: (*instance_object*) ptr, i: int ) : void = "sta#%"
+fun instance_object_world ( io: (*instance_object*) ptr, i: int ) : mat4 = "sta#%"
+fun instance_object_world_normal ( io: (*instance_object*) ptr, i: int ) : mat3 = "sta#%"

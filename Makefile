@@ -10,10 +10,10 @@ LDFLAGS0 = $(LDFLAGS)
 CFLAGS0 += -I ./include -std=gnu99 -Wall -Werror -Who-unused -03 -g
 LDFLAGS0 += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 
-SOURCES_C += $(wildcard source/*.c) $(wildcard source/*/*.c)#  the ".c" files in the project
+SOURCES_C += $(wildcard source/*.cats) $(wildcard source/*/*.cats)#  the ".cats" files in the project
 SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)#  the static files in the project
 SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)#  the dynamic files in the project
-SOURCES_OBJ = $(addprefix obj/,$(notdir $(SOURCES_C:.c=.o))) $(addprefix obj/,$(notdir $(SOURCES_SATS:.sats=_sats.o))) $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
+SOURCES_OBJ = $(addprefix obj/,$(notdir $(SOURCES_C:.cats=.o))) $(addprefix obj/,$(notdir $(SOURCES_SATS:.sats=_sats.o))) $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
 
 PLATFORM = $(shell uname)
 ifeq ($(findstring Linux, $(PLATFORM)), Linux)
@@ -51,10 +51,10 @@ obj/%_dats.o: source/%.dats | obj
 	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
 obj/%_dats.o: source/*/%.dats | obj
 	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS) -o $@ -c $<
-obj/%.o: source/%.c | obj
-	$(CC) $(LDFLAGS0) -o $@
-obj/%.o: source/*/%.c | obj
-	$(CC) $(LDFLAGS0) -o $@
+obj/%.o: source/%.cats | obj
+	$(PATSCC) $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
+obj/%.o: source/*/%.cats | obj
+	$(PATSCC) $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS) -o $@ -c $<
 obj:
 	mkdir obj
 

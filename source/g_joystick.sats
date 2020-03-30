@@ -10,4 +10,4 @@ fun joystick_init () : void = "sta#%"
 fun joystick_finish () : void = "sta#%"
 
 fun joystick_count () : int = "sta#%"
-fun joystick_get () : SDL_Joystick ptr = "sta#%"
+fun joystick_get () : (*SDL_Joystick*) ptr = "sta#%"

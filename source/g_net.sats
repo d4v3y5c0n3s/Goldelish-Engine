@@ -21,5 +21,5 @@ datatype HTTP_ERR_TYPE =
 	 | DATA of ()
 	 | NO_FILE of ()
 
-fun net_http_get ( out: string, max: int, fmt: string, ... ) : int = "sta#%"
-fun net_http_upload ( filename: string, fmt: string, ... ) : int = "sta#%"
+fun net_http_get ( out: string, max: int, fmt: string(*, ...  <- this means that there can be a variable number of arguements passed, could likely be modified to work with arrays/lists instead*) ) : int = "sta#%"
+fun net_http_upload ( filename: string, fmt: string(*, ...*) ) : int = "sta#%"

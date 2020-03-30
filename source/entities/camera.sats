@@ -4,8 +4,8 @@
 a basic camera
 *)
 
-#include "./g_engine.sats"
-#include "./g_joystick.sats"
+#include "./../g_engine.sats"
+#include "./../g_joystick.sats"
 
 typedef camera = @{
 	position=vec3,
@@ -15,15 +15,15 @@ typedef camera = @{
 	far_clip=float
 }
 
-fun camera_new () : camera ptr = "sta#%"
-fun camera_delete ( cam: camera ptr ) : void = "sta#%"
+fun camera_new () : (*camera*) ptr = "sta#%"
+fun camera_delete ( cam: (*camera*) ptr ) : void = "sta#%"
 
-fun camera_direction ( c: camera ptr ) : vec3 = "sta#%"
-fun camera_view_matrix ( c: camera ptr ) : mat4 = "sta#%"
-fun camera_proj_matrix ( c: camera ptr ) : mat4 = "sta#%"
-fun camera_view_proj_matrix ( c: camera ptr ) : mat4 = "sta#%"
+fun camera_direction ( c: (*camera*) ptr ) : vec3 = "sta#%"
+fun camera_view_matrix ( c: (*camera*) ptr ) : mat4 = "sta#%"
+fun camera_proj_matrix ( c: (*camera*) ptr ) : mat4 = "sta#%"
+fun camera_view_proj_matrix ( c: (*camera*) ptr ) : mat4 = "sta#%"
 
-fun camera_normalize_target ( c: camera ptr ) : void = "sta#%"
-fun camera_control_orbit ( c: camera ptr, e: SDL_Event ) : void = "sta#%"
-fun camera_control_freecam ( c: camera ptr, timestep: float ) : void = "sta#%"
-fun camera_control_joyorbit ( c: camera ptr, timestep: float ) : void = "sta#%"
+fun camera_normalize_target ( c: (*camera*) ptr ) : void = "sta#%"
+fun camera_control_orbit ( c: (*camera*) ptr, e: SDL_Event ) : void = "sta#%"
+fun camera_control_freecam ( c: (*camera*) ptr, timestep: float ) : void = "sta#%"
+fun camera_control_joyorbit ( c: (*camera*) ptr, timestep: float ) : void = "sta#%"

@@ -4,7 +4,7 @@
 definition of 3D mesh in the game engine
 *)
 
-#include "./g_engine.sats"
+#include "./../g_engine.sats"
 
 typedef ctri = @{ a=vec3, b=vec3, c=vec3, norm=vec3, bound=sphere }
 
@@ -16,16 +16,18 @@ fun ctri_inside_plane ( t: ctri, p: plane ) : bool = "sta#%"
 fun ctri_outside_plane ( t: ctri, p: plane ) : bool = "sta#%"
 fun ctri_intersects_plane ( t: ctri, p: plane ) : bool = "sta#%"
 
-typedef cmesh = @{
-	is_leaf=bool,
-	'(
-		@{ division=plane, front=cmesh ptr, back=cmesh ptr },
-		@{ triangles=ctri ptr, triangles_num=int, bound=sphere }
-	)
+typedef shape_def = @{
+  division=plane, front=(*cmesh*) ptr, back=(*cmesh*) ptr,
+  triangles=(*ctri*) ptr, triangles_num=int, bound=sphere
 }
 
-fun col_load_file ( filename=string ) : cmesh ptr = "sta#%"
-fun cmesh_delete ( cm: cmesh ptr ) : void = "sta#%"
+typedef cmesh = @{
+	is_leaf=bool,
+	shape=shape_def
+}
 
-fun cmesh_bound ( cm: cmesh ptr ) : sphere = "sta#%"
-fun cmesh_subdivide ( cm: cmesh ptr, iterations: int ) : void = "sta#%"
+fun col_load_file ( filename: string ) : (*cmesh*) ptr = "sta#%"
+fun cmesh_delete ( cm: (*cmesh*) ptr ) : void = "sta#%"
+
+fun cmesh_bound ( cm: (*cmesh*) ptr ) : sphere = "sta#%"
+fun cmesh_subdivide ( cm: (*cmesh*) ptr, iterations: int ) : void = "sta#%"

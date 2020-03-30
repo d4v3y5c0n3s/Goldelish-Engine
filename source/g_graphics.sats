@@ -14,9 +14,9 @@ fun graphics_set_multisamples ( samples: int ) : void = "sta#%"
 fun graphics_set_fullscreen ( fullscreen: bool ) : void = "sta#%"
 fun graphics_set_antialiasing ( quality: int ) : void = "sta#%"
 
-fun graphics_context_new () : SDL_GLContext ptr = "sta#%"
-fun graphics_context_delete ( context: SDL_GLContext ptr ) : void = "sta#%"
-fun graphics_context_current ( context: SDL_GLContext ptr ) : void = "sta#%"
+fun graphics_context_new () : (*SDL_GLContext*) ptr = "sta#%"
+fun graphics_context_delete ( context: (*SDL_GLContext*) ptr ) : void = "sta#%"
+fun graphics_context_current ( context: (*SDL_GLContext*) ptr ) : void = "sta#%"
 
 fun graphics_get_multisamples () : int = "sta#%"
 fun graphics_get_fullscreen () : bool = "sta#%"

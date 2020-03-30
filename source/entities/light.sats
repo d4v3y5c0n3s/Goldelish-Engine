@@ -4,13 +4,13 @@
 light object for lighting up scenes
 *)
 
-#include "./g_engine.sats"
+#include "./../g_engine.sats"
 
 datatype TYPE =
-| LIGHT_TYPE_POINT = 0
-| LIGHT_TYPE_DIRECTIONAL = 1
-| LIGHT_TYPE_SUN = 2
-| LIGHT_TYPE_SPOT = 3
+| LIGHT_TYPE_POINT of 0
+| LIGHT_TYPE_DIRECTIONAL of 1
+| LIGHT_TYPE_SUN of 2
+| LIGHT_TYPE_SPOT of 3
 
 typedef light = @{
 	position=vec3,

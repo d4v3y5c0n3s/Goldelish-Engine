@@ -4,8 +4,8 @@
 an object which utilizes the physics system
 *)
 
-#include "./g_engine.sats"
-#include "./entities/static_object.sats"
+#include "./../g_engine.sats"
+#include "./static_object.sats"
 
 typedef physics_object = @{
 	position=vec3,
@@ -24,8 +24,8 @@ typedef physics_object = @{
 	collision_body=asset_hndl
 }
 
-fun physics_object_new () : physics_object ptr = "sta#%"
-fun physics_object_delete ( po: physics_object ptr ) : void = "sta#%"
+fun physics_object_new () : (*physics_object*) ptr = "sta#%"
+fun physics_object_delete ( po: (*physics_object*) ptr ) : void = "sta#%"
 
-fun physics_object_collide_static ( po: physics_object ptr, so: static_object ptr, timestep: float ) : void = "sta#%"
-fun physics_object_update (po: physics_object ptr, timestep: float ) : void = "sta#%"
+fun physics_object_collide_static ( po: (*physics_object*) ptr, so: (*static_object*) ptr, timestep: float ) : void = "sta#%"
+fun physics_object_update (po: (*physics_object*) ptr, timestep: float ) : void = "sta#%"

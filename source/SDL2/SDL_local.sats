@@ -4,12 +4,7 @@
 more complete SDL function definitions
 *)
 
-(*
-//  include the .cats file
-%{#
-#include "SDL_local.c"
-%}
-*)
+//  Try to do the following C typedef function prototypes in ATS
 
 %{#
 //  C includes
@@ -69,7 +64,7 @@ typedef void ( APIENTRY * GLPROGRAMPARAMETERIFN )( GLuint program, GLenum pname,
 typedef void ( APIENTRY * GLBINDATTRIBLOCATIONFN )( GLuint program, GLuint index, const GLchar* name );
 typedef void ( APIENTRY * GLGENFRAMEBUFFERSFN )( GLsizei n, GLuint* ids );
 typedef void ( APIENTRY * GLBINDFRAMEBUFFERFN )( GLenum target, GLuint framebuffer );
-typedef void ( APIENTRY * GLBLITFRAMEBUFFERFN )( GLint srcX0, GLint srcY0, GLint srcX1, GLint src Y1, GLint dstX0, GLint dstY0, GLint dstX1, GLint Y1, GLbitfield mask, GLenum filter );
+typedef void ( APIENTRY * GLBLITFRAMEBUFFERFN )( GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter );
 typedef void (APIENTRY * GLFRAMEBUFFERTEXTUREFN )( GLenum target, GLenum attachment, GLuint texture, GLint level );
 typedef void ( APIENTRY * GLFRAMEBUFFERTEXTURE2DFN )( GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level );
 typedef void ( APIENTRY * GLDELETEFRAMEBUFFERSFN )( GLsizei n, GLuint* framebuffers );
