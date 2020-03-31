@@ -4,12 +4,12 @@
 displays particles
 *)
 
-#include "./g_engine.sats"
-#include "./g_asset.sats"
+#include "./../g_engine.sats"
+#include "./../g_asset.sats"
 
-#include "./assets/effect.sats"
+#include "./../assets/effect.sats"
 
-#include "./entities/camera.sats"
+#include "./camera.sats"
 
 typedef particles = @{
 	position=vec3,

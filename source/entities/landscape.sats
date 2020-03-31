@@ -34,7 +34,7 @@ typedef landscape = @{
 	ground0_nm=asset_hndl,
 	ground1_nm=asset_hndl,
 	ground2_nm=asset_hndl,
-	ground3_nm=asset_hndl,
+	ground3_nm=asset_hndl
 }
 
 fun landscape_new () : (*landscape*) ptr = "sta#%"
