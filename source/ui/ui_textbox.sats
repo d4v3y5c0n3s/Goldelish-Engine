@@ -38,7 +38,7 @@ fun ui_textbox_set_alignment ( tb: (*ui_textbox*) ptr, halign: int, valign: int 
 fun ui_textbox_disable ( tb: (*ui_textbox*) ptr ) : void = "sta#%"
 fun ui_textbox_enable ( tb: (*ui_textbox*) ptr ) : void = "sta#%"
 
-fun ui_textbox_event ( tb: (*ui_textbox*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_textbox_event ( tb: (*ui_textbox*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_textbox_update ( tb: (*ui_textbox*) ptr ) : void = "sta#%"
 fun ui_textbox_render ( tb: (*ui_textbox*) ptr ) : void = "sta#%"
 

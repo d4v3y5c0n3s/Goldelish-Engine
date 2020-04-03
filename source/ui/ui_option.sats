@@ -23,6 +23,6 @@ fun ui_option_set_onselect ( o: (*ui_option*) ptr(*, onselect: (*ui_option*) ptr
 fun ui_option_deactivate ( o: (*ui_option*) ptr ) : void = "sta#%"
 fun ui_option_activate ( o: (*ui_option*) ptr ) : void = "sta#%"
 
-fun ui_option_event ( o: (*ui_option*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_option_event ( o: (*ui_option*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_option_update ( o: (*ui_option*) ptr ) : void = "sta#%"
 fun ui_option_render ( o: (*ui_option*) ptr ) : void = "sta#%"

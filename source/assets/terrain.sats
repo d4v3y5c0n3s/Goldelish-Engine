@@ -10,7 +10,7 @@ definition WIP heightmap-based terrain LOD system
 #define NUM_TERRAIN_SUBDIVISIONS 0
 #define NUM_TERRAIN_BUFFERS 7
 
-typedef terrain_chunk = @{
+vtypedef terrain_chunk = @{
 	id=int,
 	x=int, y=int, width=int, height=int,
 	bound=sphere,
@@ -20,9 +20,9 @@ typedef terrain_chunk = @{
 	bottom=(*@{terrain_chunk*) ptr(*}*),
 	colmesh=(*cmesh*) ptr,
 	num_verts=int,
-	vertex_buffer=GLuint,
+	vertex_buffer=$extype"GLuint",
 	num_indicies=int,//NUM_TERRAIN_BUFFERS
-	index_buffers=GLuint//NUM_TERRAIN_BUFFERS
+	index_buffers=$extype"GLuint"//NUM_TERRAIN_BUFFERS
 }
 
 (*

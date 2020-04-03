@@ -7,8 +7,8 @@ defines a GLSL shader program
 #include "./../g_engine.sats"
 #include "./../g_asset.sats"
 
-typedef shader = GLuint
-typedef shader_print = GLuint
+vtypedef shader = $extype"GLuint"
+vtypedef shader_print = $extype"GLuint"
 
 fun vs_load_file ( filename: string ) : (*shader*) ptr = "sta#%"
 fun fs_load_file ( filename: string ) : (*shader*) ptr = "sta#%"
@@ -18,7 +18,7 @@ fun tes_load_file ( filename: string ) : (*shader*) ptr = "sta#%"
 
 fun shader_delete ( s: (*shader*) ptr ) : void = "sta#%"
 fun shader_print_log ( s: (*shader*) ptr ) : void = "sta#%"
-fun shader_handle ( s: (*shader*) ptr ) : GLuint = "sta#%"
+fun shader_handle ( s: (*shader*) ptr ) : $extype"GLuint" = "sta#%"
 
 fun shader_program_new () : (*shader_program*) ptr = "sta#%"
 fun shader_program_delete ( p: (*shader_program*) ptr ) : void = "sta#%"
@@ -30,8 +30,8 @@ fun shader_program_link ( p: (*shader_program*) ptr ) : void = "sta#%"
 fun shader_program_print_info ( p: (*shader_program*) ptr ) : void = "sta#%"
 fun shader_program_print_log ( p: (*shader_program*) ptr ) : void = "sta#%"
 
-fun shader_program_handle ( p: (*shader_program*) ptr ) : GLuint = "sta#%"
-fun shader_program_get_attribute ( p: (*shader_program*) ptr, name: string ) : GLuint = "sta#%"
+fun shader_program_handle ( p: (*shader_program*) ptr ) : $extype"GLuint" = "sta#%"
+fun shader_program_get_attribute ( p: (*shader_program*) ptr, name: string ) : $extype"GLuint" = "sta#%"
 
 fun shader_program_enable ( p: (*shader_program*) ptr ) : void = "sta#%"
 fun shader_program_disable ( p: (*shader_program*) ptr ) : void = "sta#%"

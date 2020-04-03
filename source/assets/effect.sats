@@ -13,11 +13,11 @@ typedef effect_key = @{
 
 fun effect_ket_lerp ( x: effect_key, y: effect_key, amount: float ) : effect_key = "sta#%"
 
-typedef effect = @{
+vtypedef effect = @{
 	texture=asset_hndl,
 	texture_nm=asset_hndl,
-	blend_src=GLuint,
-	blend_dst=GLuint,
+	blend_src=$extype"GLuint",
+	blend_dst=$extype"GLuint",
 	count=int,
 	depth=float,
 	thickness=float,

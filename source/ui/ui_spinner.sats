@@ -20,6 +20,6 @@ typedef ui_spinner = @{
 fun ui_spinner_new () : (*ui_spinner*) ptr = "sta#%"
 fun ui_spinner_delete ( s: (*ui_spinner*) ptr ) : void = "sta#%"
 
-fun ui_spinner_event ( s: (*ui_spinner*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_spinner_event ( s: (*ui_spinner*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_spinner_update ( s: (*ui_spinner*) ptr ) : void = "sta#%"
 fun ui_spinner_render ( s: (*ui_spinner*) ptr ) : void = "sta#%"

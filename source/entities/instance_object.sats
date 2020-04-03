@@ -15,10 +15,10 @@ typedef instance_data = @{
 	world_normal=mat3
 }
 
-typedef instance_object = @{
+vtypedef instance_object = @{
 	num_instances=int,
 	instances=instance_data,
-	world_buffer=GLuint,
+	world_buffer=$extype"GLuint",
 	bound=sphere,
 	renderable=asset_hndl,
 	collision_body=asset_hndl

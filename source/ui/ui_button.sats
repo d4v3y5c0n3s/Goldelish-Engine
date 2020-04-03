@@ -39,7 +39,7 @@ fun ui_button_enable ( b: (*ui_button*) ptr ) : void = "sta#%"
 fun ui_button_position ( b: (*ui_button*) ptr ) : vec2 = "sta#%"
 fun ui_button_size ( b: (*ui_button*) ptr ) : vec2 = "sta#%"
 
-fun ui_button_event ( b: (*ui_button*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_button_event ( b: (*ui_button*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_button_update ( b: (*ui_button*) ptr ) : void = "sta#%"
 fun ui_button_render ( b: (*ui_button*) ptr ) : void = "sta#%"
 

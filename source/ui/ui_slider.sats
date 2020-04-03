@@ -28,6 +28,6 @@ fun ui_slider_set_active ( s: (*ui_slider*) ptr, active: bool ) : void = "sta#%"
 fun ui_slider_deactivate ( s: (*ui_slider*) ptr ) : void = "sta#%"
 fun ui_slider_activate ( s: (*ui_slider*) ptr ) : void = "sta#%"
 
-fun ui_slider_event ( s: (*ui_slider*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_slider_event ( s: (*ui_slider*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_slider_update ( s: (*ui_slider*) ptr ) : void = "sta#%"
 fun ui_slider_render ( s: (*ui_slider*) ptr ) : void = "sta#%"

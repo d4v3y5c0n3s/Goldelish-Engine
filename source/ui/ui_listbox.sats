@@ -22,7 +22,7 @@ fun ui_listbox_add_item ( lb: (*ui_listbox*) ptr, item: string ) : (*ui_text*) p
 fun ui_listbox_move ( lb: (*ui_listbox*) ptr, pos: vec2 ) : void = "sta#%"
 fun ui_listbox_resize ( lb: (*ui_listbox*) ptr, size: vec2 ) : void = "sta#%"
 
-fun ui_listbox_event ( lb: (*ui_listbox*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_listbox_event ( lb: (*ui_listbox*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_listbox_update ( lb: (*ui_listbox*) ptr ) : void = "sta#%"
 fun ui_listbox_render ( lb: (*ui_listbox*) ptr ) : void = "sta#%"
 

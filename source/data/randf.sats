@@ -4,7 +4,7 @@
 allows the creation of random floats
 *)
 
-#include "./g_engine.sats"
+#include "./../g_engine.sats"
 
 fun randf () : float = "sta#%"
 fun randf_seed ( s: float ) : float = "sta#%"

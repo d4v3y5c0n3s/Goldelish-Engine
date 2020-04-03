@@ -20,6 +20,6 @@ fun ui_browser_delete ( b: (*ui_browser*) ptr ) : void = "sta#%"
 
 fun ui_browser_chdir ( b: (*ui_browser*) ptr, dir: fpath ) : void = "sta#%"
 
-fun ui_browser_event ( b: (*ui_browser*) ptr, e: SDL_Event ) : void = "sta#%"
+fun ui_browser_event ( b: (*ui_browser*) ptr, e: $extype"SDL_Event" ) : void = "sta#%"
 fun ui_browser_update ( b: (*ui_browser*) ptr ) : void = "sta#%"
 fun ui_browser_render ( b: (*ui_browser*) ptr ) : void = "sta#%"

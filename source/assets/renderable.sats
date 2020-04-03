@@ -9,7 +9,7 @@ defines a renderable mesh (may be rigged or not)
 
 typedef vertex_weight = @{ bone_ids=int, bone_weights=float }//  bone_ids[3] & bone_weights[3] in C
 
-typedef renderable_surface = @{ vertex_vbo=GLuint, triangle_vbo=GLuint, num_verticies=int, num_triangles=int, bound=sphere }
+vtypedef renderable_surface = @{ vertex_vbo=$extype"GLuint", triangle_vbo=$extype"GLuint", num_verticies=int, num_triangles=int, bound=sphere }
 
 fun renderable_surface_new ( m: (*mesh*) ptr ) : (*renderable_surface*) ptr = "sta#%"
 fun renderable_surface_new_rigged ( m: (*mesh*) ptr, weights: (*vertex_weight*) ptr ) : (*renderable_surface*) ptr = "sta#%"
