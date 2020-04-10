@@ -12,11 +12,11 @@ This is the main header file for handling audio within the engine.
 (*  functions  *)
 fn audio_init() : void = "sta#audio_init"
 fn audio_finish() : void = "sta#audio_finish"
-fn audio_sound_play( s: ptr, loops: int ) : int = "sta#audio_sound_play"
+fn audio_sound_play ( s: &sound, loops: int ) : int = "sta#audio_sound_play"
 fn audio_sound_pause( channel: int ) : void = "sta#audio_sound_pause"
 fn audio_sound_resume( channel: int ) : void = "sta#audio_sound_resume"
 fn audio_sound_stop( channel: int ) : void = "sta#audio_sound_stop"
-fn audio_music_play( m: ptr ) : void = "sta#audio_music_play"
+fn audio_music_play( m: &music ) : void = "sta#audio_music_play"
 fn audio_music_pause() : void = "sta#audio_sound_pause"
 fn audio_music_resume() : void = "sta#audio_music_resume"
 fn audio_music_stop() : void = "sta#audio_music_stop"

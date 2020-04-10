@@ -1,4 +1,4 @@
-(*
+(*p
 ###  g_audio.dats  ###
 
 
@@ -7,57 +7,86 @@
 staload "./g_audio.sats"
 
 val audio_rate: int = 22050
-val audio_format: Uint16 = AUDIO_S16
+macdef audio_format = $extval(uint16, "AUDIO_S16")
 val audio_channels: int = 2
 val audio_buffers: int = 4096
-var volume: float = 1.0
+var volume: float = 1.0f
 
-implement audio_init () =
-(
-)
+extern fun SDL_InitSubSystem ( flags: uint32 ) : int = "mac#SDL_InitSubSystem"
+extern fun Mix_OpenAudio ( frequency: int, format: uint16, channels: int, chunksize: int ) : int = "mac#Mix_OpenAudio"
+extern fun Mix_QuerySpec (frequency: &int, format: &uint16, channels: &int ) : int = "mac#Mix_QuerySpec"
+extern fun Mix_CloseAudio () : void = "mac#Mix_CloseAudio"
+extern fun Mix_PlayChannel ( channel: int, chunk: &Mix_Chunk, loops: int ) : int = "mac#Mix_PlayChannel"
+extern fun Mix_Pause ( channel: int ) : void = "mac#Mix_Pause"
+extern fun Mix_Resume ( channel: int ) : void = "mac#Mix_Resume"
+extern fun Mix_HaltChannel ( channel: int ) : void = "mac#Mix_HaltChannel"
+extern fun Mix_FadeInMusic ( music: &Mix_Music, loops: int, ms: int ) : int = "mac#Mix_FadeInMusic"
+extern fun Mix_GetError(): string = "mac#Mix_GetError"
+extern fun Mix_PauseMusic(): void = "mac#Mix_PauseMusic"
+extern fun Mix_ResumeMusic(): void = "mac#Mix_ResumeMusic"
+extern fun Mix_FadeOutMusic( ms: int ): int = "mac#Mix_FadeOutMusic"
+extern fun Mix_VolumeMusic( volume: int ): int = "mac#Mix_VolumeMusic"
 
-implement audio_finish () =
-(
-)
+macdef MIX_MAX_VOLUME = $extval(int, "MIX_MAX_VOLUME")
 
-implement audio_sound_play ( s, loops ) =
-(
-)
+extern castfn float_to_int( f:float ): int
+extern castfn int_to_float( i: int ): float
+
+implement audio_init () = let
+  var a_rate = audio_rate
+  var a_format = audio_format
+  var a_channels = audio_channels
+in
+  if (SDL_InitSubSystem($extval(uint32, "SDL_INIT_AUDIO")) = ~1)
+    then println!("Could not start audio!")
+  else if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) = ~1)
+    then println!("Unable to start audio mixer!")
+  else if (Mix_QuerySpec(a_rate, a_format, a_channels) = ~1)
+    then println!("Issue with SDL_mixer query spec")
+  else ((*there were no issues*))
+end
+
+
+implement audio_finish () = begin
+  Mix_CloseAudio()
+end
+
+implement audio_sound_play ( s, loops ) = let
+  val chan = Mix_PlayChannel(~1, s.sample, loops);
+in
+  if (chan = ~1) then println!("unable to play sound: ", Mix_GetError()); chan
+end
 
 implement audio_sound_pause ( channel ) =
-(
-)
+  Mix_Pause(channel)
 
 implement audio_sound_resume ( channel ) =
-(
-)
+  Mix_Resume(channel)
 
 implement audio_sound_stop ( channel ) =
-(
-)
+  Mix_HaltChannel(channel)
 
 val fade_time: int = 5000
 
-implement audio_music_play ( m ) =
-(
-)
+implement audio_music_play ( m ) = let
+  val chan = Mix_FadeInMusic(m.handle, ~1, fade_time);
+in
+  if (chan = ~1) then println!("unable to play music: ", Mix_GetError())
+end
 
 implement audio_music_pause () =
-(
-)
+  Mix_PauseMusic()
 
 implement audio_music_resume () =
-(
-)
+  Mix_ResumeMusic()
 
-implement audio_music_stop () =
-(
-)
+implement audio_music_stop () = let
+  val err = Mix_FadeOutMusic(fade_time)
+in
+end
 
-implement audio_set_volume ( volume ) =
-(
-)
+fn audio_set_volume ( volume ) =
+  Mix_VolumeMusic(float_to_int(mul_int_float(MIX_MAX_VOLUME, volume)))
 
 implement audio_music_get_volume () =
-(
-)
+  int_to_float(Mix_VolumeMusic(~1) * MIX_MAX_VOLUME)
