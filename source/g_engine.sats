@@ -9,14 +9,7 @@ This file has code for general things & math operations in the engine.
 #include "share/HATS/atslib_staload_libats_libc.hats"
 
 (*  SDL includes  *)
-%{
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <SDL2/SDL_rwops.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_net.h>
-%}
-staload SDL2_LOCAL = "./SDL2/SDL_local.sats"
+#include "./SDL2/SDL_local.sats"
 
 #ifndef MAX_PATH
 #define MAX_PATH 512

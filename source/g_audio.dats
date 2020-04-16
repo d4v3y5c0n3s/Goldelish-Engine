@@ -1,8 +1,10 @@
-(*p
+(*
 ###  g_audio.dats  ###
 
 
 *)
+
+#include "share/atspre_staload.hats"
 
 staload "./g_audio.sats"
 
@@ -85,8 +87,10 @@ implement audio_music_stop () = let
 in
 end
 
-fn audio_set_volume ( volume ) =
-  Mix_VolumeMusic(float_to_int(mul_int_float(MIX_MAX_VOLUME, volume)))
+implement audio_music_set_volume ( volume ) = let
+  val temp = Mix_VolumeMusic(float_to_int(mul_int_float(MIX_MAX_VOLUME, volume)))
+in
+end
 
 implement audio_music_get_volume () =
   int_to_float(Mix_VolumeMusic(~1) * MIX_MAX_VOLUME)
