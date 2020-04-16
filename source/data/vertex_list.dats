@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./data/vertex_list.sats"
 
 implement vertex_list_new (  ) =

@@ -5,6 +5,7 @@
 *)
 
 #include "share/atspre_staload.hats"
+
 staload "./data/dict.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 

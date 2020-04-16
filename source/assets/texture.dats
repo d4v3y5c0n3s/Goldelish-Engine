@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/texture.sats"
 
 staload "./data/spline.sats"

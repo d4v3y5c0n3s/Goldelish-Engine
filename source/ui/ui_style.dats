@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./ui/ui_style.sats"
 
 val ui_style_current: ui_style ptr = &ui_style_goldelish

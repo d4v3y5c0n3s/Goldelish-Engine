@@ -6,7 +6,6 @@ defines a sound
 
 #include "./../g_engine.sats"
 
-typedef Mix_Chunk = $extype"Mix_Chunk"
 typedef sound = @{ sample = Mix_Chunk }
 
 fun wav_load_file ( filename: string ) : (*sound*) ptr = "sta#%"

@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./ui/ui_broser.sats"
 staload "./ui/ui_style.sats"
 

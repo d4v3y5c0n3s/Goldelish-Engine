@@ -6,11 +6,11 @@ provides an interface to SDL
 
 #include <SDL2/SDL.h>
 
-#include "source/SDL2/SDL_mixer.cats"
-#include "source/SDL2/SDL_net.cats"
-#include "source/SDL2/SDL_opengl.cats"
-#include "source/SDL2/SDL_rwops.cats"
-#include "source/SDL2/SDL_thread.cats"
+#include "../SDL2/SDL_mixer.cats"
+#include "../SDL2/SDL_net.cats"
+#include "../SDL2/SDL_opengl.cats"
+#include "../SDL2/SDL_rwops.cats"
+#include "../SDL2/SDL_thread.cats"
 
 #ifdef MAX_PATH
        //do nothing

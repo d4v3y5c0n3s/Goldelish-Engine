@@ -8,28 +8,11 @@
 
 staload "./g_audio.sats"
 
+val audio_format = AUDIO_S16
 val audio_rate: int = 22050
-macdef audio_format = $extval(uint16, "AUDIO_S16")
 val audio_channels: int = 2
 val audio_buffers: int = 4096
 var volume: float = 1.0f
-
-extern fun SDL_InitSubSystem ( flags: uint32 ) : int = "mac#SDL_InitSubSystem"
-extern fun Mix_OpenAudio ( frequency: int, format: uint16, channels: int, chunksize: int ) : int = "mac#Mix_OpenAudio"
-extern fun Mix_QuerySpec (frequency: &int, format: &uint16, channels: &int ) : int = "mac#Mix_QuerySpec"
-extern fun Mix_CloseAudio () : void = "mac#Mix_CloseAudio"
-extern fun Mix_PlayChannel ( channel: int, chunk: &Mix_Chunk, loops: int ) : int = "mac#Mix_PlayChannel"
-extern fun Mix_Pause ( channel: int ) : void = "mac#Mix_Pause"
-extern fun Mix_Resume ( channel: int ) : void = "mac#Mix_Resume"
-extern fun Mix_HaltChannel ( channel: int ) : void = "mac#Mix_HaltChannel"
-extern fun Mix_FadeInMusic ( music: &Mix_Music, loops: int, ms: int ) : int = "mac#Mix_FadeInMusic"
-extern fun Mix_GetError(): string = "mac#Mix_GetError"
-extern fun Mix_PauseMusic(): void = "mac#Mix_PauseMusic"
-extern fun Mix_ResumeMusic(): void = "mac#Mix_ResumeMusic"
-extern fun Mix_FadeOutMusic( ms: int ): int = "mac#Mix_FadeOutMusic"
-extern fun Mix_VolumeMusic( volume: int ): int = "mac#Mix_VolumeMusic"
-
-macdef MIX_MAX_VOLUME = $extval(int, "MIX_MAX_VOLUME")
 
 extern castfn float_to_int( f:float ): int
 extern castfn int_to_float( i: int ): float
@@ -39,7 +22,7 @@ implement audio_init () = let
   var a_format = audio_format
   var a_channels = audio_channels
 in
-  if (SDL_InitSubSystem($extval(uint32, "SDL_INIT_AUDIO")) = ~1)
+  if (SDL_InitSubSystem(SDL_INIT_AUDIO) = ~1)
     then println!("Could not start audio!")
   else if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) = ~1)
     then println!("Unable to start audio mixer!")

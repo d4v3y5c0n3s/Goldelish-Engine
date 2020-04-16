@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/material.sats"
 
 implement material_entry_delete ( me ) =

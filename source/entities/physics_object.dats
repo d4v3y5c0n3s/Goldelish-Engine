@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./entities/physics_object.sats"
 
 staload "./assets/cmesh.sats"

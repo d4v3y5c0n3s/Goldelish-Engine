@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/land.sats"
 
 implement SDL_RWreadline ( file, buffer, buffersize ) =

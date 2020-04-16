@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/animation.sats"
 
 implement animation_new (  ) =

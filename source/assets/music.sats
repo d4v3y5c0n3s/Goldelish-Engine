@@ -6,7 +6,6 @@ defines music files
 
 #include "./../g_engine.sats"
 
-typedef Mix_Music = $extype"Mix_Music"
 typedef music = @{
 	handle=Mix_Music
 }

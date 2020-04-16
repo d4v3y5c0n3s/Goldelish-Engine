@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./entities/landscape.sats"
 
 staload "./assets/terrain.sats"

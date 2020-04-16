@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/cmesh.sats"
 
 staload "./data/vertex_list.sats"

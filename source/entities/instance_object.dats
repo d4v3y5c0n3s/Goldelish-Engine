@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./entities/instance_object.sats"
 
 staload "./g_net.sats"

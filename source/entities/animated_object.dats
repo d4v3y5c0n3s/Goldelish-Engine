@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./entities/animated_object.sats"
 
 staload "./assets/animation.sats"

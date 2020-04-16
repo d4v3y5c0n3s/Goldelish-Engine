@@ -3,3 +3,7 @@
 
 
 *)
+
+%{#
+#include "source/SDL2/SDL_rwops.cats"
+%}

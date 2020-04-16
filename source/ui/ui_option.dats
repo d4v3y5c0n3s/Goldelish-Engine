@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./ui/ui_option.sats"
 
 implement ui_option_new (  ) =

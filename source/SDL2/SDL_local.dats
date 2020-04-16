@@ -4,11 +4,10 @@
 the full function definitions for SDL & the initial values for the OpenGL extensions
 *)
 
+#include "share/atspre_staload.hats"
+
 //  include statements go here
 staload "SDL_local.sats"
-$%{
-#include "SDL_rwops.h"
-%}
 
 //  standard lib includes
 staload STDLIB = "libats/libc/SATS/stdlib.sats"//  stdlib.h

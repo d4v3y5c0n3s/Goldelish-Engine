@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/renderable.sats"
 
 staload "./data/vertex_hashtable.sats"

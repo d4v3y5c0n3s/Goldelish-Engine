@@ -4,6 +4,10 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
+staload "./music.sats"
+
 implement mp3_load_file ( filename ) =
 (
 )

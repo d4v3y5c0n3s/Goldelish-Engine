@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./entities/static_object.sats"
 
 implement static_object_new (  ) =

@@ -1,8 +1,12 @@
 (*
-###  spline.sats  ###
+###  spline.dats  ###
 
 
 *)
+
+#include "share/atspre_staload.hats"
+
+staload "./spline.sats"
 
 implement spline_new (  ) =
 {

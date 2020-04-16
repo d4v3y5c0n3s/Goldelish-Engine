@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./g_ui.sats"
 
 staload "./data/dict.sats"

@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./data/int_list.sats"
 
 implement int_list_new (  ) =

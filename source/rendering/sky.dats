@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./rendering/sky.sats"
 
 implement sky_new (  ) =

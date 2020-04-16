@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./ui/ui_dialog.sats"
 
 staload "./g_graphics.sats"

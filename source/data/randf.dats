@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./data/randf.sats"
 
 implement randf (  ) =

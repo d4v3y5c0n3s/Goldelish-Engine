@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./entities/light.sats"
 
 #define DEFAULT_LIGHT_NEAR_CLIP 0.1

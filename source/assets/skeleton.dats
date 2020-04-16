@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/skeleton.sats"
 
 implement frame_new (  ) =

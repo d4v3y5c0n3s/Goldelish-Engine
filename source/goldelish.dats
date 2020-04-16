@@ -2,6 +2,8 @@
 ###  goldelish.dats  ###
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./goldelish.sats"
 
 //  may not need all of these... reexamine later

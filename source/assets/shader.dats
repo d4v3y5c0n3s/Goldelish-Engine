@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./assets/shader.sats"
 staload "./assets/texture.sats"
 

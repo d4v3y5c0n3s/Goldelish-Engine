@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./data/vertex_hashtable.sats"
 
 implement vertex_hash ( ht, v ) =

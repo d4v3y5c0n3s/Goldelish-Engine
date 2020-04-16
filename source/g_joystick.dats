@@ -4,6 +4,8 @@
 
 *)
 
+#include "share/atspre_staload.hats"
+
 staload "./g_joystick.sats"
 
 #define MAX_STICKS 8
