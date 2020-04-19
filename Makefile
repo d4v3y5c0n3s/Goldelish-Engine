@@ -14,7 +14,7 @@ SOURCES_C += $(wildcard source/*.cats) $(wildcard source/*/*.cats)#  the ".cats"
 SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)#  the static files in the project
 SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)#  the dynamic files in the project
 
-#SOURCES_C_OBJ += $(addprefix obj/,$(notdir $(SOURCES_C:.cats=.o)))
+SOURCES_C_OBJ += $(addprefix obj/,$(notdir $(SOURCES_C:.cats=.o)))
 SOURCES_SATS_OBJ += $(addprefix obj/,$(notdir $(SOURCES_SATS:.sats=_sats.o)))
 SOURCES_DATS_OBJ += $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
 
@@ -41,8 +41,6 @@ endif
 
 INCLUDE += $(LDFLAGS0)
 
-include $(PATSHOME)/share/atsmake-post.mk
-
 display_sources:
 	@echo "SOURCES_C:"
 	@echo $(SOURCES_C)
@@ -53,21 +51,18 @@ display_sources:
 
 all:: $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(SOURCES_OBJ)
-	$(CC) $(SOURCES_OBJ) $(LDFLAGS0) -o $@ #PATSCCOMP
+	@echo "reached the dynamic block"
+	$(CC) $(SOURCES_OBJ) $(LDFLAGS0) -o $@
 $(STATIC): $(SOURCES_OBJ)
 	$(AR) rcs $@ $(SOURCES_OBJ)
 obj/%_sats.o: source/%.sats | obj
-	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
+	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
 obj/%_sats.o: source/*/%.sats | obj
-	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
+	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
 obj/%_dats.o: source/%.dats | obj
-	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
+	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
 obj/%_dats.o: source/*/%.dats | obj
-	$(PATSCC) -cleanaft --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
-#obj/%.o: source/%.cats | obj
-#	$(PATSCC) $(INCLUDE) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
-#obj/%.o: source/*/%.cats | obj
-#	$(PATSCC) $(INCLUDE) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
+	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
 obj:
 	mkdir obj
 
@@ -83,3 +78,5 @@ install_win32: $(STATIC)
 install_win64: $(STATIC) $(DYNAMIC)
 	cp $(STATIC) C:/MinGW64/x86_64-w64-mingw32/lib/$(STATIC)
 	cp $(DYNAMIC) C:/MinGW64/x86_64-w64-mingw32/bin/$(DYNAMIC)
+
+include $(PATSHOME)/share/atsmake-post.mk

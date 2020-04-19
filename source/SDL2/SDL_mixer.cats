@@ -5,6 +5,7 @@ the direct interface to SDL_mixer
 */
 
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_audio.h>
 
 #define gldlsh_sdl_bind_SDL_InitSubSystem SDL_InitSubSystem
 
