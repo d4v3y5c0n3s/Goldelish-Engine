@@ -9,13 +9,13 @@
 staload "./g_engine.sats"
 
 implement P ( path ) =
-if strlen (path) >= 256 then None() else Some( @{ path=path }: fpath )
+  if strlen (path) >= 256 then None()
+  else Some( @{ path=path }: fpath )
 
-implement fpath_full ( path ) = let
-	  var ret: fpath; SDL_PathFullName(ret.path, path.path)
-in
-	ret
-end
+implement fpath_full ( path_in ) = ret where {
+	  var ret: fpath
+          SDL_PathFullName(ret.path, path_in.path)
+}
 
 implement fpath_file ( path ) = let
 	  var ret: fpath; SDL_PathFileName(ret.path, path.path)

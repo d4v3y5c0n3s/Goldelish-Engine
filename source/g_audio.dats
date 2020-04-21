@@ -7,6 +7,7 @@
 #include "share/atspre_staload.hats"
 
 staload "./g_audio.sats"
+staload "./SDL2/SDL_local.sats"
 
 val audio_format = AUDIO_S16
 val audio_rate: int = 22050
