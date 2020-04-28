@@ -37,12 +37,10 @@ implement audio_finish () = begin
   Mix_CloseAudio()
 end
 
-macdef mix_error = Mix_GetError()
-
 implement audio_sound_play ( s, loops ) = let
   val chan = Mix_PlayChannel(~1, s.sample, loops);
 in
-  if (chan = ~1) then println!("unable to play sound: ", mix_error);
+  if (chan = ~1) then println!("unable to play sound: ", Mix_GetError());
   chan
 end
 
@@ -58,9 +56,10 @@ implement audio_sound_stop ( channel ) =
 val fade_time: int = 5000
 
 implement audio_music_play ( m ) = let
-  val chan = 1//Mix_FadeInMusic(m.handle, ~1, fade_time);
+  var music_p: Mix_Music = m.handle
+  val chan = Mix_FadeInMusic(music_p, ~1, fade_time);
 in
-  if (chan = ~1) then println!("unable to play music: ")//, Mix_GetError())
+  if (chan = ~1) then println!("unable to play music: ", Mix_GetError())
 end
 
 implement audio_music_pause () =
