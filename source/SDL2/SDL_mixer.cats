@@ -26,7 +26,7 @@ the direct interface to SDL_mixer
 
 #define gldlsh_sdl_bind_Mix_FadeInMusic Mix_FadeInMusic
 
-#define gldlsh_sdl_bind_Mix_GetError Mix_GetError
+#define gldlsh_sdl_bind_Mix_GetError() ((char*)(Mix_GetError()))
 
 #define gldlsh_sdl_bind_Mix_PauseMusic Mix_PauseMusic
 
