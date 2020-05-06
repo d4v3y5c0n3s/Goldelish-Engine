@@ -28,30 +28,32 @@ provides an interface to SDL
 #endif
 
 //  SDL functions
-#define gSDL_PrintStackTrace SDL_PrintStackTrace
+#define gldlsh_sdl_bind_SDL_PrintStackTrace SDL_PrintStackTrace
 
-#define gSDL_PathFullName SDL_PathFullName
-#define gSDL_PathFileName SDL_PathFileName
-#define gSDL_PathFileExtension SDL_PathFileExtension
-#define gSDL_PathFileLocation SDL_PathFileLocation
-#define gSDL_PathRelative SDL_PathRelative
-#define gSDL_PathForwardSlashes SDL_PathForwardSlashes
-#define gSDL_PathJoin SDL_PathJoin
-#define gSDL_PathIsFile SDL_PathIsFile
-#define gSDL_PathIsDirectory SDL_PathIsDirectory
-#define gSDL_PathParentDirectory SDL_PathParentDirectory
+#define gldlsh_sdl_bind_SDL_PathFullName SDL_PathFullName
+#define gldlsh_sdl_bind_SDL_PathFileName SDL_PathFileName
+#define gldlsh_sdl_bind_SDL_PathFileExtension SDL_PathFileExtension
+#define gldlsh_sdl_bind_SDL_PathFileLocation SDL_PathFileLocation
+#define gldlsh_sdl_bind_SDL_PathRelative SDL_PathRelative
+#define gldlsh_sdl_bind_SDL_PathForwardSlashes SDL_PathForwardSlashes
+#define gldlsh_sdl_bind_SDL_PathJoin SDL_PathJoin
+#define gldlsh_sdl_bind_SDL_PathIsFile SDL_PathIsFile
+#define gldlsh_sdl_bind_SDL_PathIsDirectory SDL_PathIsDirectory
+#define gldlsh_sdl_bind_SDL_PathParentDirectory SDL_PathParentDirectory
 
-#define gSDL_GetWorkingDir SDL_GetWorkingDir
-#define gSDL_SetWorkingDir SDL_SetWorkingDir
+#define gldlsh_sdl_bind_SDL_GetWorkingDir SDL_GetWorkingDir
+#define gldlsh_sdl_bind_SDL_SetWorkingDir SDL_SetWorkingDir
 
-#define gSDL_GL_FrameBufferErrorString SDL_GL_FrameBufferErrorString
-#define gSDL_GL_ErrorString SDL_GL_ErrorString
+#define gldlsh_sdl_bind_SDL_GL_FrameBufferErrorString SDL_GL_FrameBufferErrorString
+#define gldlsh_sdl_bind_SDL_GL_ErrorString SDL_GL_ErrorString
 
-#define gSDL_GL_PrintInfo SDL_GL_PrintInfo
-#define gSDL_GL_PrintExtensions SDL_GL_PrintExtensions
-#define gSDL_GL_LoadExtensions SDL_GL_LoadExtensions
-#define gSDL_GL_ExtensionPresent SDL_GL_ExtensionPresent
-#define gSDL_GL_ExtensionFunctionLoaded SDL_GL_ExtensionFunctionLoaded
+#define gldlsh_sdl_bind_SDL_GL_PrintInfo SDL_GL_PrintInfo
+#define gldlsh_sdl_bind_SDL_GL_PrintExtensions SDL_GL_PrintExtensions
+#define gldlsh_sdl_bind_SDL_GL_LoadExtensions SDL_GL_LoadExtensions
+#define gldlsh_sdl_bind_SDL_GL_ExtensionPresent SDL_GL_ExtensionPresent
+#define gldlsh_sdl_bind_SDL_GL_ExtensionFunctionLoaded SDL_GL_ExtensionFunctionLoaded
+
+#define gldlsh_sdl_bind_SDL_GetTicks SDL_GetTicks
 
 typedef GLuint ( APIENTRY * GLCREATESHADERFN )( GLuint type );
 typedef GLuint ( APIENTRY * GLCREATEPROGRAMFN )( void );

@@ -21,50 +21,20 @@ This file has code for general things & math operations in the engine.
 (*  ###  file system path  ###  *)
 typedef fpath = @{ path=string }
 
-fun P {s:int | s >= 0} ( path: string s ) : Option(fpath) = "sta#"
+fun P ( path: string ) : fpath = "sta#"
 
 fun fpath_full (path: fpath) : fpath = "sta#fpath_full"
 fun fpath_file (path: fpath) : fpath = "sta#fpath_file"
 fun fpath_file_location (path: fpath) : fpath = "sta#fpath_file_location"
 fun fpath_file_extension (path: fpath) : fpath = "sta#fpath_file_extension"
 
-(*  --  NOTICE: This may need to be rethought for ATS  --
-(*  ###  errors & debugging  ###  *)
-fun at_error(f: void -> void, c: string): void = "sta#at_error"
-fun at_warning(f: void -> void, c: string): void = "sta#at_warning"
-fun at_debug(f: void -> void, c: string): void = "sta#at_debug"
-
-fun error_(c: string): void = "sta#error_"
-fun warning_(c: string): void = "sta#warning_"
-fun debug_(c: string): void = "sta#debug_"
-
-fun error_buf(size: int): char = "sta#error_buf"//ERROR_BUFFER_SIZE
-fun error_str(): char = "sta#error_str"//ERROR_BUFFER_SIZE
-
-fun warning_buf(): char = "sta#warning_buf"//WARNING_BUFFER_SIZE
-fun warning_str(): char = "sta#warning_str"//WARNING_BUFFER_SIZE
-
-fun debug_buf(): char = "sta#debug_buf"//DEBUG_BUFFER_SIZE
-fun debug)str(): char = "sta#debug_str"//DEBUG_BUFFER_SIZE
-
-#define error()
-
-#define warning()
-
-#define debug()
-
-#define alloc_check()
-
+(*
 (*  #  OpenGL error checking  #  *)
 #ifdef RELEASE
 #define SDL_GL_CheckError()
 #else
 #define SDL_GL_CheckError() { GLenum __glerror = glGetError(); if (__glerror) { error("OpenGL Error: %s", SDL_GL_ErrorString(__glerror)); } }
 #endif
-
-(*  #  conditional hinting  #  *)
-#define likely(x)  __builtin_expect((x),1)
-#define unlikely(x)	__builtin_expect((x),0)
 *)
 
 (*  ###  timing  ###  *)
@@ -179,7 +149,7 @@ fun vec3_up () : vec3 = "sta#%"
 
 //  it seems that vec3 types are used for RGB colors as well as 3D coordinates
 fun vec3_red () : vec3 = "sta#%"
-fun vec3_greeen () : vec3 = "sta#%"
+fun vec3_green () : vec3 = "sta#%"
 fun vec3_blue () : vec3 = "sta#%"
 fun vec3_white () : vec3 = "sta#%"
 fun vec3_black () : vec3 = "sta#%"
@@ -200,7 +170,7 @@ fun vec3_floor ( v: vec3 ) : vec3 = "sta#%"
 fun vec3_fmod ( v: vec3, vl: float ) : vec3 = "sta#%"
 
 fun vec3_equ ( v1: vec3, v2: vec3 ) : bool = "sta#%"
-fun vec3_neg ( v1: vec3, v2: vec3 ) : bool = "sta#%"
+fun vec3_neq ( v1: vec3, v2: vec3 ) : bool = "sta#%"
 
 fun vec3_dot ( v1: vec3, v2: vec3 ) : float = "sta#%"
 fun vec3_length_sqrd ( v: vec3 ) : float = "sta#%"
@@ -229,7 +199,7 @@ fun vec3_smootherstep ( v1: vec3, v2: vec3, amount: float ) : vec3 = "sta#%"
 //  vec4 type
 typedef vec4 = @{ x=float, y=float, z=float, w=float }
 
-fun vec4_new ( x: float, y: float, z: float ) : vec4 = "sta#%"
+fun vec4_new ( x: float, y: float, z: float, w: float ) : vec4 = "sta#%"
 fun vec4_zero () : vec4 = "sta#%"
 fun vec4_one () : vec4 = "sta#%"
 
@@ -321,7 +291,7 @@ fun quat_log ( q: quat ) : vec3 = "sta#%"
 
 fun quat_slerp ( q1: quat, q2: quat, amount: float ) : quat = "sta#%"
 
-fun quat_constraint ( q: quat, axis: vec3 ) : quat = "sta#%"
+fun quat_constrain ( q: quat, axis: vec3 ) : quat = "sta#%"
 fun quat_constrain_y ( q: quat ) : quat = "sta#%"
 
 fun quat_distance ( q0: quat, q1: quat ) : float = "sta#%"
@@ -333,6 +303,7 @@ fun quat_dual_id () : quat_dual = "sta#%"
 fun quat_dual_new ( real: quat, dual: quat ) : quat_dual = "sta#%"
 fun quat_dual_transform ( q: quat, t: vec3 ) : quat_dual = "sta#%"
 fun quat_dual_mul ( q0: quat_dual, q1: quat_dual ) : quat_dual = "sta#%"
+fn quat_dual_normalize ( q: quat ) : quat_dual = "sta#%"
 fun quat_dual_mul_vec3 ( q: quat_dual, v: vec3 ) : vec3 = "sta#%"
 fun quat_dual_mul_vec3_rot ( q: quat_dual, v: vec3 ) : vec3 = "sta#%"
 
@@ -502,7 +473,7 @@ fun sphere_intersects_box ( s: sphere, b: box ) : bool = "sta#%"
 
 fun sphere_inside_frustum ( s: sphere, f: frustum ) : bool = "sta#%"
 fun sphere_outside_frustum ( s: sphere, f: frustum ) : bool = "sta#%"
-fun sphere_intersects_box ( s: sphere, b: box ) : bool = "sta#%"
+fun sphere_intersects_frustum ( s: sphere, b: box ) : bool = "sta#%"
 
 fun sphere_outside_sphere ( s1: sphere, s2: sphere ) : bool = "sta#%"
 fun sphere_inside_sphere ( s1: sphere, s2: sphere ) : bool = "sta#%"

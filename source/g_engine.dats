@@ -8,76 +8,52 @@
 
 staload "./g_engine.sats"
 
+val PATH_MAX = 256
+
 implement P ( path ) =
-  if strlen (path) >= 256 then None()
-  else Some( @{ path=path }: fpath )
+  if strlen (path) >= PATH_MAX
+    then ( println!("Path too long: ", path); @{path=""} : fpath)
+  else @{path=path} : fpath
 
 implement fpath_full ( path_in ) = ret where {
 	  var ret: fpath
-          SDL_PathFullName(ret.path, path_in.path)
+          var rpath = ret.path
+          val () = SDL_PathFullName(view@(rpath) | addr@(rpath), (path_in.path))
+          ret.path := rpath
 }
 
 implement fpath_file ( path ) = let
-	  var ret: fpath; SDL_PathFileName(ret.path, path.path)
+	  var ret = (@{path=""}:fpath)
+          var rpath = ret.path
+          val () = SDL_PathFileName(view@(rpath) | addr@(rpath), path.path)
+          ret.path := rpath
 in
 	ret
 end
 
-implement fpath_file_location ( path ) let
-	  var ret: fpath; SDL_PathFileLocation(ret.path, path.path)
+implement fpath_file_location ( path ) = let
+	  var ret = (@{path=""}:fpath)
+          var rpath = ret.path
+          val () = SDL_PathFileLocation(view@(rpath) | addr@(rpath), path.path)
+          ret.path := rpath
 in
 	ret
 end
 
 implement fpath_file_extension ( path ) = let
-	  var ret: fpath; SDL_PathFileExtension(ret.path, path.path)
+	  var ret = (@{path=""}:fpath)
+          var rpath = ret.path
+          val () = SDL_PathFileExtension(view@(rpath) | addr@(rpath), path.path)
+          ret.path := rpath
 in
 	ret
 end
 
-//  error functions
-fun error_func_t ( x: char ptr ) : void
-fun warn_func_t ( x: char ptr ) : void
-fun debug_func_t ( x: char ptr ) : void
-
-#define MAX_AT_FUNCS 32
-(*
-static error_func_t error_funcs[MAX_AT_FUNCS];
-static warn_func_t warn_funcs[MAX_AT_FUNCS];
-static debug_func_t debug_funcs[MAX_AT_FUNCS];
-*)
-
-var num_error_funcs: int = 0
-var num_warn_funcs: int = 0
-var num_debug_funcs: int = 0
-
-implement at_error ( func ) =
-(
-)
-
-implement at_warning ( func ) =
-(
-)
-
-implement at_debug ( func ) =
-(
-)
-
-implement error_ ( str ) =
-(
-)
-
-implement warning_ ( str ) =
-(
-)
-
-implement debug_ ( str ) =
-(
-)
-
 //  timing functions
-implement timer_start ( id, tag ) =
-	  debug("Timer %d '%s' Start: %f", id, tag, 0.0f); @{id=id, start=SDL_GetTicks(), end=0, split=SDL_GetTicks()}:timer
+implement timer_start ( id, tag ) = (
+	  println!("Timer ", id, tag, "Start: ", (0.0f))
+          @{id=id, start_time=SDL_GetTicks(), end_time=0, split=SDL_GetTicks()}:timer
+)
 
 implement timer_split ( t, tag ) =
 (
@@ -98,8 +74,8 @@ var frame_rate_string_var: char //[12]
 var frame_rate_var: int = 0
 var frame_time_var: double = 0
 
-var frame_start_time: unsigned long = 0.0
-var frame_end_time: unsigned long = 0.0
+var frame_start_time: ulint = 0.0
+var frame_end_time: ulint = 0.0
 
 val frame_update_rate = 0.5
 
@@ -412,11 +388,11 @@ implement vec3_mul ( v, fac ) =
 implement vec3_mul_vec3 ( v1, v2 ) =
 	  vec3_new(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z)
 
-implement vec3_pow ( v, exp ) =
-	  vec3_new($MATH.pow(v.x, exp), $MATH.pow(v.y, exp), $MATH.pow(v.z, exp))
+implement vec3_pow ( v, fac ) =
+	  vec3_new($MATH.pow(v.x, fac), $MATH.pow(v.y, fac), $MATH.pow(v.z, fac))
 
 implement vec3_neg ( v ) =
-	  vec3_new(~v.x, ~v.y, ~v.z)
+	  vec3_new((~v.x), (~v.y), (~v.z))
 
 implement vec3_abs ( v ) =
 	  vec3_new(abs(v.x), abs(v.y), abs(v.z))
@@ -569,8 +545,7 @@ implement vec4_mul_vec4 ( v1, v2 ) =
 implement vec4_pow ( v, exp ) =
 	  @{x=$MATH.pow(v.x, exp), y=$MATH.pow(v.y, exp), z=$MATH.pow(v.z, exp), w=$MATH.pow(v.w, exp)}:vec4
 
-implement vec4_neg ( v ) =
-	  @{x=~v.x, y=~v.y, z=~v.z, w=~v.w}:vec4
+implement vec4_neg ( v ) = @{x=(~v.x), y=(~v.y), z=(~v.z), w=(~v.w)}:vec4
 
 implement vec4_abs ( v ) =
 	  @{x=abs(v.x), y=abs(v.y), z=abs(v.z), w=abs(v.w)}:vec4
@@ -582,7 +557,7 @@ implement vec4_fmod ( v, vl ) =
 	  @{x=$MATH.fmod(v.x, vl), y=$MATH.fmod(v.y, vl), z=$MATH.fmod(v.z, vl), w=$MATH.fmod(v.w, vl)}:vec4
 
 implement vec4_sqrt ( v ) =
-	  @{x=$MATH.sqrt(v.x), y=$MATH.sqrt(v.y), z=$MATH.sqrt(v.z), $MATH.sqrt(v.w)}:vec4
+	  @{x=$MATH.sqrt(v.x), y=$MATH.sqrt(v.y), z=$MATH.sqrt(v.z), w=$MATH.sqrt(v.w)}:vec4
 
 implement vec4_print ( v ) = begin
 	  print("vec4 (");
@@ -632,7 +607,7 @@ implement vec4_from_string ( s ) =
 )
 
 implement vec4_max ( v1, v2 ) =
-	  @{x=max(v1.x, v2,x), y=max(v1.y, v2.y), z=max(v1.z, v2,z), w=max(v1.w, v2.w)}:vec4
+	  @{x=max(v1.x, v2.x), y=max(v1.y, v2.y), z=max(v1.z, v2.z), w=max(v1.w, v2.w)}:vec4
 
 implement vec4_min ( v1, v2 ) =
 	  @{x=min(v1.x, v2.x), y=min(v1.y, v2.y), z=min(v1.z, v2.z), w=min(v1.w, v2.w)}:vec4
@@ -688,13 +663,9 @@ implement quat_new ( x, y, z, w ) =
 	  @{x=x, y=y, z=z, w=w}:vec4
 
 implement quat_at ( q, i ) = let
-	  var values = arrszref(float);
-	  values[0] := q.x;
-	  values[1] := q.y;
-	  values[2] := q.z;
-	  values[3] := q.w;
+  var values = @[float](q.x, q.y, q.z, q.w)
 in
-	values[i]
+  values[i]
 end
 
 implement quat_real ( q ) = q.w
@@ -750,9 +721,9 @@ implement quat_to_euler ( q ) = let
 	  val sqrw = q.w * q.w
 in
 	vec3_new(
-	$MATH.asin(-2.0f * (q.x * q.z - q.y * q.w))
-	$MATH.atan2(-2.0f * (q.y * q.z + q.x * q.w), (~sqrx - sqry + sqrz + sqrw))
-	$MATH.atan2(-2.0f * (q.x * q.y + q.z * q.w), (sqrx - sqry - sqrz + sqrw))
+	$MATH.asin(~2.0f * (q.x * q.z - q.y * q.w)),
+	$MATH.atan2(~2.0f * (q.y * q.z + q.x * q.w), ((~sqrx) - sqry + sqrz + sqrw)),
+	$MATH.atan2(~2.0f * (q.x * q.y + q.z * q.w), (sqrx - sqry - sqrz + sqrw))
 	)
 end
 
@@ -778,7 +749,7 @@ implement quat_inverse ( q ) = let
 	  val scale = quat_length(q)
 	  val result = quat_unit_inverse(q)
 in
-	if ( scale > FLT_EPSILON ) then
+	if ( scale > $FLOAT.FLT_EPSILON ) then
 	   @{
 	   x=result.x / scale,
 	   y=result.y / scale,
@@ -798,7 +769,7 @@ implement quat_length ( q ) =
 implement quat_normalize ( q ) = let
 	  val scale = quat_length(q)
 in
-	if (scale > FLT_EPSILON)
+	if (scale > $FLOAT.FLT_EPSILON)
 	   then quat_new(q.x/scale, q.y/scale, q.z/scale, q.w/scale)
 	else
 		quat_new(0.f,0.f,0.f,0.f)
@@ -831,7 +802,7 @@ implement quat_dot ( q1, q2 ) =
 
 implement quat_exp ( w ) = let
 	  val theta = $MATH.sqrt(vec3_dot(w, w))
-	  val len = if (theta < FLT_EPSILON) then 1.f else $MATH.sin(theta)/theta
+	  val len = if (theta < $FLOAT.FLT_EPSILON) then 1.f else $MATH.sin(theta)/theta
 	  val v = vec3_mul(w, len)
 in
 	quat_new(v.x, v.y, v.z, $MATH.cos(theta))
@@ -839,24 +810,24 @@ end
 
 implement quat_log ( q ) = let
 	  val len0 = vec3_length(quat_imaginaries(q))
-	  val angle = atan2(len, q.w)
-	  val len = if (len0 > FLT_EPSILON) then (angle/len) else 1.f
+	  val angle = $MATH.atan2(len0, q.w)
+	  val len = if (len0 > $FLOAT.FLT_EPSILON) then (angle/len0) else 1.f
 in
 	vec3_mul(quat_imaginaries(q), len)
 end
 
-implement quat_get_value ( t, axis ) =
+fn quat_get_value ( t: float, axis: vec3 ) : quat =
 	  quat_exp( vec3_mul(axis, t / 2.0f) )
 
 implement quat_constrain ( q, axis ) = let
-	  val orient = quat_net(0.f, 0.f, 0.f, 1.f)
+	  val orient = quat_new(0.f, 0.f, 0.f, 1.f)
 	  val vs = quat_imaginaries(q)
 	  val v0 = quat_imaginaries(orient)
 	  val a = q.w * orient.w + vec3_dot(vs, v0)
 	  val b = orient.w * vec3_dot(axis, vs) - q.w * vec3_dot(axis, v0) + vec3_dot(vs, vec3_mul_vec3(axis, v0))
 	  val alpha = $MATH.atan2(a, b)
-	  val t1 = ~2 * alpha + M_PI
-	  val t2 = ~2 * alpha - M_PI
+	  val t1 = ~2 * alpha + $MATH.M_PI
+	  val t2 = ~2 * alpha - $MATH.M_PI
 in
 	if (quat_dot(q, quat_get_value(t1, axis)) > quat_dot(q, quat_get_value(t2, axis)))
 	   then quat_get_value(t1, axis)
@@ -869,11 +840,11 @@ implement quat_constrain_y ( q ) =
 implement quat_distance ( q0, q1 ) = let
 	  val comb = quat_mul_quat(quat_inverse(q0), q1)
 in
-	sin(vec3_length(quat_log(comb)))
+	$MATH.sin(vec3_length(quat_log(comb)))
 end
 
 implement quat_neg ( q ) =
-	  @{x=~q.x, y=~q.y, z=~q.z, w=~q.w}:quat
+	  @{x=(~q.x), y=(~q.y), z=(~q.z), w=(~q.w)}:quat
 
 implement quat_scale ( q, f ) =
 	  @{x=q.x * f, y=q.y * f, z=q.z * f, w=q.w * f}:quat
@@ -882,7 +853,7 @@ implement quat_interpolate ( qs, ws, count ) = let
 	  val ref = quat_id()
 	  val ref_inv = quat_inverse(ref)
 	  val acc = vec3_zero()
-	  fun loop (i:int, acc1: vec3) .<i>. : vec3 = let
+	  fun loop (i:int, acc1: vec3) : vec3 = let
 	      val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[i]))
 	      val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[i])))
 	  in
@@ -961,24 +932,24 @@ implement mat2_new ( xx, xy, yx, yy ) =
 
 implement mat2_mul_mat2 ( m1, m2 ) =
 	  mat2_new(
-	  xx=m1.xx * m2.xx + m1.xy * m2.yx,
-	  xy=m1.xx * m2.xy + m1.xy * m2.yy,
-	  yx=m1.yx * m2.xx + m1.yy * m2.yx,
-	  yy=m1.yx * m2.xy + m1.yy * m2.yy
+	  (m1.xx * m2.xx + m1.xy * m2.yx),
+	  (m1.xx * m2.xy + m1.xy * m2.yy),
+	  (m1.yx * m2.xx + m1.yy * m2.yx),
+	  (m1.yx * m2.xy + m1.yy * m2.yy)
 	  )
 
 implement mat2_mul_vec2 ( m, v ) =
 	  vec2_new(
-	  x=v.x * m.xx + v.y * m.xy,
-	  y=v.x * m.yx + v.y * m.yy
+	  (v.x * m.xx + v.y * m.xy),
+	  (v.x * m.yx + v.y * m.yy)
 	  )
 
 implement mat2_transpose ( m ) =
 	  mat2_new(
-	  xx=m.xx,
-	  xy=m.yx,
-	  yx=m.xy,
-	  yy=m.yy.xs
+	  (m.xx),
+	  (m.yx),
+	  (m.xy),
+	  (m.yy)
 	  )
 
 implement mat2_det ( m ) =
@@ -989,10 +960,10 @@ implement mat2_inverse ( m ) = let
 	  val fac = 1.0f/det
 in
 	mat2_new(
-	xx=fac * m.yy,
-	xy=fac * ~m.xy,
-	yx=fac * ~m.yx,
-	yy=fac * m.xx
+	(fac * m.yy),
+	(fac * ~m.xy),
+	(fac * ~m.yx),
+	(fac * m.xx)
 	)
 end
 
@@ -1006,10 +977,10 @@ implement mat2_print ( m ) =
 
 implement mat2_rotation ( a ) =
 	  mat2_new(
-	  xx=$MATH.cos(a),
-	  xy=~$MATH.sin(a),
-	  yx=$MATH.sin(a),
-	  yy=$MATH.cos(a)
+	  ($MATH.cos(a)),
+	  (~$MATH.sin(a)),
+	  ($MATH.sin(a)),
+	  ($MATH.cos(a))
 	  )
 
 //  matrix 3 by 3
@@ -1099,7 +1070,7 @@ implement mat3_inverse ( m ) = let
 	  val fac = 1.0f / det
 in
 	@{
-	xx= fac * mat2_det(mat2_new(m,yy, m,yz, m.zy, m.zz)),
+	xx= fac * mat2_det(mat2_new(m.yy, m.yz, m.zy, m.zz)),
 	xy= fac * mat2_det(mat2_new(m.xz, m.xy, m.zz, m.zy)),
 	xz= fac * mat2_det(mat2_new(m.xy, m.xz, m.yy, m.yz)),
 	yx= fac * mat2_det(mat2_new(m.yz, m.yx, m.zz, m.zx)),
@@ -1126,7 +1097,7 @@ implement mat3_rotation_x ( a ) =
 	  xz=0.0f,
 	  yx=0.0f,
 	  yy=$MATH.cos(a),
-	  yz=~$MATH.sin(a),
+	  yz=(~$MATH.sin(a)),
 	  zx=0.0f,
 	  zy=$MATH.sin(a),
 	  zz=$MATH.cos(a)
@@ -1153,7 +1124,7 @@ implement mat3_rotation_y ( a ) =
 	  yx=0.0f,
 	  yy=1.0f,
 	  yz=0.0f,
-	  zx=~$MATH.sin(a),
+	  zx=(~$MATH.sin(a)),
 	  zy=0.0f,
 	  zz=$MATH.cos(a)
 	  }:mat3
@@ -1161,7 +1132,7 @@ implement mat3_rotation_y ( a ) =
 implement mat3_rotation_z ( a ) =
 	  @{
 	  xx=$MATH.cos(a),
-	  xy=~$MATH.sin(a),
+	  xy=(~$MATH.sin(a)),
 	  xz=0.0f,
 	  yx=$MATH.sin(a),
 	  yy=$MATH.cos(a),
@@ -1230,27 +1201,55 @@ implement mat4_id (  ) =
 	  ww=1.0f
 	  }:mat4
 
-implement mat4_at ( m, x, y ) =
-(
-)
+implement mat4_at ( m, x, y ) = let
+  var values = @[float](m.xx, m.xy, m.xz, m.xw, m.yx, m.yy, m.yz, m.yw, m.zx, m.zy, m.zz, m.zw, m.wx, m.wy, m.wz, m.ww)
+in
+  values[x + (y*4)]
+end
 
-implement mat4_set ( m, x, y, v ) =
-(
-)
+implement mat4_set ( m, x, y, v ) = let
+  var values = @[float](m.xx, m.xy, m.xz, m.xw, m.yx, m.yy, m.yz, m.yw, m.zx, m.zy, m.zz, m.zw, m.wx, m.wy, m.wz, m.ww)
+in
+  values[x + (y*4)] := v;
+  m
+end
 
 implement mat4_new
 (
-xx, xy, xz, xw,
-yx, yy, yz, yw,
-zx, zy, zz, zw,
-wx, wy, wz, ww
-) =
-(
-)
+  xx, xy, xz, xw,
+  yx, yy, yz, yw,
+  zx, zy, zz, zw,
+  wx, wy, wz, ww
+) = let
+  var mat = @{
+  xx=xx, xy=xy, xz=xz, xw=xw,
+  yx=yx, yy=yy, yz=yz, yw=yw,
+  zx=zx, zy=zy, zz=zz, zw=zw,
+  wx=wx, wy=wy, wz=wz, ww=ww
+  }:mat4
+in
+  mat
+end
 
 implement mat4_transpose ( m ) =
-(
-)
+  mat4_new(
+  m.xx,
+  m.xy,
+  m.xz,
+  m.xw,
+  m.yx,
+  m.yy,
+  m.yz,
+  m.yw,
+  m.zx,
+  m.zy,
+  m.zz,
+  m.zw,
+  m.wx,
+  m.wy,
+  m.wz,
+  m.ww
+  )
 
 implement mat3_to_mat4 ( m ) =
 (
@@ -1344,7 +1343,7 @@ implement mat4_rotation_quat ( q ) =
 (
 )
 
-implement mat4_roatation_quat_dual ( q ) =
+implement mat4_rotation_quat_dual ( q ) =
 (
 )
 
@@ -1481,7 +1480,7 @@ implement frustum_new_camera ( view, proj ) =
 (
 )
 
-implement frustum_slice ( f, start, end ) =
+implement frustum_slice ( f, f_start, f_end ) =
 (
 )
 
@@ -1597,15 +1596,15 @@ implement point_intersects_sphere ( s, point ) =
 (
 )
 
-implement line_inside_sphere ( s, start, end ) =
+implement line_inside_sphere ( s, l_start, l_end ) =
 (
 )
 
-implement line_outside_sphere ( s, start, end ) =
+implement line_outside_sphere ( s, l_start, l_end ) =
 (
 )
 
-implement line_intersects_sphere ( s, start, end ) =
+implement line_intersects_sphere ( s, l_start, l_end ) =
 (
 )
 
@@ -1637,9 +1636,19 @@ implement sphere_swept_intersects_plane ( s, v, p ) =
 (
 )
 
-implement quadratic ( a, b, c, t0, t1 ) =
-(
-)
+fn quadratic {l1,l2:addr} ( pf1: !float @ l1, pf2: !float @ l2 | a: float, b: float, c: float, t0: ptr l1, t1: ptr l2 ) : bool = let
+  val descrim = b*b - 4.f*a*c
+in
+  if descrim < 0 then false
+  else let
+    val d = $MATH.sqrt(descrim)
+    val q = if (b < 0) then ((~b - d) / 2.f) else ((~b + d) / 2.f)
+  in
+    !t0 := q / a;
+    !t1 := c / q;
+    true
+  end
+end
 
 implement point_swept_inside_sphere ( s, v, point ) =
 (
@@ -1693,7 +1702,7 @@ implement ellipsoid_inv_space ( e ) =
 (
 )
 
-implement capsule_new ( start, end, radius ) =
+implement capsule_new ( c_start, c_end, radius ) =
 (
 )
 

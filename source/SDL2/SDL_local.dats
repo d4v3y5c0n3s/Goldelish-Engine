@@ -29,11 +29,11 @@ staload _(*UNISTD*) = "libats/libc/DATS/unistd.dats"
 #endif
 
 #ifdef _WIN32
-implement SDL_PathFullName ( dst, path ) =
+implement SDL_PathFullName ( dstpf | dst, path ) =
 	  GetFullPathName ( path, MAX_PATH, dst, () )
 #elif defined(__unix__) ||  defined(__APPLE__)
-implement SDL_PathFullName ( dst, path ) =
-	  val ret: char ptr = realpath ( path, dst )
+implement SDL_PathFullName ( dstpf | dst, path ) =
+	  val ret: string = realpath ( path, dst )
 #endif
 
 $%{
