@@ -54,6 +54,7 @@ provides an interface to SDL
 #define gldlsh_sdl_bind_SDL_GL_ExtensionFunctionLoaded SDL_GL_ExtensionFunctionLoaded
 
 #define gldlsh_sdl_bind_SDL_GetTicks SDL_GetTicks
+#define gldlsh_sdl_bind_SDL_Delay SDL_Delay
 
 typedef GLuint ( APIENTRY * GLCREATESHADERFN )( GLuint type );
 typedef GLuint ( APIENTRY * GLCREATEPROGRAMFN )( void );

@@ -55,19 +55,42 @@ implement timer_start ( id, tag ) = (
           @{id=id, start_time=SDL_GetTicks(), end_time=0, split=SDL_GetTicks()}:timer
 )
 
-implement timer_split ( t, tag ) =
-(
-)
+implement timer_split ( t, tag ) = let
+  val curr = SDL_GetTicks()
+  val difference = (curr - t.split) / 1000.0
+in
+  println!("Timer ", t.id, tag, "Split: ", difference);
+  t.split := curr;
+  t
+end
 
-implement timer_stop ( t, tag ) =
-(
-)
+implement timer_stop ( t, tag ) = let
+  val curr = SDL_GetTicks()
+  val difference = (curr - t.split) / 1000.0
+in
+  println!("Timer ", t.id, tag, "End: ", difference);
+  t.end_time := SDL_GetTicks();
+  t
+end
 
 var timestamp_counter: int = 0
 
-implement timestamp ( out ) =
-(
-)
+implement timestamp ( out_pf | out ) = let
+  var ltime: $TIME.time_t
+  var time_value: $TIME.tm_struct
+in
+  ltime := $TIME.time(the_null_ptr);
+  time_value := $TIME.localtime(ltime);
+  println!(out_pf | out,
+  time_value.tm_mday,
+  time_value.tm_mon,
+  time_value.tm_year,
+  time_value.tm_hour,
+  time_value.tm_min,
+  time_value.tm_sec,
+  timestamp_counter);
+  timestamp_counter := timestamp_counter + 1
+end
 
 var frame_rate_string_var: char //[12]
 
@@ -82,46 +105,37 @@ val frame_update_rate = 0.5
 var frame_counter: int = 0
 var frame_acc_time: double = 0.0
 
-implement frame_begin () =
-(
-)
+implement frame_begin () = begin
+  frame_start_time := SDL_GetTicks()
+end
 
-implement frame_end () =
-(
-)
+implement frame_end () = begin
+  frame_end_time := SDL_GetTicks();
+  frame_time_var := (frame_end_time - frame_start_time) / 1000.0;
+  frame_acc_time := frame_acc_time + frame_time_var;
+  frame_counter := frame_counter + 1;
+  if (frame_acc_time > frame_update_rate) then begin
+    frame_rate_var := $MATH.round(frame_counter / frame_acc_time);
+    frame_counter := 0;
+    frame_acc_time := 0.0;
+  end else ()
+end
 
-implement frame_end_at_rate ( fps ) =
-(
-)
+implement frame_end_at_rate ( fps ) = let
+  val end_ticks = SDL_GetTicks()
+  val active_frame_time = (end_ticks - frame_start_time) / 1000.0
+  val wait = (1.0 / fps) - active_frame_time
+  val milliseconds = max(wait, 0) * 1000
+in
+  SDL_Delay(milliseconds);
+  frame_end()
+end
 
-implement frame_rate () =
-(
-)
+implement frame_rate () = frame_rate_var
 
-implement frame_time () =
-(
-)
+implement frame_time () = frame_time_var
 
-implement frame_rate_string () =
-(
-)
-
-//  type functions
-#define MAX_TYPE_LEN 512
-#define MAX_NUM_TYPES 1024
-
-typedef type_string = char//  [MAX_TYPE_LEN]
-typedef type_size = size_t
-
-var type_index: int = 0
-
-implement type_find ( type, size ) =
-(
-)
-
-implement type_id_name ( id ) =
-(
-)
+implement frame_rate_string () = frame_rate_string_var
 
 //  vector math
 fn rawcast {} ( x: float ): int = g0float2int(x)
@@ -271,9 +285,14 @@ implement vec2_normalize ( v ) =
 implement vec2_reflect ( v1, v2 ) =
 	  vec2_sub(v1, vec2_mul(v2, 2 * vec2_dot(v1, v2)))
 
-implement vec2_from_string ( s ) =
-(
-)
+implement vec2_from_string ( s ) = let
+  var pEnd: string
+  val d1 = $STDLIB.strtod(s, pEnd)
+  val d2 = $STDLIB.strtod(pEnd, the_null_ptr)
+  val v = vec2_new(d1, d2)
+in
+  v
+end
 
 implement vec2_equ ( v1, v2 ) =
 	  if (not(v1.x = v2.x)) then false
@@ -282,6 +301,8 @@ implement vec2_equ ( v1, v2 ) =
 
 implement vec2_to_array ( v, out ) =
 (
+  out[0] := v.x;
+  out[1] := v.y
 )
 
 implement vec2_hash ( v ) = abs(rawcast(v.x) || rawcast(v.y))
@@ -449,9 +470,15 @@ implement vec3_reflect ( v1, v2 ) =
 implement vec3_project ( v1, v2 ) =
 	  vec3_sub(v1, vec3_mul(v2, vec3_dot(v1, v2)))
 
-implement vec3_from_string ( s ) =
-(
-)
+implement vec3_from_string ( s ) = let
+  var pEnd: string
+  val d1 = $STDLIB.strtod(s, pEnd)
+  val d2 = $STDLIB.strtod(pEnd, pEnd)
+  val d3 = $STDLIB.strtod(pEnd, the_null_ptr)
+  val v = vec3_new(d1, d2, d3)
+in
+  v
+end
 
 implement vec3_equ ( v1, v2 ) =
 	  if (not(v1.x = v2.x)) then false
@@ -465,9 +492,11 @@ implement vec3_neq ( v1, v2 ) =
 	  else if (not(v1.z = v2.z)) then true
 	  else false
 
-implement vec3_to_array ( v, out ) =
-(
-)
+implement vec3_to_array ( v, out ) = begin
+  out[0] := v.x;
+  out[1] := v.y;
+  out[2] := v.z
+end
 
 implement vec3_hash ( v ) =
 	  abs( rawcast(v.x) || rawcast(v.y) || rawcast(v.z) )
@@ -602,9 +631,16 @@ end
 implement vec4_reflect ( v1, v2 ) =
 	  vec4_sub(v1, vec4_mul(v2, 2 * vec4_dot(v1, v2)))
 
-implement vec4_from_string ( s ) =
-(
-)
+implement vec4_from_string ( s ) = let
+  var pEnd: string
+  val d1 = $STDLIB.strtod(s, pEnd)
+  val d2 = $STDLIB.strtod(pEnd, pEnd)
+  val d3 = $STDLIB.strtod(pEnd, pEnd)
+  val d4 = $STDLIB.strtod(pEnd, the_null_ptr)
+  val v = vec4_new(d1, d2, d3, d4)
+in
+  v
+end
 
 implement vec4_max ( v1, v2 ) =
 	  @{x=max(v1.x, v2.x), y=max(v1.y, v2.y), z=max(v1.z, v2.z), w=max(v1.w, v2.w)}:vec4
@@ -619,9 +655,12 @@ implement vec4_equ ( v1, v2 ) =
 	  else if (not(v1.w = v2.w)) then false
 	  else true
 
-implement vec4_to_array ( v, out ) =
-(
-)
+implement vec4_to_array ( v, out ) = begin
+  out[0] := v.x;
+  out[1] := v.y;
+  out[2] := v.z;
+  out[3] := v.w
+end
 
 implement vec4_from_homogeneous ( v ) =
 	  vec3_div(vec3_new(v.x, v.y, v.z), v.w)
@@ -710,9 +749,21 @@ implement quat_rotation_y ( angle ) =
 implement quat_rotation_z ( angle ) =
 	  quat_angle_axis(angle, vec3_new(0.f,0.f,1.f))
 
-implement quat_to_angle_axis ( q, axis, angle ) =
-(
-)
+implement quat_to_angle_axis ( pf_ax, pf_an | q, axis, angle ) = let
+  val () = !angle := 2.f * $MATH.acos(q.w)
+  val divisor = $MATH.sin(!angle / 2.f)
+in
+  if ( abs(divisor) < $FLOAT.FLT_EPSILON ) then (
+    !axis.x := 0.f;
+    !axis.y := 1.f;
+    !axis.z := 0.f
+  ) else (
+    !axis.x := q.x / divisor;
+    !axis.y := q.y / divisor;
+    !axis.z := q.z / divisor;
+    !axis := vec3_normalize(!axis)
+  )
+end
 
 implement quat_to_euler ( q ) = let
 	  val sqrx = q.x * q.x
@@ -967,13 +1018,16 @@ in
 	)
 end
 
-implement mat2_to_array ( m, out ) =
-(
-)
+implement mat2_to_array ( m, out ) = begin
+  out[0] := m.xx;
+  out[1] := m.xy;
+  out[2] := m.yx;
+  out[3] := m.yy
+end
 
 implement mat2_print ( m ) =
-(
-)
+  println!("|", m.xx, " ", m.xy, "|\n",
+  "|", m.yx, " ", m.yy, "|")
 
 implement mat2_rotation ( a ) =
 	  mat2_new(
@@ -1082,13 +1136,23 @@ in
 	}:mat3
 end
 
-implement mat3_to_array ( m, out ) =
-(
-)
+implement mat3_to_array ( m, out ) = begin
+  out[0] := m.xx;
+  out[1] := m.yx;
+  out[2] := m.zx;
+  out[3] := m.xy;
+  out[3] := m.yy;
+  out[3] := m.zy;
+  out[3] := m.xz;
+  out[3] := m.yz;
+  out[3] := m.zz
+end
 
-implement mat3_print ( m ) =
-(
-)
+implement mat3_print ( m ) = begin
+  println!("|", m.xx, " ", m.xy, " ", m.xz, "|\n");
+  println!("|", m.yx, " ", m.yy, " ", m.yz, "|\n");
+  println!("|", m.zx, " ", m.zy, " ", m.zz, "|\n")
+end
 
 implement mat3_rotation_x ( a ) =
 	  @{
@@ -1252,8 +1316,24 @@ implement mat4_transpose ( m ) =
   )
 
 implement mat3_to_mat4 ( m ) =
-(
-)
+  mat4_new(
+    m.xx,
+    m.xy,
+    m.xz,
+    0.f,
+    m.yx,
+    m.yy,
+    m.yz,
+    0.f,
+    m.zx,
+    m.zy,
+    m.zz,
+    0.f,
+    0.f,
+    0.f,
+    0.f,
+    1.f
+  )
 
 implement mat4_mul_mat4 ( m1, m2 ) =
 (

@@ -44,11 +44,11 @@ timer = @{ id=int,
       end_time=ulint,
       split=ulint }
 
-fun timer_start {i:int | i > 0}{s:int | s > 0} (id: int i, tag: string s) : timer = "sta#"
-fun timer_split {s:int | s > 0} (t: timer, tag: string s) : timer = "sta#timer_split"
-fun timer_stop {s:int | s > 0} (t: timer, tag: string s) : timer = "sta#timer_stop"
+fun timer_start (id: int, tag: string) : timer = "sta#"
+fun timer_split (t: timer, tag: string) : timer = "sta#timer_split"
+fun timer_stop (t: timer, tag: string) : timer = "sta#timer_stop"
 
-fun timestamp {s:int | s > 0} (out: string s) : void = "sta#timestamp"
+fun timestamp {l:agz} (out_pf: string @ l | out: ptr l) : void = "sta#timestamp"
 
 (*  ###  framerate  ###  *)
 fun frame_begin () : void = "sta#frame_begin"
@@ -129,7 +129,7 @@ fn vec2_reflect {} ( v1: vec2, v2: vec2 ) : vec2 = "sta#%"
 fn vec2_from_string {} ( s: string ) : vec2 = "sta#%"
 fn vec2_print {} ( v: vec2 ) : void = "sta#%"
 
-fn vec2_to_array {} ( v: vec2, out: ptr ) : void = "sta#%"
+fn vec2_to_array ( v: vec2, out: (@[float][2]) ) : void = "sta#%"
 
 fn vec2_hash {} ( v: vec2 ) : int = "sta#%"
 fn vec2_mix_hash {} ( v: vec2 ) : int = "sta#%"
@@ -187,7 +187,7 @@ fun vec3_project ( v1: vec3, v2: vec3 ) : vec3 = "sta#%"
 fun vec3_from_string ( s: string ) : vec3 = "sta#%"
 fun vec3_print ( v: vec3 ) : void = "sta#%"
 
-fun vec3_to_array ( v: vec3, out: ptr ) : void = "sta#%"
+fun vec3_to_array ( v: vec3, out: (@[float][3]) ) : void = "sta#%"
 
 fun vec3_hash ( v: vec3 ) : int = "sta#%"
 
@@ -241,7 +241,7 @@ fun vec4_reflect ( v1: vec4, v2: vec4 ) : vec4 = "sta#%"
 fun vec4_from_string ( s: string ) : vec4 = "sta#%"
 fun vec4_print ( v: vec4 ) : void = "sta#%"
 
-fun vec4_to_array ( v: vec4, out: ptr ) : void = "sta#%"
+fun vec4_to_array ( v: vec4, out: (@[float][4]) ) : void = "sta#%"
 
 fun vec3_to_homogeneous ( v: vec3 ) : vec4 = "sta#%"
 fun vec4_from_homogeneous ( v: vec4 ) : vec3 = "sta#%"
@@ -268,11 +268,11 @@ fun quat_rotation_x ( angle: float ) : quat = "sta#%"
 fun quat_rotation_y ( angle: float ) : quat = "sta#%"
 fun quat_rotation_z ( angle: float ) : quat = "sta#%"
 
-fun quat_at {} ( q: quat, i: int ) : float = "sta#%"
+fun quat_at ( q: quat, i: int ) : float = "sta#%"
 fun quat_real ( q: quat ) : float = "sta#%"
 fun quat_imaginaries ( q: quat ) : vec3 = "sta#%"
 
-fun quat_to_angle_axis ( q: quat, axis: ptr, angle: ptr ) : void = "sta#%"
+fun quat_to_angle_axis {l1,l2:addr} ( pf_ax: !vec3 @ l1, pf_an: !float @ l2 | q: quat, axis: ptr l1, angle: ptr l2 ) : void = "sta#%"
 fun quat_to_euler ( q: quat ) : vec3 = "sta#%"
 
 fun quat_neg ( q: quat ) : quat = "sta#%"
@@ -321,7 +321,7 @@ fun mat2_transpose ( m: mat2 ) : mat2 = "sta#%"
 fun mat2_det ( m: mat2 ) : float = "sta#%"
 fun mat2_inverse ( m: mat2 ) : mat2 = "sta#%"
 
-fun mat2_to_array ( m: mat2, out: ptr ) : void = "sta#%"
+fun mat2_to_array ( m: mat2, out: (@[float][4]) ) : void = "sta#%"
 fun mat2_print ( m: mat2 ) : void = "sta#%"
 fun mat2_rotation ( a: float ) : mat2 = "sta#%"
 
@@ -338,7 +338,7 @@ fun mat3_transpose ( m: mat3 ) : mat3 = "sta#%"
 fun mat3_det ( m: mat3 ) : float = "sta#%"
 fun mat3_inverse ( m: mat3 ) : mat3 = "sta#%"
 
-fun mat3_to_array ( m: mat3, out: ptr ) : void = "sta#%"
+fun mat3_to_array ( m: mat3, out: (@[float][9]) ) : void = "sta#%"
 fun mat3_print ( m: mat3 ) : mat3 = "sta#%"
 
 fun mat3_scale ( s: vec3 ) : mat3 = "sta#%"

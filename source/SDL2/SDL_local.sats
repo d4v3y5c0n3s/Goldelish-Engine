@@ -44,3 +44,4 @@ fun SDL_GL_ExtensionPresent ( name: string ) : bool = "sta#%"
 fun SDL_GL_ExtensionFunctionLoaded ( function: ptr ) : bool = "sta#%"
 
 fn SDL_GetTicks() : ulint = "#mac%"
+fn SDL_Delay( ms:uint32 ) : void = "#mac%"
