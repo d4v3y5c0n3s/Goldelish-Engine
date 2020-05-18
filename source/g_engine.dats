@@ -1141,11 +1141,11 @@ implement mat3_to_array ( m, out ) = begin
   out[1] := m.yx;
   out[2] := m.zx;
   out[3] := m.xy;
-  out[3] := m.yy;
-  out[3] := m.zy;
-  out[3] := m.xz;
-  out[3] := m.yz;
-  out[3] := m.zz
+  out[4] := m.yy;
+  out[5] := m.zy;
+  out[6] := m.xz;
+  out[7] := m.yz;
+  out[8] := m.zz
 end
 
 implement mat3_print ( m ) = begin
@@ -1336,217 +1336,582 @@ implement mat3_to_mat4 ( m ) =
   )
 
 implement mat4_mul_mat4 ( m1, m2 ) =
-(
-)
+  mat4_new(
+    (m1.xx * m2.xx) + (m1.xy * m2.yx) + (m1.xz * m2.zx) + (m1.xw * m2.wx),
+    (m1.xx * m2.xy) + (m1.xy * m2.yy) + (m1.xz * m2.zy) + (m1.xw * m2.wy),
+    (m1.xx * m2.xz) + (m1.xy * m2.yz) + (m1.xz * m2.zz) + (m1.xw * m2.wz),
+    (m1.xx * m2.xw) + (m1.xy * m2.yw) + (m1.xz * m2.zw) + (m1.xw * m2.ww),
+    (m1.yx * m2.xx) + (m1.yy * m2.yx) + (m1.yz * m2.zx) + (m1.yw * m2.wx),
+    (m1.yx * m2.xy) + (m1.yy * m2.yy) + (m1.yz * m2.zy) + (m1.yw * m2.wy),
+    (m1.yx * m2.xz) + (m1.yy * m2.yz) + (m1.yz * m2.zz) + (m1.yw * m2.wz),
+    (m1.yx * m2.xw) + (m1.yy * m2.yw) + (m1.yz * m2.zw) + (m1.yw * m2.ww),
+    (m1.zx * m2.xx) + (m1.zy * m2.yx) + (m1.zz * m2.zx) + (m1.zw * m2.wx),
+    (m1.zx * m2.xy) + (m1.zy * m2.yy) + (m1.zz * m2.zy) + (m1.zw * m2.wy),
+    (m1.zx * m2.xz) + (m1.zy * m2.yz) + (m1.zz * m2.zz) + (m1.zw * m2.wz),
+    (m1.zx * m2.xw) + (m1.zy * m2.yw) + (m1.zz * m2.zw) + (m1.zw * m2.ww),
+    (m1.wx * m2.xx) + (m1.wy * m2.yx) + (m1.wz * m2.zx) + (m1.ww * m2.wx),
+    (m1.wx * m2.xy) + (m1.wy * m2.yy) + (m1.wz * m2.zy) + (m1.ww * m2.wy),
+    (m1.wx * m2.xz) + (m1.wy * m2.yz) + (m1.wz * m2.zz) + (m1.ww * m2.wz),
+    (m1.wx * m2.xw) + (m1.wy * m2.yw) + (m1.wz * m2.zw) + (m1.ww * m2.ww)
+  )
 
 implement mat4_mul_vec4 ( m, v ) =
-(
-)
+  vec4_new(
+    (m.xx * v.x) + (m.xy * v.y) + (m.xz * v.z) + (m.xw * v.w),
+    (m.yx * v.x) + (m.yy * v.y) + (m.yz * v.z) + (m.yw * v.w),
+    (m.zx * v.x) + (m.zy * v.y) + (m.zz * v.z) + (m.zw * v.w),
+    (m.wx * v.x) + (m.wy * v.y) + (m.wz * v.z) + (m.ww * v.w)
+  )
 
-implement mat4_mul_vec3 ( m, v ) =
-(
-)
+implement mat4_mul_vec3 ( m, v ) = let
+  var v_homo = vec4_new(v.x, v.y, v.z, 1.f)
+in
+  v_homo := mat4_mul_vec4(m, v_homo);
+  v_homo := vec4_div(v_homo, v_homo.w);
+  vec3_new(v_homo.x, v_homo.y, v_homo.z)
+end
 
 implement mat4_to_mat3 ( m ) =
-(
-)
+  mat3_new(
+  m.xx,
+  m.xy,
+  m.xz,
+  m.yx,
+  m.yy,
+  m.yz,
+  m.zx,
+  m.zy,
+  m.zz
+  )
 
-implement mat4_to_quat ( m ) =
-(
-)
+implement mat4_to_quat ( m ) = let
+  val tr = m.xx + m.yy + m.zz
+in
+  if tr > 0.f then let
+    val s = $MATH.sqrt(tr + 1.f)
+    val w = s / 2.f
+    val x = ( mat4_at(m, 1, 2) - mat4_at(m, 2, 1) ) * (0.5f / s)
+    val y = ( mat4_at(m, 2, 0) - mat4_at(m, 0, 2) ) * (0.5f / s)
+    val z = ( mat4_at(m, 0, 1) - mat4_at(m, 1, 0) ) * (0.5f / s)
+  in
+    quat_new(x, y, z, w)
+  end else let
+    val nxt = @[int](1, 2, 0)
+    var q = @[float][4](0.f)
+    var i = 0.f
+    var j = 0.f
+    var k = 0.f
+    var s = 0.f
+  in
+    i := begin if mat4_at(m, 1, 1) > mat4_at(m, 0, 0) then 1.f else i end;
+    i := begin if mat4_at(m, 2, 2) > mat4_at(m, i, i) then 2.f else i end;
+    j := nxt[i];
+    k := nxt[j];
+    s := $MATH.sqrt( (mat4_at(m, i, i) - (mat4_at(m, j, j) mat4_at(m, k, k))) + 1.f );
+    q[i] := s * 0.5f;
+    s := begin if (s != 0.f) then 0.5f / s else s end;
+    q[3] := (mat4_at(m, j, k) - mat4_at(m, k, j)) * s;
+    q[j] := (mat4_at(m, i, j) + mat4_at(m, j, i)) * s;
+    q[k] := (mat4_at(m, i, k) + mat4_at(m, k, i)) * s;
+    quat_new(q[0], q[1], q[2], q[3])
+  end
+end
 
-implement mat4_to_quat_dual ( m ) =
-(
-)
+implement mat4_to_quat_dual ( m ) = let
+  val rotation = mat4_to_quat(m)
+  val translation = mat4_mul_vec3(m, vec3_zero())
+in
+  quat_dual_transform(rotation, translation)
+end
 
-implement mat4_det ( m ) =
-(
-)
+implement mat4_det ( m ) = let
+  val cofact_xx = mat3_det(mat3_new(m.yy, m.yz, m.yw, m.zy, m.zz, m.zw, m.wy, m.wz, m.ww))
+  val cofact_xy = ~(mat3_det(mat3_new(m.yx, m.yz, m.yw, m.zx, m.zz, m.zw, m.wx, m.wz, m.ww)))
+  val cofact_xz = mat3_det(mat3_new(m.yx, m.yy, m.yw, m.zx, m.zy, m.zw, m.wx, m.wy, m.ww))
+  val cofact_xw = ~(mat3_det(mat3_new(m.yx, m.yy, m.yz, m.zx, m.zy, m.zz, m.wx, m.wy, m.wz)))
+in
+  (cofact_xx * m.xx) + (cofact_xy * m.xy) + (cofact_xz * m.xz) + (cofact_xw * m.xw)
+end
 
-implement mat4_inverse ( m ) =
-(
-)
+implement mat4_inverse ( m ) = let
+  val det = mat4_det(m)
+  val fac = 1.f / det
+  var ret = mat4_new(
+    fac * mat3_det(mat3_new(m.yy, m.yz, m.yw, m.zy, m.zz, m.zw, m.wy, m.wz, m.ww)),
+    fac * ~(mat3_det(mat3_new(m.yx, m.yz, m.yw, m.zx, m.zz, m.zw, m.wx, m.wz, m.ww))),
+    fac * mat3_det(mat3_new(m.yx, m.yy, m.yw, m.zx, m.zy, m.zw, m.wx, m.wy, m.ww)),
+    fac * ~(mat3_det(mat3_new(m.yx, m.yy, m.yz, m.zx, m.zy, m.zz, m.wx, m.wy, m.wz))),
+    fac * ~(mat3_det(mat3_new(m.xy, m.xz, m.xw, m.zy, m.zz, m.zw, m.wy, m.wz, m.ww))),
+    fac * mat3_det(mat3_new(m.xx, m.xz, m.xw, m.zx, m.zz, m.zw, m.wx, m.wz, m.ww)),
+    fac * ~(mat3_det(mat3_new(m.xx, m.xy, m.xw, m.zx, m.zy, m.zw, m.wx, m.wy, m.ww))),
+    fac * mat3_det(mat3_new(m.xx, m.xy, m.xz, m.zx, m.zy, m.zz, m.wx, m.wy, m.wz)),
+    fac * mat3_det(mat3_new(m.xy, m.xz, m.xw, m.yy, m.yz, m.yw, m.wy, m.wz, m.ww)),
+    fac * ~(mat3_det(mat3_new(m.xx, m.xz, m.xw, m.yx, m.yz, m.yw, m.wx, m.wz, m.ww))),
+    fac * mat3_det(mat3_new(m.xx, m.xy, m.xw, m.yx, m.yy, m.yw, m.wx, m.wy, m.ww)),
+    fac * ~(mat3_det(mat3_new(m.xx, m.xy, m.xz, m.yx, m.yy, m.yz, m.wx, m.wy, m.wz))),
+    fac * ~(mat3_det(mat3_new(m.xy, m.xz, m.xw, m.yy, m.yz, m.yw, m.zy, m.zz, m.zw))),
+    fac * mat3_det(mat3_new(m.xx, m.xz, m.xw, m.yx, m.yz, m.yw, m.zx, m.zz, m.zw)),
+    fac * ~(mat3_det(mat3_new(m.xx, m.xy, m.xw, m.yx, m.yy, m.yw, m.zx, m.zy, m.zw))),
+    fac * mat3_det(mat3_new(m.xx, m.xy, m.xz, m.yx, m.yy, m.yz, m.zx, m.zy, m.zz))
+  )
+in
+  ret
+end
 
-implement mat4_to_array ( m, out ) =
-(
-)
+implement mat4_to_array ( m, out ) = begin
+  out[0] := m.xx;
+  out[1] := m.yx;
+  out[2] := m.zx;
+  out[3] := m.wx;
+  out[4] := m.xy;
+  out[5] := m.yy;
+  out[6] := m.zy;
+  out[7] := m.wy;
+  out[8] := m.xz;
+  out[9] := m.yz;
+  out[10] := m.zz;
+  out[11] := m.wz;
+  out[12] := m.xw;
+  out[13] := m.yw;
+  out[14] := m.zw;
+  out[15] := m.ww
+end
 
-implement mat4_to_array_trans ( m, out ) =
-(
-)
+implement mat4_to_array_trans ( m, out ) = begin
+  out[0] := m.xx;
+  out[1] := m.xy;
+  out[2] := m.xz;
+  out[3] := m.xw;
+  out[4] := m.yx;
+  out[5] := m.yy;
+  out[6] := m.yz;
+  out[7] := m.yw;
+  out[8] := m.zx;
+  out[9] := m.zy;
+  out[10] := m.zz;
+  out[11] := m.zw;
+  out[12] := m.wx;
+  out[13] := m.wy;
+  out[14] := m.wz;
+  out[15] := m.ww
+end
 
-implement mat4_print ( m ) =
-(
-)
+implement mat4_print ( m ) = begin
+  println!("|", m.xx, " ", m.xy, " ", m.xz, " ", m.xw, "|\n");
+  println!("|", m.yx, " ", m.yy, " ", m.yz, " ", m.yw, "|\n");
+  println!("|", m.zx, " ", m.zy, " ", m.zz, " ", m.zw,  "|\n");
+  println!("|", m.wx, " ", m.wy, " ", m.wz, " ", m.ww, "|\n")
+end
 
-implement mat4_view_look_at ( position, target, up ) =
-(
-)
+implement mat4_view_look_at ( position, target, up ) = let
+  val zaxis = vec3_normalize(vec3_sub(target, position))
+  var xaxis = vec3_normalize(vec3_cross(up, zaxis))
+  var yaxis = vec3_cross(zaxis, xaxis)
+  var view_matrix = mat4_id()
+in
+  view_matrix.xx := xaxis.x;
+  view_matrix.xy := xaxis.y;
+  view_matrix.xz := xaxis.z;
+  view_matrix.yx := yaxis.x;
+  view_matrix.yy := yaxis.y;
+  view_matrix.yz := yaxis.z;
+  view_matrix.zx := ~(zaxis.x);
+  view_matrix.zy := ~(zaxis.y);
+  view_matrix.zz := ~(zaxis.z);
+  view_matrix := mat4_mul_mat4(view_matrix, mat4_translation(vec3_neg(position)));
+  view_matrix
+end
 
-implement mat4_perspective ( fov, near_clip, far_clip, ratio ) =
-(
-)
+implement mat4_perspective ( fov, near_clip, far_clip, ratio ) = let
+  var right = 0.f
+  var left = 0.f
+  var bottom = 0.f
+  var top = 0.f
+  var proj_matrix = mat4_zero()
+in
+  right := ~(near_clip * $MATH.tan(fov));
+  left := ~(right);
+  top := ratio * near_clip * $MATH.tan(fov);
+  bottom := ~(top);
+  proj_matrix.xx := (2.f * near_clip) / (right - left);
+  proj_matrix.yy := (2.f * near_clip) / (top - bottom);
+  proj_matrix.xz := (right * left) / (right - left);
+  proj_matrix.yz := (top + bottom) / (top - bottom);
+  proj_matrix.zz := (~(far_clip) - near_clip) / (far_clip - near_clip);
+  proj_matrix.wz := ~(1.f);
+  proj_matrix.zw := (~(2.f * near_clip) * far_clip) / (far_clip - near_clip);
+  proj_matrix
+end
 
-implement mat4_orthographic ( left, right, bottom, top, clip_near, clip_far ) =
-(
-)
+implement mat4_orthographic ( left, right, bottom, top, clip_near, clip_far ) = let
+  var m = mat4_id()
+in
+  m.xx := 2.f / (right - left);
+  m.yy := 2.f / (top - bottom);
+  m.zz := 1.f / (clip_near - clip_far);
+  m.xw := ~(1.f) - 2.f * left / (right - left);
+  m.yw := 1.f + 2.f * top / (bottom - top);
+  m.zw := clip_near / (clip_near - clip_far);
+  m
+end
 
-implement mat4_translation ( v ) =
-(
-)
+implement mat4_translation ( v ) = let
+  var m = mat4_id()
+in
+  m.xw := v.x;
+  m.yw := v.y;
+  m.zw := v.z;
+  m
+end
 
-implement mat4_scale ( v ) =
-(
-)
+implement mat4_scale ( v ) = let
+  var m = mat4_id()
+in
+  m.xx := v.x;
+  m.yy := v.y;
+  m.zz := v.z;
+  m
+end
 
-implement mat4_rotation_x ( a ) =
-(
-)
+implement mat4_rotation_x ( a ) = let
+  var m = mat4_id()
+in
+  m.yy := $MATH.cos(a);
+  m.yz := ~($MATH.sin(a));
+  m.zy := $MATH.sin(a);
+  m.zz := $MATH.cos(a);
+  m
+end
 
-implement mat4_rotation_y ( a ) =
-(
-)
+implement mat4_rotation_y ( a ) = let
+  var m = mat4_id()
+in
+  m.xx := $MATH.cos(a);
+  m.xz := $MATH.sin(a);
+  m.zx := ~($MATH.sin(a));
+  m.zz := $MATH.cos(a);
+  m
+end
 
-implement mat4_rotation_z ( a ) =
-(
-)
+implement mat4_rotation_z ( a ) = let
+  var m = mat4_id()
+in
+  m.xx := $MATH.cos(a);
+  m.xy := ~($MATH.sin(a));
+  m.yx := $MATH.sin(a);
+  m.yy := $MATH.cos(a);
+  m
+end
 
-implement mat4_rotation_axis_angle ( v, angle ) =
-(
-)
+implement mat4_rotation_axis_angle ( v, angle ) = let
+  var m = mat4_id()
+  val c = $MATH.cos(angle)
+  val s = $MATH.sin(angle)
+  val nc = 1.f - c
+in
+  m.xx := v.x * v.x * nc + c;
+  m.xy := v.x * v.y * nc - v.z * s;
+  m.xz := v.x * v.z * nc + v.y * s;
+  m.yx := v.y * v.x * nc + v.z * s;
+  m.yy := v.y * v.y * nc + c;
+  m.yz := v.y * v.z * nc - v.x * s;
+  m.zx := v.z * v.x * nc - v.y * s;
+  m.zy := v.z * v.y * nc + v.x * s;
+  m.zz := v.z * v.z * nc + c;
+  m
+end
 
-implement mat4_rotation_euler ( x, y, z ) =
-(
-)
+implement mat4_rotation_euler ( x, y, z ) = let
+  val m = mat4_zero()
+  val cosx = $MATH.cos(x)
+  val cosy = $MATH.cos(y)
+  val cosz = $MATH.cos(z)
+  val sinx =  $MATH.sin(x)
+  val siny =  $MATH.sin(y)
+  val sinz =  $MATH.sin(z)
+in
+  m.xx := cosy * cosz;
+  m.yx := ~(cosx) * sinz + sinx * siny * cosz;
+  m.zx := sinx * sinz + cosx * siny * cosz;
+  m.xy := cosy * sinz;
+  m.yy := cosx * cosz + sinx * siny * sinz;
+  m.zy := ~(sinx) * cosz + cosx * siny * sinz;
+  m.xz := ~(siny);
+  m.yz := sinx * cosy;
+  m.zz := cosx * cosy;
+end
 
-implement mat4_rotation_quat ( q ) =
-(
-)
+implement mat4_rotation_quat ( q ) = let
+  val x2 = q.x + q.x
+  val y2 = q.y + q.y
+  val z2 = q.z + q.z
+  val xx = q.x * x2
+  val yy = q.y * y2
+  val wx = q.w * x2
+  val xy = q.x * y2
+  val yz = q.y * z2
+  val wy = q.w * y2
+  val xz = q.x * z2
+  val zz = q.z * z2
+  val wz = q.w * z2
+in
+  mat4_new(
+    1.f - (yy + zz),
+    xy - wz,
+    xz + wy,
+    0.f,
+    xy + wz,
+    1.f - (xx + zz),
+    yz - wx,
+    0.f,
+    xz - wy,
+    yz + wx,
+    1.f - (xx + yy),
+    0.f,
+    0.f,
+    0.f,
+    0.f,
+    1.f
+  )
+end
 
-implement mat4_rotation_quat_dual ( q ) =
-(
-)
+implement mat4_rotation_quat_dual ( q ) = let
+  val rx = q.real.x
+  val ry = q.real.y
+  val rz = q.real.z
+  val rw = q.real.w
+  val tx = q.dual.x
+  val ty = q.dual.y
+  val tz = q.dual.z
+  val tw = q.dual.w
+  var m = mat4_id()
+in
+  m.xx := rw * rw + rx * rx - ry * ry - rz * rz;
+  m.xy := 2.f * (rx * ry - rw * rz);
+  m.xz := 2.f * (rx * rz + rw * ry);
+  m.yx := 2.f * (rx * ry + rw * rz);
+  m.yy := rw * rw - rx * rx + ry * ry - rz * rz;
+  m.yz := 2.f * (ry * rz - rw * rx);
+  m.zx := 2.f * (rx * rz - rw * ry);
+  m.zy := 2.f * (ry * rz + rw * rx);
+  m.zz := rw * rw - rx * rx - ry * ry + rz * rz;
+  m.xw := ~(2.f) * tw * rx + 2.f * rw * tx - 2.f * ty * rz + 2.f * ry * tz;
+  m.yw := ~(2.f) * tw * ry + 2.f * tx * rz - 2.f * rx * tz + 2.f * rw * ty;
+  m.zw := ~(2.f) * tw * rz + 2.f * rx * ty + 2.f * rw * tz - 2.f * tx * ry;
+  m
+end
 
-implement mat4_world ( position, scale, rotation ) =
-(
-)
+implement mat4_world ( position, scale, rotation ) = let
+  val pos_m = mat4_translation(position)
+  val rot_m = mat4_rotation_quat(rotation)
+  val sca_m = mat4_scale(scale)
+  var result = mat4_id()
+in
+  result := mat4_mul_mat4(result, pos_m);
+  result := mat4_mul_mat4(result, rot_m);
+  result := mat4_mul_mat4(result, sca_m);
+  result
+end
 
 implement mat4_lerp ( m1, m2, amount ) =
-(
-)
+  mat4_new(
+    lerp(m1.xx, m2.xx, amount),
+    lerp(m1.xy, m2.xy, amount),
+    lerp(m1.xz, m2.xz, amount),
+    lerp(m1.xw, m2.xw, amount),
+    lerp(m1.yx, m2.yx, amount),
+    lerp(m1.yy, m2.yy, amount),
+    lerp(m1.yz, m2.yz, amount),
+    lerp(m1.yw, m2.yw, amount),
+    lerp(m1.zx, m2.zx, amount),
+    lerp(m1.zy, m2.zy, amount),
+    lerp(m1.zz, m2.zz, amount),
+    lerp(m1.zw, m2.zw, amount),
+    lerp(m1.wx, m2.wx, amount),
+    lerp(m1.wy, m2.wy, amount),
+    lerp(m1.wz, m2.wz, amount),
+    lerp(m1.ww, m2.ww, amount)
+  )
 
 implement mat4_smoothstep ( m1, m2, amount ) =
-(
-)
+  mat4_new(
+    smoothstep(m1.xx, m2.xx, amount),
+    smoothstep(m1.xy, m2.xy, amount),
+    smoothstep(m1.xz, m2.xz, amount),
+    smoothstep(m1.xw, m2.xw, amount),
+    smoothstep(m1.yx, m2.yx, amount),
+    smoothstep(m1.yy, m2.yy, amount),
+    smoothstep(m1.yz, m2.yz, amount),
+    smoothstep(m1.yw, m2.yw, amount),
+    smoothstep(m1.zx, m2.zx, amount),
+    smoothstep(m1.zy, m2.zy, amount),
+    smoothstep(m1.zz, m2.zz, amount),
+    smoothstep(m1.zw, m2.zw, amount),
+    smoothstep(m1.wx, m2.wx, amount),
+    smoothstep(m1.wy, m2.wy, amount),
+    smoothstep(m1.wz, m2.wz, amount),
+    smoothstep(m1.ww, m2.ww, amount)
+  )
 
 //  geometry functions
-implement plane_new ( position, direction ) =
-(
-)
+implement plane_new ( position, direction ) = @{position=position, direction=direction}:plane
 
 implement plane_distance ( p, point ) =
-(
-)
+  vec3_dot(vec3_sub(point, p.position), p.direction)
 
-implement plane_transform ( p, world, world_normal ) =
-(
-)
+implement plane_transform ( p, world, world_normal ) = let
+  val () = p.position := mat4_mul_vec3(world, p.position)
+  val () = p.direction := mat3_mul_vec3(world_normal, p.direction)
+  val () = p.direction := vec3_normalize(p.direction)
+in
+  p
+end
 
-implement point_inside_plane ( point, p ) =
-(
-)
+implement plane_transform_space (p, space, space_normal) = let
+  val () = p.position := mat3_mul_vec3(space, p.position)
+  val () = p.direction := mat3_mul_vec3(space_normal, p.direction)
+  val () = p.direction := vec3_normalize(p.direction)
+in
+  p
+end
 
-implement point_outside_plane ( point, p ) =
-(
-)
+implement point_inside_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position), p.direction) < 0.f
 
-implement point_intersects_plane ( point, p ) =
-(
-)
+implement point_outside_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position), p.direction) > 0.f
 
-implement plane_project ( p, v ) =
-(
-)
+implement point_intersects_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position), p.direction) == 0.f
 
-implement plane_closest ( p, v ) =
-(
-)
+implement plane_project ( p, v ) = vec3_sub(v, vec3_mul(p.direction, vec3_dot(v, p.direction)))
 
-implement point_swept_inside_plane ( point, v, p ) =
-(
-)
+implement plane_closest ( p, v ) = vec3_sub(v, vec3_mul(p.direction, plane_distance(p, v)))
 
-implement point_swept_outside_plane ( point, v, p ) =
-(
-)
+implement point_swept_inside_plane ( point, v, p ) = let
+  val angle = vec3_dot(p.direction, v)
+  val dist = vec3_dot(p.direction, vec3_sub(point, p.position))
+in
+  if ~(dist) <= 0.f then false
+  else not(between_or(~(dist) / angle, 0.f, 1.f))
+end
 
-implement point_swept_intersects_plane ( point, v, p ) =
-(
-)
+implement point_swept_outside_plane ( point, v, p ) = let
+  val angle = vec3_dot(p.direction, v)
+  val dist = vec3_dot(p.direction, vec3_sub(point, p.position))
+in
+  if dist <= 0.f then false
+  else not(between_or(~(dist) / angle, 0.f, 1.f))
+end
 
-implement box_new ( x_min, x_max, y_min, y_max, z_min, z_max ) =
-(
-)
-
-implement box_sphere ( center, radius ) =
-(
-)
-
-implement box_invert ( b ) =
-(
-)
-
-implement box_invert_depth ( b ) =
-(
-)
-
-implement box_invert_width ( b ) =
-(
-)
+implement point_swept_intersects_plane ( point, v, p ) = let
+  val angle = vec3_dot(p.direction, v)
+  val dist = vec3_dot(p.direction, vec3_sub(point, p.position))
+in
+  if dist == 0.f then true
+  else between_or(~(dist) / angle, 0.f, 1.f)
+end
 
 implement box_new ( x_min, x_max, y_min, y_max, z_min, z_max ) =
-(
-)
+  @{
+    top=plane_new(vec3_new(0.f, y_max, 0.f), vec3_new(0.f, 1.f, 0.f)),
+    bottom=plane_new(vec3_new(0.f, y_min, 0.f), vec3_new(0.f, ~(1.f), 0.f)),
+    left=plane_new(vec3_new(x_max, 0.f, 0.f), vec3_new(1.f, 0.f, 0.f)),
+    right=plane_new(vec3_new(x_min, 0.f, 0.f), vec3_new(~(1.f), 0.f, 0.f)),
+    front=plane_new(vec3_new(0.f, 0.f, z_max), vec3_new(0.f, 0.f, 1.f)),
+    back=plane_new(vec3_new(0.f, 0.f, z_min), vec3_new(0.f, 0.f, ~(1.f)))
+  }:box
 
 implement box_sphere ( center, radius ) =
-(
-)
+  @{
+    top=plane_new(vec3_new(0.f, radius, 0.f), vec3_new(0.f, 1.f, 0.f)),
+    bottom=plane_new(vec3_new(0.f, ~(radius), 0.f), vec3_new(0.f, ~(1.f), 0.f)),
+    left=plane_new(vec3_new(radius, 0.f, 0.f), vec3_new(1.f, 0.f, 0.f)),
+    right=plane_new(vec3_new(~(radius), 0.f, 0.f), vec3_new(~(1.f), 0.f, 0.f)),
+    front=plane_new(vec3_new(0.f, 0.f, radius), vec3_new(0.f, 0.f, 1.f)),
+    back=plane_new(vec3_new(0.f, 0.f, ~(radius)), vec3_new(0.f, 0.f, ~(1.f)))
+  }:box
 
-implement box_invert ( b ) =
-(
-)
+implement box_invert ( b ) = begin
+  b.front.direction := vec3_neg(b.front.direction);
+  b.back.direction := vec3_neg(b.back.direction);
+  b.left.direction := vec3_neg(b.left.direction);
+  b.right.direction := vec3_neg(b.right.direction);
+  b.top.direction := vec3_neg(b.top.direction);
+  b.bottom.direction := vec3_neg(b.bottom.direction);
+  b
+end
 
-implement box_invert_depth ( b ) =
-(
-)
+implement box_invert_depth ( b ) = begin
+  b.front.direction := vec3_neg(b.front.direction);
+  b.back.direction := vec3_neg(b.back.direction);
+  b
+end
 
-implement box_invert_width ( b ) =
-(
-)
+implement box_invert_width ( b ) = begin
+  b.left.direction := vec3_neg(b.left.direction);
+  b.right.direction := vec3_neg(b.right.direction);
+  b
+end
 
-implement box_invert_height ( b ) =
-(
-)
+implement box_invert_height ( b ) = begin
+  b.top.direction := vec3_neg(b.top.direction);
+  b.bottom.direction := vec3_neg(b.bottom.direction);
+  b
+end
 
 implement point_inside_box ( point, b ) =
 (
+  if not(point_inside_plane(point, b.top)) then false
+  else if not(point_inside_plane(point, b.bottom)) then false
+  else if not(point_inside_plane(point, b.left)) then false
+  else if not(point_inside_plane(point, b.right)) then false
+  else if not(point_inside_plane(point, b.front)) then false
+  else if not(point_inside_plane(point, b.back)) then false
+  else true
 )
 
 implement point_outside_box ( point, b ) =
-(
-)
+  not(point_intersects_box(point, b)) || point_inside_box(point, b)
 
 implement point_intersects_box ( point, b ) =
-(
-)
+  if point_intersects_plane(point, b.top) then true
+  else if point_intersects_plane(point, b.bottom) then true
+  else if point_intersects_plane(point, b.left) then true
+  else if point_intersects_plane(point, b.right) then true
+  else if point_intersects_plane(point, b.front) then true
+  else if point_intersects_plane(point, b.back) then true
+  else false
 
-implement box_merge ( b1, b2 ) =
-(
-)
+implement box_merge ( b1, b2 ) = let
+  val b1_x_max = b1.left.position.x
+  val b1_x_min = b1.right.position.x
+  val b1_y_max = b1.top.position.y
+  val b1_y_min = b1.bottom.position.y
+  val b1_z_max = b1.front.position.z
+  val b1_z_min = b1.back.position.z
+  val b2_x_max = b2.left.position.x
+  val b2_x_min = b2.right.position.x
+  val b2_y_max = b2.top.position.y
+  val b2_y_min = b2.bottom.position.y
+  val b2_z_max = b2.front.position.z
+  val b2_z_min = b2.back.position.z
+  val x_min = min(b1_x_min, b2_x_min)
+  val x_max = max(b1_x_max, b2_x_max)
+  val y_min = min(b1_y_min, b2_y_min)
+  val y_max = max(b1_y_max, b2_y_max)
+  val z_min = min(b1_z_min, b2_z_min)
+  val z_max = max(b1_z_max, b2_z_max)
+in
+  box_new(x_min, x_max, y_min, y_max, z_min, z_max)
+end
 
 implement box_transform ( bb, world, world_normal ) =
-(
-)
+  box_new(
+    plane_transform(bb.top, world, world_normal),
+    plane_transform(bb.bottom, world, world_normal),
+    plane_transform(bb.left, world, world_normal),
+    plane_transform(bb.right, world, world_normal),
+    plane_transform(bb.front, world, world_normal),
+    plane_transform(bb.back, world, world_normal)
+  )
 
 implement frustum_new ( ntr, ntl, nbr, nbl, ftr, ftl, fbr, fbl ) =
 (

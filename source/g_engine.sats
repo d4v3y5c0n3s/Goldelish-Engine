@@ -370,8 +370,8 @@ fun mat4_to_mat3 ( m: mat4 ) : mat3 = "sta#%"
 fun mat4_to_quat ( m: mat4 ) : quat = "sta#%"
 fun mat4_to_quat_dual ( m: mat4 ) : quat_dual = "sta#%"
 
-fun mat4_to_array ( m: mat4, out: ptr ) : void = "sta#%"
-fun mat4_to_array_trans ( m: mat4, out: ptr ) : void = "sta#%"
+fun mat4_to_array ( m: mat4, out: @[float][16] ) : void = "sta#%"
+fun mat4_to_array_trans ( m: mat4, out: @[float][16] ) : void = "sta#%"
 
 fun mat4_print ( m: mat4 ) : void = "sta#%"
 
