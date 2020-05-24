@@ -1914,172 +1914,332 @@ implement box_transform ( bb, world, world_normal ) =
   )
 
 implement frustum_new ( ntr, ntl, nbr, nbl, ftr, ftl, fbr, fbl ) =
-(
-)
+  @{
+    ntr=ntr,
+    ntl=ntl,
+    nbr=nbr,
+    nbl=nbl,
+    ftr=ftr,
+    ftl=ftl,
+    fbr=fbr,
+    fbl=fbl
+  }:frustum
 
 implement frustum_new_clipbox (  ) =
-(
-)
+  frustum_new(
+    vec3_new(1.f, 1.f, ~(1.f)), vec3_new(~1.f, 1.f, ~1.f),
+    vec3_new(1.f, ~1.f, ~1.f), vec3_new(~1.f, ~1.f, ~1.f),
+    vec3_new(1.f, 1.f, 1.f), vec3_new(~1.f, 1.f, 1.f),
+    vec3_new(1.f, ~1.f, 1.f), vec3_new(~1.f, ~1.f, 1.f)
+  )
 
-implement frustum_new_camera ( view, proj ) =
-(
-)
+implement frustum_new_camera ( view, proj ) = let
+  var f = frustum_new_clipbox()
+in
+  f := frustum_transform(f, mat4_inverse(proj));
+  f := frustum_transform(f, mat4_inverse(view));
+  f
+end
 
-implement frustum_slice ( f, f_start, f_end ) =
-(
-)
+implement frustum_slice ( f, f_start, f_end ) = let
+  var r = @{
+  ntr=vec3_add(f.ntr, vec3_mul(vec3_sub(f.ftr, f.ntr), f_start)),
+  ftr=vec3_add(f.ntr, vec3_mul(vec3_sub(f.ftr, f.ntr), f_end)),
+  ntl=vec3_add(f.ntl, vec3_mul(vec3_sub(f.ftl, f.ntl), f_start)),
+  ftl=vec3_add(f.ntl, vec3_mul(vec3_sub(f.ftl, f.ntl), f_end)),
+  nbr=vec3_add(f.nbr, vec3_mul(vec3_sub(f.fbr, f.nbr), f_start)),
+  fbr=vec3_add(f.nbr, vec3_mul(vec3_sub(f.fbr, f.nbr), f_end)),
+  nbl=vec3_add(f.nbl, vec3_mul(vec3_sub(f.fbl, f.nbl), f_start)),
+  fbl=vec3_add(f.nbl, vec3_mul(vec3_sub(f.fbl, f.nbl), f_end))
+  }:frustum
+in
+  r
+end
 
-implement frustum_center ( f ) =
-(
-)
+implement frustum_center ( f ) = let
+  var total = vec3_zero()
+in
+  total := vec3_add(total, f.ntr);
+  total := vec3_add(total, f.ftr);
+  total := vec3_add(total, f.ntl);
+  total := vec3_add(total, f.ftl);
+  total := vec3_add(total, f.nbr);
+  total := vec3_add(total, f.fbr);
+  total := vec3_add(total, f.nbl);
+  total := vec3_add(total, f.fbl);
+  vec3_div(total, 8)
+end
 
-implement frustum_maximums ( f ) =
-(
-)
+implement frustum_maximums ( f ) = let
+  var r = vec3_zero()
+in
+  r.x := max(max(max(max(max(max(max(f.ntr.x, f.ftr.x), f.ntl.x), f.ftl.x), f.nbr.x), f.fbr.x), f.nbl.x), f.fbl.x);
+  r.y := max(max(max(max(max(max(max(f.ntr.y, f.ftr.y), f.ntl.y), f.ftl.y), f.nbr.y), f.fbr.y), f.nbl.y), f.fbl.y);
+  r.z := max(max(max(max(max(max(max(f.ntr.z, f.ftr.z), f.ntl.z), f.ftl.z), f.nbr.z), f.fbr.z), f.nbl.z), f.fbl.z);
+  r
+end
 
-implement frustum_minimums ( f ) =
-(
-)
+implement frustum_minimums ( f ) = let
+  var r = vec3_zero()
+in
+  r.x := min(min(min(min(min(min(min(f.ntr.x, f.ftr.x), f.ntl.x), f.ftl.x), f.nbr.x), f.fbr.x), f.nbl.x), f.fbl.x);
+  r.y := min(min(min(min(min(min(min(f.ntr.y, f.ftr.y), f.ntl.y), f.ftl.y), f.nbr.y), f.fbr.y), f.nbl.y), f.fbl.y);
+  r.z := min(min(min(min(min(min(min(f.ntr.z, f.ftr.z), f.ntl.z), f.ftl.z), f.nbr.z), f.fbr.z), f.nbl.z), f.fbl.z);
+  r
+end
 
 implement frustum_transform ( f, m ) =
-(
-)
+  frustum_new(
+    mat4_mul_vec3(m, f.ntr),
+    mat4_mul_vec3(m, f.ftr),
+    mat4_mul_vec3(m, f.ntl),
+    mat4_mul_vec3(m, f.ftl),
+    mat4_mul_vec3(m, f.nbr),
+    mat4_mul_vec3(m, f.fbr),
+    mat4_mul_vec3(m, f.nbl),
+    mat4_mul_vec3(m, f.fbl)
+  )
 
 implement frustum_translate ( f, v ) =
-(
-)
+  frustum_new(
+    vec3_add(f.ntr, v),
+    vec3_add(f.ftr, v),
+    vec3_add(f.ntl, v),
+    vec3_add(f.ftl, v),
+    vec3_add(f.nbr, v),
+    vec3_add(f.fbr, v),
+    vec3_add(f.nbl, v),
+    vec3_add(f.fbl, v)
+  )
 
 implement frustum_box ( f ) =
-(
-)
+  box_new(
+    plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.ftr, f.ntr), vec3_sub(f.ntl, f.ntr)))),
+    plane_new(f.nbr, vec3_normalize(vec3_cross(vec3_sub(f.nbl, f.nbr), vec3_sub(f.fbr, f.nbr)))),
+    plane_new(f.ntl, vec3_normalize(vec3_cross(vec3_sub(f.ftl, f.ntl), vec3_sub(f.nbl, f.ntl)))),
+    plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.nbr, f.ntr), vec3_sub(f.ftr, f.ntr)))),
+    plane_new(f.ftr, vec3_normalize(vec3_cross(vec3_sub(f.ftl, f.ftr), vec3_sub(f.fbr, f.ftr)))),
+    plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.nbr, f.ntr), vec3_sub(f.ntl, f.ntr))))
+  )
 
-implement frustum_outside_box ( f, b ) =
-(
-)
+//  this function is unimplemented
+implement frustum_outside_box ( f, b ) = false
 
 implement sphere_outside_frustum ( s, f ) =
-(
-)
+  sphere_outside_box(s, frustum_box(f))
 
 implement sphere_inside_frustum ( s, f ) =
-(
-)
+  sphere_inside_box(s, frustum_box(f))
 
 implement sphere_intersects_frustum ( s, f ) =
-(
-)
+  sphere_intersects_box(s, frustum_box(f))
 
-implement sphere_outside_sphere ( s1, s2 ) =
-(
-)
+implement sphere_outside_sphere ( s1, s2 ) = let
+  val rtot = (s1.radius + s2.radius)
+in
+  vec3_dist_sqrd(s1.center, s2.center) > rtot * rtot
+end
 
-implement sphere_unit (  ) =
-(
-)
+implement sphere_unit () = sphere_new(vec3_zero(), 1.f)
 
-implement sphere_point (  ) =
-(
-)
+implement sphere_point () = sphere_new(vec3_zero(), 0.f)
 
 implement sphere_new ( center, radius ) =
-(
-)
+  @{
+    center=center,
+    radius=radius
+  }:sphere
 
-implement sphere_of_box ( bb ) =
-(
-)
+implement sphere_of_box ( bb ) = let
+  val x_max = bb.left.position.x
+  val x_min = bb.right.position.x
+  val y_max = bb.top.position.y
+  val y_min = bb.bottom.position.y
+  val z_max = bb.front.position.z
+  val z_min = bb.back.position.z
+  val center = vec3_new( ((x_min + x_max) / 2.f), ((y_min + y_max) / 2.f), ((z_min + z_max) / 2.f) )
+  var radius = 0.f
+  var bs = sphere_unit()
+in
+  radius := max(radius, vec3_dist(center, vec3_new(x_min, y_min, z_min)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_max, y_min, z_min)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_min, y_max, z_min)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_min, y_min, z_max)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_min, y_max, z_max)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_max, y_max, z_min)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_max, y_min, z_max)));
+  radius := max(radius, vec3_dist(center, vec3_new(x_max, y_max, z_max)));
+  bs.center := center;
+  bs.radius := radius;
+  bs
+end
 
-implement sphere_of_frustum ( f ) =
-(
-)
+implement sphere_of_frustum ( f ) = let
+  var s: sphere
+in
+  s.center := frustum_center(f);
+  s.radius := 0.f;
+  s.radius := max(s.radius, vec3_dist(s.center, f.ntr));
+  s.radius := max(s.radius, vec3_dist(s.center, f.ftr));
+  s.radius := max(s.radius, vec3_dist(s.center, f.ntl));
+  s.radius := max(s.radius, vec3_dist(s.center, f.ftl));
+  s.radius := max(s.radius, vec3_dist(s.center, f.nbr));
+  s.radius := max(s.radius, vec3_dist(s.center, f.fbr));
+  s.radius := max(s.radius, vec3_dist(s.center, f.nbl));
+  s.radius := max(s.radius, vec3_dist(s.center, f.fbl));
+  s
+end
 
-implement sphere_merge ( bs1, bs2 ) =
-(
-)
+implement sphere_merge ( bs1, bs2 ) = let
+  val dir = vec3_sub(bs2.center, bs1.center)
+  val dirnorm = vec3_normalize(dir)
+  val p0 = vec3_sub(bs1.center, vec3_mul(dirnorm, bs1.radius))
+  val p1 = vec3_add(bs2.center, vec3_mul(dirnorm, bs2.radius))
+  val center = vec3_div(vec3_add(p0, p1), 2.f)
+  val dist = vec3_dist(center, p0)
+in
+  sphere_new(center, dist)
+end
 
-implement sphere_merge_many ( s, count ) =
-(
-)
+implement sphere_merge_many {n} ( s, count ) = let
+  fun loop {i:nat} .<i>. ( s: @[sphere][n], ret: sphere, i: int i ): sphere =
+    if (i > 0) then
+      loop(s, sphere_merge(ret, s[i]), i-1)
+    else
+      ret
+in
+  loop(s, s[0], count-1)
+end
 
 implement sphere_inside_box ( s, b ) =
-(
-)
+  if not(sphere_inside_plane(s, b.front)) then false
+  else if not(sphere_inside_plane(s, b.back)) then false
+  else if not(sphere_inside_plane(s, b.top)) then false
+  else if not(sphere_inside_plane(s, b.bottom)) then false
+  else if not(sphere_inside_plane(s, b.left)) then false
+  else if not(sphere_inside_plane(s, b.right)) then false
+  else true
 
 implement sphere_outside_box ( s, b ) =
-(
-)
+  not(sphere_inside_box(s, b) || sphere_intersects_box(s, b))
 
-implement sphere_intersects_box ( s, b ) =
-(
-)
+implement sphere_intersects_box ( s, b ) = let
+  var point: vec3
+  var radius = 0.f
+  val plane_size_check = lam@(): bool => if (
+    plane_distance(b.left, point) <= radius &&
+    plane_distance(b.right, point) <= radius &&
+    plane_distance(b.front, point) <= radius &&
+    plane_distance(b.back, point) <= radius
+  ) then true
+in
+  if sphere_intersects_plane_point(s, b.top, addr@(point), addr@(radius)) then plane_size_check()
+  else if sphere_intersects_plane_point(s, b.bottom, addr@(point), addr@(radius)) then plane_size_check()
+  else if sphere_intersects_plane_point(s, b.left, addr@(point), addr@(radius)) then plane_size_check()
+  else if sphere_intersects_plane_point(s, b.right, addr@(point), addr@(radius)) then plane_size_check()
+  else if sphere_intersects_plane_point(s, b.front, addr@(point), addr@(radius)) then plane_size_check()
+  else if sphere_intersects_plane_point(s, b.back, addr@(point), addr@(radius)) then plane_size_check()
+  else false
+end
 
-implement sphere_transform ( s, world ) =
-(
-)
+implement sphere_transform ( s, world ) = let
+  val center = mat4_mul_vec3(world, s.center)
+  val radius = s.radius * max(max(world.xx, world.yy), world.zz)
+in
+  sphere_new(center, radius)
+end
 
-implement sphere_translate ( s, x ) =
-(
-)
+implement sphere_translate ( s, x ) = begin
+  s.center := vec3_add(s.center, x);
+  s
+end
 
-implement sphere_scale ( s, x ) =
-(
-)
+implement sphere_scale ( s, x ) = begin
+  s.radius := s.radius * x;
+  s
+end
 
-implement sphere_transform_space ( s, space ) =
-(
-)
+implement sphere_transform_space ( s, space ) = let
+  val center = mat3_mul_vec3(space, s.center)
+  val radius = s.radius * max(max(space.xx, space.yy), space.zz)
+in
+  sphere_new(center, radius)
+end
 
 implement point_inside_sphere ( s, point ) =
-(
-)
+  vec3_dist(s.center, point) < s.radius
 
 implement point_outside_sphere ( s, point ) =
-(
-)
+  vec3_dist(s.center, point) > s.radius
 
 implement point_intersects_sphere ( s, point ) =
-(
-)
+  vec3_dist(s.center, point) == s.radius
 
 implement line_inside_sphere ( s, l_start, l_end ) =
-(
-)
+  point_swept_inside_sphere(s, vec3_sub(l_end, l_start), l_start)
 
 implement line_outside_sphere ( s, l_start, l_end ) =
-(
-)
+  point_swept_outside_sphere(s, vec3_sub(l_end, l_start), l_start)
 
 implement line_intersects_sphere ( s, l_start, l_end ) =
-(
-)
+  point_swept_intersects_sphere(s, vec3_sub(l_end, l_start), l_start)
 
 implement sphere_inside_plane ( s, p ) =
-(
-)
+  ~(plane_distance(p, s.center)) > s.radius
 
 implement sphere_outside_plane ( s, p ) =
-(
-)
+  plane_distance(p, s.center) > s.radius
 
 implement sphere_intersects_plane ( s, p ) =
-(
-)
+  abs(plane_distance(p, s.center)) <= s.radius
 
-implement sphere_intersects_plane_point ( s, p, point, radius ) =
-(
-)
+implement sphere_intersects_plane_point {l1,l2} ( pfpnt, pfrds | s, p, point, radius ) = let
+  val d = plane_distance(p, s.center)
+  val proj = vec3_mul(p.direction, d)
+in
+  !point := vec3_sub(s.center, proj);
+  !radius := $MATH.sqrt(max(s.radius * s.radius - d * d, 0.f));
+  abs(d) <= s.radius
+end
 
-implement sphere_swept_inside_plane ( s, v, p ) =
-(
-)
+implement sphere_swept_inside_plane ( s, v, p ) = let
+  val angle = vec3_dot(p.direction, v)
+  val dist = vec3_dot(p.direction, vec3_sub(s.center, p.position))
+in
+  if ~(dist) <= s.radius then false
+  else let
+    val t0 = (s.radius - dist) / angle
+    val t1 = (~(s.radius) - dist) / angle
+  in
+    not(between_or(t0, 0.f, 1.f)) && not(between_or(t1, 0.f, 1.f))
+  end
+end
 
-implement sphere_swept_outside_plane ( s, v, p ) =
-(
-)
+implement sphere_swept_outside_plane ( s, v, p ) = let
+  val angle = vec3_dot(p.direction, v)
+  val dist = vec3_dot(p.direction, vec3_sub(s.center, p.position))
+in
+  if dist <= s.radius then false
+  else let
+    val t0 = (s.radius - dist) / angle
+    val t1 = (~s.radius - dist) / angle
+  in
+    not(between_or(t0, 0.f, 1.f)) && not(between_or(t1, 0.f, 1.f))
+  end
+end
 
-implement sphere_swept_intersects_plane ( s, v, p ) =
-(
-)
+implement sphere_swept_intersects_plane ( s, v, p ) = let
+  val angle = vec3_dot(p.direction, v)
+  val dist = vec3_dot(p.direction, vec3_sub(s.center, p.position))
+in
+  if abs(dist) <= s.radius then true
+  else let
+    val t0 = (s.radius - dist) / angle
+    val t1 = (~s.radius - dist) / angle
+  in
+    between_or(t0, 0.f, 1.f) || between_or(t1, 0.f, 1.f)
+  end
+end
 
 fn quadratic {l1,l2:addr} ( pf1: !float @ l1, pf2: !float @ l2 | a: float, b: float, c: float, t0: ptr l1, t1: ptr l2 ) : bool = let
   val descrim = b*b - 4.f*a*c
@@ -2095,77 +2255,127 @@ in
   end
 end
 
-implement point_swept_inside_sphere ( s, v, point ) =
-(
-)
+//  uninplemented
+implement point_swept_inside_sphere ( s, v, point ) = false
 
-implement point_swept_outside_sphere ( s, v, point ) =
-(
-)
+implement point_swept_outside_sphere ( s, v, point ) = let
+  val sdist = vec3_dist_sqrd(point, s.center)
+in
+  if (sdist <= s.radius * s.radius) then false
+  else let
+    val o = vec3_sub(point, s.center)
+    val A = vec3_dot(v, v)
+    val B = 2.f * vec3_dot(v, o)
+    val C = vec3_dot(o, o) - (s.radius * s.radius)
+    var t0: float
+    var t1: float
+    var t: float
+  in
+    if not(quadratic(A, B, C, addr@(t0), addr@(t1))) then true
+    else not(between_or(t0, 0.f 1.f)) && not(between_or(t1, 0.f, 1.f))
+  end
+end
 
-implement point_swept_intersects_sphere ( s, v, point ) =
-(
-)
+//  unimplemented
+implement point_swept_intersects_sphere ( s, v, point ) = false
 
-implement sphere_swept_outside_sphere ( s1, v, s2 ) =
-(
-)
+implement sphere_swept_outside_sphere ( s1, v, s2 ) = let
+  val sdist = vec3_dist_sqrd(s1.center, s2.center)
+  val rtot = s1.radius + s2.radius
+in
+  if sdist <= rtot * rtot then false
+  else let
+    val o = vec3_sub(s1.center, s2.center)
+    val A = vec3_dot(v, v)
+    val B = 2.f * vec3_dot(v, v)
+    val C = vec3_dot(o, o) - (rtot * rtot)
+    var t0: float
+    var t1: float
+    var t: float
+  in
+    if not(quadratic(A, B, C, addr@(t0), addr@(t1))) then true
+    else not(between_or(t0, 0.f, 1.f)) && not(between_or(t1, 0.f, 1.f))
+  end
+end
 
-implement sphere_swept_inside_sphere ( s1, v, s2 ) =
-(
-)
+//  unimplemented
+implement sphere_swept_inside_sphere ( s1, v, s2 ) = false
 
-implement sphere_swept_intersects_sphere ( s1, v, s2 ) =
-(
-)
+//  unimplemented
+implement sphere_swept_intersects_sphere ( s1, v, s2 ) = false
 
-implement point_inside_triangle ( p, v0, v1, v2 ) =
-(
-)
+implement point_inside_triangle ( p, v0, v1, v2 ) = let
+  val d0 = vec3_sub(v2, v0)
+  val d1 = vec3_sub(v1, v0)
+  val d2 = vec3_sub(p, v0)
+  val dot00 = vec3_dot(d0, d0)
+  val dot01 = vec3_dot(d0, d1)
+  val dot02 = vec3_dot(d0, d2)
+  val dot11 = vec3_dot(d1, d1)
+  val dot12 = vec3_dot(d1, d2)
+  val inv_dom = 1.f / (dot00 * dot11 - dot01 * dot01)
+  val u = (dot11 * dot02 - dot01 * dot12) * inv_dom
+  val v = (dot00 * dot12 - dot01 * dot02) * inv_dom
+in
+  (u >= 0.f) && (v >= 0.f) && (u + v < 1.f)
+end
 
 implement sphere_intersects_face ( s, v0, v1, v2, norm ) =
-(
-)
+  if not(sphere_intersects_plane(s, plane_new(v0, norm))) then false
+  else let
+    val c = plane_closest(plane_new(v0, norm), s.center)
+  in
+    point_inside_triangle(c, v0, v1, v2)
+  end
 
 implement ellipsoid_new ( center, radiuses ) =
-(
-)
+  @{center=center, radiuses=radiuses}:ellipsoid
 
-implement ellipsoid_of_sphere ( s ) =
-(
-)
+implement ellipsoid_of_sphere ( s ) = let
+  val radiuses = vec3_new(s.radius, s.radius, s.radius)
+in
+  ellipsoid_new(s.center, radiuses)
+end
 
-implement ellipsoid_transform ( e, m ) =
-(
-)
+implement ellipsoid_transform ( e, m ) = let
+in
+  e.center := mat4_mul_vec3(m, e.center);
+  e.radiuses := mat3_mul_vec3(mat4_to_mat3(m), e.radiuses);
+  e
+end
 
 implement ellipsoid_space ( e ) =
-(
-)
+  mat3_new(
+  1.f/e.radiuses.x, 0.f, 0.f,
+  0.f, 1.f/e.radiuses.y, 0.f,
+  0.f, 0.f, 1.f/e.radiuses.z
+  )
 
 implement ellipsoid_inv_space ( e ) =
-(
-)
+  mat3_new(
+    e.radiuses.x, 0.f, 0.f,
+    0.f, e.radiuses.y, 0.f,
+    0.f, 0.f, e.radiuses.z
+  )
 
 implement capsule_new ( c_start, c_end, radius ) =
-(
-)
+  @{c_start=c_start, c_end=c_end, radius=radius}:capsule
 
 implement capsule_transform ( c, m ) =
-(
-)
+  capsule_new(
+    mat4_mul_vec3(m, c.c_start),
+    mat4_mul_vec3(m, c.c_end),
+    c.radius * max(max(m.xx, m.yy), m.zz)
+  )
 
 implement capsule_inside_plane ( c, p ) =
-(
-)
+  sphere_inside_plane(sphere_new(c.c_start, c.radius), p) && sphere_inside_plane(sphere_new(c.c_end, c.radius), p)
 
 implement capsule_outside_plane ( c, p ) =
-(
-)
+  sphere_outside_plane(sphere_new(c.c_start, c.radius), p) && sphere_inside_plane(sphere_new(c.c_end, c.radius), p)
 
 implement capsule_intersects_plane ( c, p ) =
-(
-)
+  not(capsule_inside_plane(c, p)) && not(capsule_outside_plane(c, p))
 
 implement vertex_new (  ) =
 (
