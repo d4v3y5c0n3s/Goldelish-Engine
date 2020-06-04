@@ -2377,28 +2377,66 @@ implement capsule_outside_plane ( c, p ) =
 implement capsule_intersects_plane ( c, p ) =
   not(capsule_inside_plane(c, p)) && not(capsule_outside_plane(c, p))
 
-implement vertex_new (  ) =
-(
-)
+implement vertex_new (  ) = let
+  var vert: vertex
+in
+  vert
+end
 
 implement vertex_equal ( v1, v2 ) =
-(
-)
+  if not(vec3_equ(v1.position, v2.position)) then false
+  else if not(vec3_equ(v1.normal, v2.normal)) then false
+  else if not(vec2_equ(v1.uvs, v2.uvs)) then false
+  else true
 
 implement vertex_print ( v ) =
 (
+  println!("V\(Position: "); vec3_print(v.position);
+  println!(", Normal: "); vec3_print(v.normal);
+  println!(", Tangent: "); vec3_print(v.tangent);
+  println!(", Binormal: "); vec3_print(v.binormal);
+  println!(", Color: "); vec4_print(v.color);
+  println!(", Uvs: "); vec2_print(v.uvs);
+  println!(")")
 )
 
-implement mesh_print ( m ) =
-(
-)
+implement mesh_print ( pfm | m ) = let
+  val verts_from_m = !m.verticies
+  val tris_from_m = !m.triangles
+  fun vert_print_loop {i:nat} .<i>. ( i: int i ): void =
+    if not(i < 0) then begin
+      vertex_print(verts_from_m[i]);
+      vert_print_loop(i-1)
+    end else ()
+  fun tri_print_loop {i:nat} .<i>. ( i: int i ): void =
+    if not(i < 0) then begin
+      println!(tris_from_m[i]);
+      tri_print_loop(i-1)
+    end else ()
+in
+  println!("Num Verts: ", !m.num_verts);
+  vert_print_loop(!m.num_verts - 1);
+  println!("Num Tris: ", !m.num_triangles);
+  println!("Triangle Indicies");
+  tri_print_loop(!m.num_triangles - 1)
+end
 
-implement mesh_new (  ) =
-(
-)
+//  use malloc_gc & mfree_gc to alloc & dealloc ptrs for mesh_new & mesh_delete (may need to rework mesh type)
+implement mesh_new (  ) = let
+  var res = ptr_alloc{mesh}()
+in
+  res.num_verts := 0;
+  res.num_triangles := 0;
+  res.verticies := array_ptr_alloc<vertex>(1);
+  res.triangles := array_ptr_alloc<uint32>(1);
+  res
+end
 
-implement mesh_delete ( m ) =
+implement mesh_delete ( pfm, pfmf | m ) =
 (
+  array_ptr_free(m.verticies)
+  array_ptr_free(m.triangles)
+  ptr_free(pfm, pfmf | m)
 )
 
 implement mesh_generate_tangents ( m ) =

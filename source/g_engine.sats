@@ -535,17 +535,17 @@ fun vertex_equal ( v1: vertex, v2: vertex ) : bool = "sta#%"
 fun vertex_print ( v: vertex ) : void = "sta#%"
 
 //  mesh type
-typedef mesh = @{ num_verts=int, num_triangles=int, verticies=ptr, triangles=ptr }
+vtypedef mesh = [i,j:nat][l1,l2:addr] ( @{ num_verts=int i, num_triangles=int j, verticies=(array_v(vertex, l1, i), mfree_gc_v(l1) | ptr l1), triangles=(array_v(uint32, l2, j), mfree_gc_v(l2) | ptr l2) })
 
-fun mesh_new () : ptr = "str#%"
-fun mesh_delete ( ptr ) : void = "sta#%"
+fun mesh_new () : [l:addr] ( mesh? @ l, mfree_gc_v(l) | ptr l ) = "str#%"
+fun mesh_delete {l:addr} ( pfm: mesh @ l, pfmf: mfree_gc_v(l) | m: ptr l ) : void = "sta#%"
 
 fun mesh_generate_normals ( m: ptr ) : void = "sta#%"
 fun mesh_generate_tangents ( m: ptr ) : void = "sta#%"
 fun mesh_generate_orthagonal_tangents ( m: ptr ) : void = "sta#%"
 fun mesh_generate_texcoords_cylinder ( m: ptr ) : void = "sta#%"
 
-fun mesh_print ( m: ptr ) : void = "sta#%"
+fun mesh_print {l:agz} ( pfm: !mesh @ l | m: ptr l ) : void = "sta#%"
 fun mesh_surface_area ( m: ptr ) : float = "sta#%"
 
 fun mesh_transform ( m: ptr, transform: mat4 ) : void = "sta#%"
