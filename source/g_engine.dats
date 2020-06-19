@@ -10,95 +10,82 @@ staload "./g_engine.sats"
 
 val PATH_MAX = 256
 
+extern castfn int_to_ulint ( x: int ): ulint
+
 implement P ( path ) =
   if strlen (path) >= PATH_MAX
     then ( println!("Path too long: ", path); @{path=""} : fpath)
   else @{path=path} : fpath
 
+//  use call by reference (&) instead of passing a pointer to a string (because it's easier to deal with)
 implement fpath_full ( path_in ) = ret where {
-	  var ret: fpath
-          var rpath = ret.path
-          val () = SDL_PathFullName(view@(rpath) | addr@(rpath), (path_in.path))
-          ret.path := rpath
+  val ret = @{path=SDL_PathFullName(path_in.path)}:fpath
 }
 
-implement fpath_file ( path ) = let
-	  var ret = (@{path=""}:fpath)
-          var rpath = ret.path
-          val () = SDL_PathFileName(view@(rpath) | addr@(rpath), path.path)
-          ret.path := rpath
-in
-	ret
-end
+implement fpath_file ( path ) = ret where {
+  val ret = @{path=SDL_PathFileName(path.path)}:fpath
+}
 
-implement fpath_file_location ( path ) = let
-	  var ret = (@{path=""}:fpath)
-          var rpath = ret.path
-          val () = SDL_PathFileLocation(view@(rpath) | addr@(rpath), path.path)
-          ret.path := rpath
-in
-	ret
-end
+implement fpath_file_location ( path ) = ret where {
+  val ret = @{path=SDL_PathFileLocation(path.path)}:fpath
+}
 
-implement fpath_file_extension ( path ) = let
-	  var ret = (@{path=""}:fpath)
-          var rpath = ret.path
-          val () = SDL_PathFileExtension(view@(rpath) | addr@(rpath), path.path)
-          ret.path := rpath
-in
-	ret
-end
+implement fpath_file_extension ( path ) = ret where {
+  val ret = @{path=SDL_PathFileExtension(path.path)}:fpath
+}
 
 //  timing functions
 implement timer_start ( id, tag ) = (
-	  println!("Timer ", id, tag, "Start: ", (0.0f))
-          @{id=id, start_time=SDL_GetTicks(), end_time=0, split=SDL_GetTicks()}:timer
+	  println!("Timer ", id, tag, "Start: ", (0.0f));
+          @{id=id, start_time=SDL_GetTicks(), end_time=int_to_ulint(0), split=SDL_GetTicks()}:timer
 )
 
 implement timer_split ( t, tag ) = let
   val curr = SDL_GetTicks()
-  val difference = (curr - t.split) / 1000.0
+  val difference = (curr - t.split) / int_to_ulint(1000)
+  var ret = t
 in
   println!("Timer ", t.id, tag, "Split: ", difference);
-  t.split := curr;
-  t
+  ret.split := curr;
+  ret
 end
 
 implement timer_stop ( t, tag ) = let
   val curr = SDL_GetTicks()
-  val difference = (curr - t.split) / 1000.0
+  val difference = (curr - t.split) / int_to_ulint(1000)
+  var ret = t
 in
   println!("Timer ", t.id, tag, "End: ", difference);
-  t.end_time := SDL_GetTicks();
-  t
+  ret.end_time := SDL_GetTicks();
+  ret
 end
 
 var timestamp_counter: int = 0
 
-implement timestamp ( out_pf | out ) = let
-  var ltime: $TIME.time_t
+implement timestamp ( out, ts_counter ) = let
+  var ltime = $TIME.time_get()
   var time_value: $TIME.tm_struct
+  val p = $TIME.localtime_r(ltime, time_value)
+  prval () = opt_unsome (time_value)
 in
-  ltime := $TIME.time(the_null_ptr);
-  time_value := $TIME.localtime(ltime);
-  println!(out_pf | out,
+  println!(out,
   time_value.tm_mday,
   time_value.tm_mon,
   time_value.tm_year,
   time_value.tm_hour,
   time_value.tm_min,
   time_value.tm_sec,
-  timestamp_counter);
-  timestamp_counter := timestamp_counter + 1
+  ts_counter);
+  (ts_counter + 1)
 end
 
 var frame_rate_string_var: char //[12]
 
 var frame_rate_var: int = 0
-var frame_time_var: double = 0
+var frame_time_var: double = 0.0
 
-var frame_start_time: ulint = 0.0
-var frame_end_time: ulint = 0.0
+var frame_start_time: ulint = int_to_ulint(0)
+var frame_end_time: ulint = int_to_ulint(0)
 
 val frame_update_rate = 0.5
 
@@ -2447,7 +2434,7 @@ implement mesh_generate_normals ( m ) =
 (
 )
 
-implement mesh_generate_orthogonal_tangents ( m ) =
+implement mesh_generate_orthagonal_tangents ( m ) =
 (
 )
 
@@ -2495,7 +2482,7 @@ implement model_generate_tangents ( m ) =
 (
 )
 
-implement model_generate_orthogonal_tangents ( m ) =
+implement model_generate_orthagonal_tangents ( m ) =
 (
 )
 

@@ -23,7 +23,7 @@ typedef fpath = @{ path=string }
 
 fun P ( path: string ) : fpath = "sta#"
 
-fun fpath_full (path: fpath) : fpath = "sta#fpath_full"
+fun fpath_full (path_in: fpath) : fpath = "sta#fpath_full"
 fun fpath_file (path: fpath) : fpath = "sta#fpath_file"
 fun fpath_file_location (path: fpath) : fpath = "sta#fpath_file_location"
 fun fpath_file_extension (path: fpath) : fpath = "sta#fpath_file_extension"
@@ -48,7 +48,7 @@ fun timer_start (id: int, tag: string) : timer = "sta#"
 fun timer_split (t: timer, tag: string) : timer = "sta#timer_split"
 fun timer_stop (t: timer, tag: string) : timer = "sta#timer_stop"
 
-fun timestamp {l:agz} (out_pf: string @ l | out: ptr l) : void = "sta#timestamp"
+fun timestamp (out: string, ts_counter: int) : int = "sta#timestamp"
 
 (*  ###  framerate  ###  *)
 fun frame_begin () : void = "sta#frame_begin"
@@ -540,19 +540,19 @@ vtypedef mesh = [i,j:nat][l1,l2:addr] ( @{ num_verts=int i, num_triangles=int j,
 fun mesh_new () : [l:addr] ( mesh? @ l, mfree_gc_v(l) | ptr l ) = "str#%"
 fun mesh_delete {l:addr} ( pfm: mesh @ l, pfmf: mfree_gc_v(l) | m: ptr l ) : void = "sta#%"
 
-fun mesh_generate_normals ( m: ptr ) : void = "sta#%"
-fun mesh_generate_tangents ( m: ptr ) : void = "sta#%"
-fun mesh_generate_orthagonal_tangents ( m: ptr ) : void = "sta#%"
-fun mesh_generate_texcoords_cylinder ( m: ptr ) : void = "sta#%"
+fun mesh_generate_normals {l:addr} ( m: ptr ) : void = "sta#%"
+fun mesh_generate_tangents {l:addr} ( m: ptr ) : void = "sta#%"
+fun mesh_generate_orthagonal_tangents {l:addr} ( m: ptr ) : void = "sta#%"
+fun mesh_generate_texcoords_cylinder {l:addr} ( m: ptr ) : void = "sta#%"
 
 fun mesh_print {l:agz} ( pfm: !mesh @ l | m: ptr l ) : void = "sta#%"
-fun mesh_surface_area ( m: ptr ) : float = "sta#%"
+fun mesh_surface_area {l:addr} ( m: ptr ) : float = "sta#%"
 
-fun mesh_transform ( m: ptr, transform: mat4 ) : void = "sta#%"
-fun mesh_translate ( m: ptr, translation: vec3 ) : void = "sta#%"
-fun mesh_scale ( m: ptr, scale: float ) : void = "sta#%"
+fun mesh_transform {l:addr} ( m: ptr, transform: mat4 ) : void = "sta#%"
+fun mesh_translate {l:addr} ( m: ptr, translation: vec3 ) : void = "sta#%"
+fun mesh_scale {l:addr} ( m: ptr, scale: float ) : void = "sta#%"
 
-fun mesh_bounding_sphere ( m: ptr ) : sphere = "sta#%"
+fun mesh_bounding_sphere {l:addr} ( m: ptr ) : sphere = "sta#%"
 
 //  model type
 typedef model = @{ num_meshes=int, meshes=ptr }//  look up exactly what '**' means in C later to get this working
