@@ -11,6 +11,9 @@ staload "./g_engine.sats"
 val PATH_MAX = 256
 
 extern castfn int_to_ulint ( x: int ): ulint
+extern castfn ulint_to_float ( x: ulint ): float
+extern castfn ulint_to_double ( x: ulint ): double
+extern castfn float_to_uint ( x: float ): uint
 
 implement P ( path ) =
   if strlen (path) >= PATH_MAX
@@ -79,8 +82,6 @@ in
   (ts_counter + 1)
 end
 
-var frame_rate_string_var: char //[12]
-
 var frame_rate_var: int = 0
 var frame_time_var: double = 0.0
 
@@ -93,36 +94,38 @@ var frame_counter: int = 0
 var frame_acc_time: double = 0.0
 
 implement frame_begin () = begin
-  frame_start_time := SDL_GetTicks()
+  SDL_GetTicks()
 end
 
-implement frame_end () = begin
-  frame_end_time := SDL_GetTicks();
-  frame_time_var := (frame_end_time - frame_start_time) / 1000.0;
-  frame_acc_time := frame_acc_time + frame_time_var;
-  frame_counter := frame_counter + 1;
-  if (frame_acc_time > frame_update_rate) then begin
-    frame_rate_var := $MATH.round(frame_counter / frame_acc_time);
-    frame_counter := 0;
-    frame_acc_time := 0.0;
-  end else ()
-end
-
-implement frame_end_at_rate ( fps ) = let
-  val end_ticks = SDL_GetTicks()
-  val active_frame_time = (end_ticks - frame_start_time) / 1000.0
-  val wait = (1.0 / fps) - active_frame_time
-  val milliseconds = max(wait, 0) * 1000
+implement frame_end ( fstartt, fendt, ftimev, facct, fcntr, frv ) = let
+  val fendt = SDL_GetTicks()
+  val ftimev = (fendt - fstartt) / int_to_ulint(1000)
+  var facct = facct + ftimev
+  var fcntr = fcntr + int_to_ulint(1)
+  var frv = frv
 in
-  SDL_Delay(milliseconds);
-  frame_end()
+  if (ulint_to_float(facct) > frame_update_rate) then begin
+    frv := $MATH.round(fcntr / facct);
+    fcntr := int_to_ulint(0);
+    facct := int_to_ulint(0);
+    (fstartt, fendt, ftimev, facct, fcntr, frv)
+  end else (fstartt, fendt, ftimev, facct, fcntr, frv)
 end
 
-implement frame_rate () = frame_rate_var
+implement frame_end_at_rate ( fps, fstartt, fendt, ftimev, facct, fcntr, frv ) = let
+  val end_ticks = SDL_GetTicks()
+  val active_frame_time = (end_ticks - fstartt) / int_to_ulint(1000)
+  val wait = (1.0 / fps) - ulint_to_double(active_frame_time)
+  val milliseconds = float_to_uint(max(wait, 0.0) * 1000.f)
+  val () = SDL_Delay(milliseconds)
+  val fe = frame_end(fstartt, fendt, ftimev, facct, fcntr, frv)
+in
+  ()
+end
 
-implement frame_time () = frame_time_var
+//implement frame_rate () = frame_rate_var
 
-implement frame_rate_string () = frame_rate_string_var
+//implement frame_time () = frame_time_var
 
 //  vector math
 fn rawcast {} ( x: float ): int = g0float2int(x)
@@ -239,7 +242,7 @@ implement vec2_fmod ( v, vl ) = @{ x=($MATH.fmod(v.x, vl)), y=($MATH.fmod(v.y, v
 
 implement vec2_max ( v, x ) = @{ x=(max(v.x, x)), y=(max(v.y, x)) }:vec2
 
-implement vec2_min ( v, x ) = @{ x=(min(v.x, x)), y=(min(x.y, x)) }:vec2
+implement vec2_min ( v, x ) = @{ x=(min(v.x, x)), y=(min(v.y, x)) }:vec2
 
 implement vec2_clamp ( v, b, t ) = @{ x=(clamp(v.x, b, t)), y=(clamp(v.y, b, t)) }:vec2
 
@@ -272,15 +275,6 @@ implement vec2_normalize ( v ) =
 implement vec2_reflect ( v1, v2 ) =
 	  vec2_sub(v1, vec2_mul(v2, 2 * vec2_dot(v1, v2)))
 
-implement vec2_from_string ( s ) = let
-  var pEnd: string
-  val d1 = $STDLIB.strtod(s, pEnd)
-  val d2 = $STDLIB.strtod(pEnd, the_null_ptr)
-  val v = vec2_new(d1, d2)
-in
-  v
-end
-
 implement vec2_equ ( v1, v2 ) =
 	  if (not(v1.x = v2.x)) then false
 	  else if (not(v1.y = v2.y)) then false
@@ -292,7 +286,14 @@ implement vec2_to_array ( v, out ) =
   out[1] := v.y
 )
 
-implement vec2_hash ( v ) = abs(rawcast(v.x) || rawcast(v.y))
+extern fn bin_xor ( x1: int, x2: int ) : int = "ext#bin_xor_c"
+%{
+int bin_xor_c ( int x1, int x2 ) {
+  return x1 ^ x2
+}
+%}
+
+implement vec2_hash ( v ) = abs(bin_xor(rawcast(v.x), rawcast(v.y)))
 
 implement vec2_mix_hash ( v ) = let
 	  val raw_vx = abs(rawcast(v.x))
@@ -314,12 +315,12 @@ implement vec2_mix_hash ( v ) = let
 	  val h11 = raw_vx >> 21
 	  val h12 = raw_vy >> 13
 
-	  val res1 = h1 || h2 || h3
-	  val res2 = h4 || h5 || h6
-	  val res3 = h7 || h8 || h9
-	  val res4 = h10 || h11 || h12
+	  val res1 = bin_xor(bin_xor(h1, h2), h3)
+	  val res2 = bin_xor(bin_xor(h4, h5), h6)
+	  val res3 = bin_xor(bin_xor(h7, h8), h9)
+	  val res4 = bin_xor(bin_xor(h10, h11), h12)
 in
-	(res1 * 10252247) || (res2 * 70209673) || (res3 * 104711) || (res4 * 63589)
+	bin_xor(bin_xor(bin_xor((res1 * 10252247), (res2 * 70209673)), (res3 * 104711)), (res4 * 63589))
 end
 
 implement vec2_saturate ( v ) =
@@ -442,7 +443,7 @@ implement vec3_dist ( v1, v2 ) =
 	  $MATH.sqrt(vec3_dist_sqrd(v1, v2))
 
 implement vec3_dist_manhattan ( v1, v2 ) =
-	  abs(v1.x - v2.x) + abs(v1.y - v2.y) + abs(v1.z, v2.z)
+	  abs(v1.x - v2.x) + abs(v1.y - v2.y) + abs(v1.z - v2.z)
 
 implement vec3_normalize ( v ) = let
 	  val len = vec3_length(v);
@@ -456,16 +457,6 @@ implement vec3_reflect ( v1, v2 ) =
 
 implement vec3_project ( v1, v2 ) =
 	  vec3_sub(v1, vec3_mul(v2, vec3_dot(v1, v2)))
-
-implement vec3_from_string ( s ) = let
-  var pEnd: string
-  val d1 = $STDLIB.strtod(s, pEnd)
-  val d2 = $STDLIB.strtod(pEnd, pEnd)
-  val d3 = $STDLIB.strtod(pEnd, the_null_ptr)
-  val v = vec3_new(d1, d2, d3)
-in
-  v
-end
 
 implement vec3_equ ( v1, v2 ) =
 	  if (not(v1.x = v2.x)) then false
@@ -486,7 +477,7 @@ implement vec3_to_array ( v, out ) = begin
 end
 
 implement vec3_hash ( v ) =
-	  abs( rawcast(v.x) || rawcast(v.y) || rawcast(v.z) )
+	  abs( bin_xor(bin_xor(rawcast(v.x), rawcast(v.y)), rawcast(v.z)) )
 
 implement vec3_to_homogeneous ( v ) =
 	  vec4_new(v.x, v.y, v.z, 1.0f)
@@ -618,17 +609,6 @@ end
 implement vec4_reflect ( v1, v2 ) =
 	  vec4_sub(v1, vec4_mul(v2, 2 * vec4_dot(v1, v2)))
 
-implement vec4_from_string ( s ) = let
-  var pEnd: string
-  val d1 = $STDLIB.strtod(s, pEnd)
-  val d2 = $STDLIB.strtod(pEnd, pEnd)
-  val d3 = $STDLIB.strtod(pEnd, pEnd)
-  val d4 = $STDLIB.strtod(pEnd, the_null_ptr)
-  val v = vec4_new(d1, d2, d3, d4)
-in
-  v
-end
-
 implement vec4_max ( v1, v2 ) =
 	  @{x=max(v1.x, v2.x), y=max(v1.y, v2.y), z=max(v1.z, v2.z), w=max(v1.w, v2.w)}:vec4
 
@@ -653,7 +633,7 @@ implement vec4_from_homogeneous ( v ) =
 	  vec3_div(vec3_new(v.x, v.y, v.z), v.w)
 
 implement vec4_hash ( v ) =
-	  abs( rawcast(v.x) || rawcast(v.y) || rawcast(v.z) || rawcast(v.w) )
+	  abs( bin_xor(bin_xor(bin_xor(rawcast(v.x), rawcast(v.y)), rawcast(v.z)), rawcast(v.w)) )
 
 implement vec4_saturate ( v ) =
 	  @{x=saturate(v.x), y=saturate(v.y), z=saturate(v.z), w=saturate(v.w)}:vec4
