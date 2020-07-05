@@ -666,7 +666,7 @@ implement quat_id () =
 	  quat_new(0.f, 0.f, 0.f, 1.f)
 
 implement quat_new ( x, y, z, w ) =
-	  @{x=x, y=y, z=z, w=w}:vec4
+	  @{x=x, y=y, z=z, w=w}:quat
 
 implement quat_at ( q, i ) = let
   var values = @[float](q.x, q.y, q.z, q.w)
@@ -795,17 +795,17 @@ end
 
 implement quat_slerp ( from, to, amount ) = let
 	  val cosom0 = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w
-	  val cosom = if (cosom0 < 0.0f) then ~cosom0 else cosom0
+	  val cosom = ((if (cosom0 < 0.0f) then ~cosom0 else cosom0):float)
 	  val omega = $MATH.acos(cosom)
 	  val sinom = $MATH.sin(omega)
 	  val QUATERNION_DELTA_COS_MIN = 0.01f
-	  val afto1 = if (cosom0 < 0.0f) then quat_new(~to.x, ~to.y, ~to.z, ~to.w) else to
-	  val scale0 = if ((1.0f - cosom) > QUATERNION_DELTA_COS_MIN)
+	  val afto1 = ((if (cosom0 < 0.0f) then quat_new(~to.x, ~to.y, ~to.z, ~to.w) else to):quat)
+	  val scale0 = ((if ((1.0f - cosom) > QUATERNION_DELTA_COS_MIN)
 	      then ($MATH.sin((1.0f - amount) * omega) / sinom)
-	      else 1.0f - amount
-	  val scale1 = if ((1.0f - cosom) > QUATERNION_DELTA_COS_MIN)
+	      else 1.0f - amount):float)
+	  val scale1 = ((if ((1.0f - cosom) > QUATERNION_DELTA_COS_MIN)
 	      then ($MATH.sin(amount * omega) / sinom)
-	      else amount
+	      else amount):float)
 in
 	quat_new(
 	(scale0 * from.x) + (scale1 * afto1.x),
@@ -867,11 +867,11 @@ implement quat_neg ( q ) =
 implement quat_scale ( q, f ) =
 	  @{x=q.x * f, y=q.y * f, z=q.z * f, w=q.w * f}:quat
 
-implement quat_interpolate ( qs, ws, count ) = let
+implement quat_interpolate {n,m} ( qs, ws, count ) = let
 	  val ref = quat_id()
 	  val ref_inv = quat_inverse(ref)
 	  val acc = vec3_zero()
-	  fun loop (i:int, acc1: vec3) : vec3 = let
+	  fun loop {i:nat | i >= m} (i:int, acc1: vec3) : vec3 = let
 	      val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[i]))
 	      val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[i])))
 	  in

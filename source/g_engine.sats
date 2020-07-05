@@ -261,7 +261,7 @@ fun quat_rotation_x ( angle: float ) : quat = "sta#%"
 fun quat_rotation_y ( angle: float ) : quat = "sta#%"
 fun quat_rotation_z ( angle: float ) : quat = "sta#%"
 
-fun quat_at ( q: quat, i: int ) : float = "sta#%"
+fun quat_at {i:nat | i < 4} ( q: quat, i: int i ) : float = "sta#%"
 fun quat_real ( q: quat ) : float = "sta#%"
 fun quat_imaginaries ( q: quat ) : vec3 = "sta#%"
 
@@ -288,7 +288,7 @@ fun quat_constrain ( q: quat, axis: vec3 ) : quat = "sta#%"
 fun quat_constrain_y ( q: quat ) : quat = "sta#%"
 
 fun quat_distance ( q0: quat, q1: quat ) : float = "sta#%"
-fun quat_interpolate ( qs: ptr, ws: ptr, count: int ) : quat = "sta#%"
+fun quat_interpolate {n,m:nat | m == n - 1} ( qs: @[quat][n], ws: @[float][n], count: int m ) : quat = "sta#%"
 
 typedef quat_dual = @{ real=quat, dual=quat }
 
