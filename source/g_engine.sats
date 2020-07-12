@@ -288,7 +288,7 @@ fun quat_constrain ( q: quat, axis: vec3 ) : quat = "sta#%"
 fun quat_constrain_y ( q: quat ) : quat = "sta#%"
 
 fun quat_distance ( q0: quat, q1: quat ) : float = "sta#%"
-fun quat_interpolate {n,m:nat | m == n - 1} ( qs: @[quat][n], ws: @[float][n], count: int m ) : quat = "sta#%"
+fun quat_interpolate {n,m:nat | m == n - 1} ( qs: &(@[quat][n]), ws: &(@[float][n]), count: int m ) : quat = "sta#%"
 
 typedef quat_dual = @{ real=quat, dual=quat }
 
@@ -296,7 +296,7 @@ fun quat_dual_id () : quat_dual = "sta#%"
 fun quat_dual_new ( real: quat, dual: quat ) : quat_dual = "sta#%"
 fun quat_dual_transform ( q: quat, t: vec3 ) : quat_dual = "sta#%"
 fun quat_dual_mul ( q0: quat_dual, q1: quat_dual ) : quat_dual = "sta#%"
-fn quat_dual_normalize ( q: quat ) : quat_dual = "sta#%"
+fn quat_dual_normalize ( q: quat_dual ) : quat_dual = "sta#%"
 fun quat_dual_mul_vec3 ( q: quat_dual, v: vec3 ) : vec3 = "sta#%"
 fun quat_dual_mul_vec3_rot ( q: quat_dual, v: vec3 ) : vec3 = "sta#%"
 
@@ -308,7 +308,7 @@ fun mat2_id () : mat2 = "sta#%"
 fun mat2_zero () : mat2 = "sta#%"
 fun mat2_new ( xx: float, xy: float, yx: float, yy: float ) : mat2 = "sta#%"
 fun mat2_mul_mat2 ( m1: mat2, m2: mat2 ) : mat2 = "sta#%"
-fun mat2_mul_vec2 ( m: mat2, v: vec2 ) : mat2 = "sta#%"
+fun mat2_mul_vec2 ( m: mat2, v: vec2 ) : vec2 = "sta#%"
 
 fun mat2_transpose ( m: mat2 ) : mat2 = "sta#%"
 fun mat2_det ( m: mat2 ) : float = "sta#%"
@@ -332,7 +332,7 @@ fun mat3_det ( m: mat3 ) : float = "sta#%"
 fun mat3_inverse ( m: mat3 ) : mat3 = "sta#%"
 
 fun mat3_to_array ( m: mat3, out: &(@[float][9]) ) : void = "sta#%"
-fun mat3_print ( m: mat3 ) : mat3 = "sta#%"
+fun mat3_print ( m: mat3 ) : void = "sta#%"
 
 fun mat3_scale ( s: vec3 ) : mat3 = "sta#%"
 fun mat3_rotation_x ( a: float ) : mat3 = "sta#%"
@@ -346,8 +346,9 @@ typedef mat4 = @{ xx=float, xy=float, xz=float, xw=float, yx=float, yy=float, yz
 fun mat4_id () : mat4 = "sta#%"
 fun mat4_zero () : mat4 = "sta#%"
 fun mat4_new ( xx: float, xy: float, xz: float, xw: float, yx: float, yy: float, yz: float, yw: float, zx: float, zy: float, zz: float, zw: float, wx: float, wy: float, wz: float, ww: float ) : mat4 = "str#%"
-fun mat4_at ( m: mat4, i: int, j: int ) : float = "sta#%"
-fun mat4_set ( m: mat4, x: int, y: int, v: float ) : mat4 = "sta#%"
+//16
+fun mat4_at {x,y:nat | (x+(y*4)) < 16} ( m: mat4, x: int x, y: int y ) : float = "sta#%"
+fun mat4_set {x,y:nat | (x+(y*4)) < 16} ( m: mat4, x: int x, y: int y, v: float ) : mat4 = "sta#%"
 fun mat4_transpose ( m: mat4 ) : mat4 = "sta#%"
 
 fun mat4_mul_mat4 ( m1: mat4, m2: mat4 ) : mat4 = "sta#%"

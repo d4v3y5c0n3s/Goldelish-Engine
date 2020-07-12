@@ -868,23 +868,22 @@ implement quat_scale ( q, f ) =
 	  @{x=q.x * f, y=q.y * f, z=q.z * f, w=q.w * f}:quat
 
 implement quat_interpolate {n,m} ( qs, ws, count ) = let
-	  val ref = quat_id()
-	  val ref_inv = quat_inverse(ref)
-	  val acc = vec3_zero()
-	  fun loop {i:nat | i >= m} (i:int, acc1: vec3) : vec3 = let
-	      val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[i]))
-	      val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[i])))
-	  in
-		if i >= count
-		   then acc1
-		else
-			if (vec3_length(qlog0) < vec3_length(qlog1)) then
-			   loop(i-1, vec3_add(acc1, vec3_mul(qlog0, ws[i])))
-			else
-				loop(i-1, vec3_add(acc1, vec3_mul(qlog1, ws[i])))
-	  end
+  val ref = quat_id()
+  val ref_inv = quat_inverse(ref)
+  val acc = vec3_zero()
+  fun loop {n,m:nat | m < n} .<m>. (m: int m, qs: &(@[quat][n]), ws: &(@[float][n]), acc1: vec3) : vec3 = let
+    val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[m]))
+    val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[m])))
+  in
+    if ( m < 0 ) then acc1
+    else
+      if ( vec3_length(qlog0) < vec3_length(qlog1) ) then
+        ( loop(m-1, qs, ws, vec3_add(acc1, vec3_mul(qlog0, ws[m]))) )
+      else
+        ( loop(m-1, qs, ws, vec3_add(acc1, vec3_mul(qlog1, ws[m]))) )
+  end
 in
-	quat_normalize(quat_mul_quat(ref, quat_exp( loop(count, acc) )))
+  quat_normalize( quat_mul_quat(ref, quat_exp(loop(count, qs, ws, acc))) )
 end
 
 implement quat_dual_new ( real, dual ) =
@@ -928,12 +927,12 @@ implement quat_dual_mul_vec3 ( q, v ) = let
 	  val dimg = vec3_mul(quat_imaginaries(q.dual), q.real.w)
 	  val dual = vec3_sub(rimg, vec3_add(dimg, rdc))
 in
-	vec3_add(v, vec3_add(vec3_mul(real, 2), vec3_mul(dual, 2)))
+	vec3_add(v, vec3_add(vec3_mul(real, 2.f), vec3_mul(dual, 2.f)))
 end
 
 implement quat_dual_mul_vec3_rot ( q, v ) = let
 	  val rvc = vec3_cross(quat_imaginaries(q.real), v)
-	  val real = vec3_cross(quat_imaginaries(q.real), vec3_add(rvc, vec3_mul(v. q.real.w)))
+	  val real = vec3_cross(quat_imaginaries(q.real), vec3_add(rvc, vec3_mul(v, q.real.w)))
 in
 	vec3_add(v, vec3_mul(real, 2.0f))
 end
@@ -1233,13 +1232,13 @@ implement mat4_id (  ) =
 	  }:mat4
 
 implement mat4_at ( m, x, y ) = let
-  var values = @[float](m.xx, m.xy, m.xz, m.xw, m.yx, m.yy, m.yz, m.yw, m.zx, m.zy, m.zz, m.zw, m.wx, m.wy, m.wz, m.ww)
+  var values = @[float][16](m.xx, m.xy, m.xz, m.xw, m.yx, m.yy, m.yz, m.yw, m.zx, m.zy, m.zz, m.zw, m.wx, m.wy, m.wz, m.ww)
 in
   values[x + (y*4)]
 end
 
 implement mat4_set ( m, x, y, v ) = let
-  var values = @[float](m.xx, m.xy, m.xz, m.xw, m.yx, m.yy, m.yz, m.yw, m.zx, m.zy, m.zz, m.zw, m.wx, m.wy, m.wz, m.ww)
+  var values = @[float][16](m.xx, m.xy, m.xz, m.xw, m.yx, m.yy, m.yz, m.yw, m.zx, m.zy, m.zz, m.zw, m.wx, m.wy, m.wz, m.ww)
 in
   values[x + (y*4)] := v;
   m
@@ -1365,18 +1364,18 @@ in
   end else let
     val nxt = @[int](1, 2, 0)
     var q = @[float][4](0.f)
-    var i = 0.f
-    var j = 0.f
-    var k = 0.f
-    var s = 0.f
+    var i = 0
+    var j = 0
+    var k = 0
+    var s = 0
   in
-    i := begin if mat4_at(m, 1, 1) > mat4_at(m, 0, 0) then 1.f else i end;
-    i := begin if mat4_at(m, 2, 2) > mat4_at(m, i, i) then 2.f else i end;
+    i := ((if mat4_at(m, 1, 1) > mat4_at(m, 0, 0) then 1 else i):int);
+    i := ((if mat4_at(m, 2, 2) > mat4_at(m, i, i) then 2 else i):int);
     j := nxt[i];
     k := nxt[j];
     s := $MATH.sqrt( (mat4_at(m, i, i) - (mat4_at(m, j, j) mat4_at(m, k, k))) + 1.f );
     q[i] := s * 0.5f;
-    s := begin if (s != 0.f) then 0.5f / s else s end;
+    s := (if (s != 0.f) then 0.5f / s else s);
     q[3] := (mat4_at(m, j, k) - mat4_at(m, k, j)) * s;
     q[j] := (mat4_at(m, i, j) + mat4_at(m, j, i)) * s;
     q[k] := (mat4_at(m, i, k) + mat4_at(m, k, i)) * s;
