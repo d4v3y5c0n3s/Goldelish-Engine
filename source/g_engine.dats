@@ -1370,10 +1370,10 @@ in
     var s = 0
   in
     i := ((if mat4_at(m, 1, 1) > mat4_at(m, 0, 0) then 1 else i):int);
-    i := ((if mat4_at(m, 2, 2) > mat4_at(m, i, i) then 2 else i):int);
+    i := ((if mat4_at(m, 2, 2) > mat4_at(m, $showtype(i), i) then 2 else i):int);
     j := nxt[i];
     k := nxt[j];
-    s := $MATH.sqrt( (mat4_at(m, i, i) - (mat4_at(m, j, j) mat4_at(m, k, k))) + 1.f );
+    s := $MATH.sqrt( (mat4_at(m, i, i) - (mat4_at(m, j, j), mat4_at(m, k, k))) + 1.f );
     q[i] := s * 0.5f;
     s := (if (s != 0.f) then 0.5f / s else s);
     q[3] := (mat4_at(m, j, k) - mat4_at(m, k, j)) * s;
