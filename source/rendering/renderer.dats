@@ -18,6 +18,7 @@ staload "./assets/cmesh.sats"
 
 staload "./rendering/sky.sats"
 
+////
 implement render_object_instance ( i ) =
 {
 }

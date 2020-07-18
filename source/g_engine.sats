@@ -346,7 +346,6 @@ typedef mat4 = @{ xx=float, xy=float, xz=float, xw=float, yx=float, yy=float, yz
 fun mat4_id () : mat4 = "sta#%"
 fun mat4_zero () : mat4 = "sta#%"
 fun mat4_new ( xx: float, xy: float, xz: float, xw: float, yx: float, yy: float, yz: float, yw: float, zx: float, zy: float, zz: float, zw: float, wx: float, wy: float, wz: float, ww: float ) : mat4 = "str#%"
-//16
 fun mat4_at {x:nat | x < 4}{y:nat | y < 4} ( m: mat4, x: int x, y: int y ) : float = "sta#%"
 fun mat4_set {x:nat | x < 4}{y:nat | y < 4} ( m: mat4, x: int x, y: int y, v: float ) : mat4 = "sta#%"
 fun mat4_transpose ( m: mat4 ) : mat4 = "sta#%"

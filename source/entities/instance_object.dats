@@ -12,6 +12,7 @@ staload "./g_net.sats"
 
 staload "./assets/renderable.sats"
 
+////
 implement instance_object_new (  ) =
 {
 }

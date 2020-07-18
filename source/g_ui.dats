@@ -11,6 +11,7 @@ staload "./g_ui.sats"
 staload "./data/dict.sats"
 staload "./data/dict.sats"
 
+////
 typedef ui_elem_handler = '{ type_id=int, new_func=void -> ptr, del_func=ui_elem ptr -> void, event_func=(ui_elem ptr, SDL_Event) -> void, update_func=ui_elem ptr -> void, render_func=ui_elem ptr -> void }
 
 #define MAX_UI_ELEM_HANDLERS 512

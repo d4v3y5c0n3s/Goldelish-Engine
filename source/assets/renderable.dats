@@ -10,6 +10,7 @@ staload "./assets/renderable.sats"
 
 staload "./data/vertex_hashtable.sats"
 
+////
 implement renderable_add_mesh ( r, m ) =
 (
 )

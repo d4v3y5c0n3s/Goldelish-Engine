@@ -11,6 +11,7 @@ staload "./g_asset.sats"
 staload "./data/dict.sats"
 staload "./data/list.sats"
 
+////
 val MAX_ASSET_HANDLERS = 512
 and MAX_PATH_VARIABLES = 512
 

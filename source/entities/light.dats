@@ -12,6 +12,7 @@ staload "./entities/light.sats"
 #define DEFAULT_LIGHT_FAR_CLIP 8192.0
 #define DEFAULT_FOV 0.785398163
 
+////
 implement light_new (  ) =
 {
 }

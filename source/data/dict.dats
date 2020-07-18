@@ -9,6 +9,7 @@
 staload "./data/dict.sats"
 staload UN = "prelude/SATS/unsafe.sats"
 
+////
 fun hash {n:int} {m:int | m > 0} ( s: string n, size: int m ) : int = let
     fun loop {i,j:int} .<i>. ( index: int i, h: int j ) : int =
     	if (i >= 0)

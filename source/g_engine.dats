@@ -14,6 +14,10 @@ extern castfn int_to_ulint ( x: int ): ulint
 extern castfn ulint_to_float ( x: ulint ): float
 extern castfn ulint_to_double ( x: ulint ): double
 extern castfn float_to_uint ( x: float ): uint
+extern castfn double_to_uint ( x: double ): uint
+extern castfn double_to_float ( x: double ): float
+
+extern castfn uint_to_uint32 ( x: uint ): uint32
 
 implement P ( path ) =
   if strlen (path) >= PATH_MAX
@@ -69,6 +73,7 @@ implement timestamp ( out, ts_counter ) = let
   var ltime = $TIME.time_get()
   var time_value: $TIME.tm_struct
   val p = $TIME.localtime_r(ltime, time_value)
+  val () = assertloc(p > 0)
   prval () = opt_unsome (time_value)
 in
   println!(out,
@@ -88,7 +93,7 @@ var frame_time_var: double = 0.0
 var frame_start_time: ulint = int_to_ulint(0)
 var frame_end_time: ulint = int_to_ulint(0)
 
-val frame_update_rate = 0.5
+val frame_update_rate = 0.5f
 
 var frame_counter: int = 0
 var frame_acc_time: double = 0.0
@@ -116,8 +121,8 @@ implement frame_end_at_rate ( fps, fstartt, fendt, ftimev, facct, fcntr, frv ) =
   val end_ticks = SDL_GetTicks()
   val active_frame_time = (end_ticks - fstartt) / int_to_ulint(1000)
   val wait = (1.0 / fps) - ulint_to_double(active_frame_time)
-  val milliseconds = float_to_uint(max(wait, 0.0) * 1000.f)
-  val () = SDL_Delay(milliseconds)
+  val milliseconds = double_to_uint(max(wait, 0.0) * 1000.0)
+  val () = SDL_Delay(uint_to_uint32(milliseconds))
   val fe = frame_end(fstartt, fendt, ftimev, facct, fcntr, frv)
 in
   ()
@@ -136,7 +141,7 @@ implement between ( x, bottom, top ) = (x > bottom) && (x < top)
 
 implement between_or ( x, bottom, top ) = (x >= bottom) && (x <= top)
 
-implement saturate ( x ) = min(max(x, 0.0f), 1.0)
+implement saturate ( x ) = min(max(x, 0.0f), 1.0f)
 
 implement lerp ( p1, p2, amount ) = (p2 * amount) + (p1 * (1 - amount))
 
@@ -155,9 +160,9 @@ in
 end
 
 implement nearest_interp ( p1, p2, amount ) = let
-	  val rounded_amount = g0float2float_double_float($MATH.round(amount))
+	  val rounded_amount = ($MATH.round(amount))
 in
-	if rounded_amount != 0.f
+	if rounded_amount != 0.0f
 	   then p2
 	else p1
 end
@@ -844,8 +849,8 @@ implement quat_constrain ( q, axis ) = let
 	  val a = q.w * orient.w + vec3_dot(vs, v0)
 	  val b = orient.w * vec3_dot(axis, vs) - q.w * vec3_dot(axis, v0) + vec3_dot(vs, vec3_mul_vec3(axis, v0))
 	  val alpha = $MATH.atan2(a, b)
-	  val t1 = ~2 * alpha + $MATH.M_PI
-	  val t2 = ~2 * alpha - $MATH.M_PI
+	  val t1 = ~2 * alpha + double_to_float($MATH.M_PI)
+	  val t2 = ~2 * alpha - double_to_float($MATH.M_PI)
 in
 	if (quat_dot(q, quat_get_value(t1, axis)) > quat_dot(q, quat_get_value(t2, axis)))
 	   then quat_get_value(t1, axis)
@@ -871,11 +876,11 @@ implement quat_interpolate {n,m} ( qs, ws, count ) = let
   val ref = quat_id()
   val ref_inv = quat_inverse(ref)
   val acc = vec3_zero()
-  fun loop {n,m:nat | m < n} .<m>. (m: int m, qs: &(@[quat][n]), ws: &(@[float][n]), acc1: vec3) : vec3 = let
+  fun loop {n,m:nat | 0 <= m+1; m+1 <= n} .<m+1>. (m: int m, qs: &(@[quat][n]), ws: &(@[float][n]), acc1: vec3) : vec3 = let
     val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[m]))
     val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[m])))
   in
-    if ( m < 0 ) then acc1
+    if ( m <= 0 ) then acc1
     else
       if ( vec3_length(qlog0) < vec3_length(qlog1) ) then
         ( loop(m-1, qs, ws, vec3_add(acc1, vec3_mul(qlog0, ws[m]))) )
@@ -1362,26 +1367,27 @@ in
   in
     quat_new(x, y, z, w)
   end else let
-    val nxt = @[int](1, 2, 0)
+    var nxt = @[natLt(3)](1, 2, 0)
     var q = @[float][4](0.f)
-    var i = 0
-    var j = 0
-    var k = 0
-    var s = 0
+    var i:int = 0
+    var j:int = 0
+    var k:int = 0
+    var s:float = 0.f
   in
-    i := ((if mat4_at(m, 1, 1) > mat4_at(m, 0, 0) then 1 else i):int);
-    i := ((if mat4_at(m, 2, 2) > mat4_at(m, $showtype(i), i) then 2 else i):int);
+    i := ((if mat4_at(m, 1, 1) > mat4_at(m, 0, 0) then 1 else i):natLt(2));
+    i := ((if mat4_at(m, 2, 2) > mat4_at(m, i, i) then 2 else i):natLt(3));
     j := nxt[i];
     k := nxt[j];
-    s := $MATH.sqrt( (mat4_at(m, i, i) - (mat4_at(m, j, j), mat4_at(m, k, k))) + 1.f );
+    s := $MATH.sqrt( (mat4_at(m, i, i) - (mat4_at(m, j, j) + mat4_at(m, k, k))) + 1.f );
     q[i] := s * 0.5f;
-    s := (if (s != 0.f) then 0.5f / s else s);
+    s := ((if (s != 0.f) then 0.5f / s else s): float);
     q[3] := (mat4_at(m, j, k) - mat4_at(m, k, j)) * s;
     q[j] := (mat4_at(m, i, j) + mat4_at(m, j, i)) * s;
     q[k] := (mat4_at(m, i, k) + mat4_at(m, k, i)) * s;
     quat_new(q[0], q[1], q[2], q[3])
   end
 end
+
 
 implement mat4_to_quat_dual ( m ) = let
   val rotation = mat4_to_quat(m)
@@ -1586,7 +1592,7 @@ in
   m.zz := v.z * v.z * nc + c;
   m
 end
-
+////
 implement mat4_rotation_euler ( x, y, z ) = let
   val m = mat4_zero()
   val cosx = $MATH.cos(x)

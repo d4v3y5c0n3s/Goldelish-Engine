@@ -8,6 +8,7 @@
 
 staload "./assets/skeleton.sats"
 
+////
 implement frame_new (  ) =
 (
 )

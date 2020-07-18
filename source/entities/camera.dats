@@ -10,6 +10,7 @@ staload "./entities/camera.sats"
 
 staload "./g_graphics.sats"
 
+////
 implement camera_new (  ) =
 {
 }

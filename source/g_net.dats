@@ -8,6 +8,7 @@
 
 staload "./g_net.sats"
 
+////
 var is_server = false
 
 implement net_init (  ) =

@@ -10,6 +10,7 @@ staload "./assets/texture.sats"
 
 staload "./data/spline.sats"
 
+////
 implement texture_new (  ) =
 (
 )

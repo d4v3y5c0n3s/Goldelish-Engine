@@ -12,6 +12,7 @@ staload "./g_net.sats"
 
 staload "./assets/cmesh.sats"
 
+////
 implement terrain_chunk_delete ( tc ) =
 (
 )

@@ -8,6 +8,7 @@
 
 staload "./spline.sats"
 
+////
 implement spline_new (  ) =
 {
 }
