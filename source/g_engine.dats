@@ -16,7 +16,6 @@ extern castfn ulint_to_double ( x: ulint ): double
 extern castfn float_to_uint ( x: float ): uint
 extern castfn double_to_uint ( x: double ): uint
 extern castfn double_to_float ( x: double ): float
-
 extern castfn uint_to_uint32 ( x: uint ): uint32
 
 implement P ( path ) =
@@ -1592,9 +1591,9 @@ in
   m.zz := v.z * v.z * nc + c;
   m
 end
-////
+
 implement mat4_rotation_euler ( x, y, z ) = let
-  val m = mat4_zero()
+  var m = mat4_zero()
   val cosx = $MATH.cos(x)
   val cosy = $MATH.cos(y)
   val cosz = $MATH.cos(z)
@@ -1611,6 +1610,7 @@ in
   m.xz := ~(siny);
   m.yz := sinx * cosy;
   m.zz := cosx * cosy;
+  m
 end
 
 implement mat4_rotation_quat ( q ) = let
@@ -1751,7 +1751,7 @@ implement point_inside_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position)
 
 implement point_outside_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position), p.direction) > 0.f
 
-implement point_intersects_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position), p.direction) == 0.f
+implement point_intersects_plane ( point, p ) = vec3_dot(vec3_sub(point, p.position), p.direction) = 0.f
 
 implement plane_project ( p, v ) = vec3_sub(v, vec3_mul(p.direction, vec3_dot(v, p.direction)))
 
@@ -1777,7 +1777,7 @@ implement point_swept_intersects_plane ( point, v, p ) = let
   val angle = vec3_dot(p.direction, v)
   val dist = vec3_dot(p.direction, vec3_sub(point, p.position))
 in
-  if dist == 0.f then true
+  if dist = 0.f then true
   else between_or(~(dist) / angle, 0.f, 1.f)
 end
 
@@ -1875,15 +1875,15 @@ in
   box_new(x_min, x_max, y_min, y_max, z_min, z_max)
 end
 
-implement box_transform ( bb, world, world_normal ) =
-  box_new(
-    plane_transform(bb.top, world, world_normal),
-    plane_transform(bb.bottom, world, world_normal),
-    plane_transform(bb.left, world, world_normal),
-    plane_transform(bb.right, world, world_normal),
-    plane_transform(bb.front, world, world_normal),
-    plane_transform(bb.back, world, world_normal)
-  )
+implement box_transform ( bb, world, world_normal ) = begin
+  bb.top := plane_transform(bb.top, world, world_normal);
+  bb.bottom := plane_transform(bb.bottom, world, world_normal);
+  bb.left := plane_transform(bb.left, world, world_normal);
+  bb.right := plane_transform(bb.right, world, world_normal);
+  bb.front := plane_transform(bb.front, world, world_normal);
+  bb.back := plane_transform(bb.back, world, world_normal);
+  bb
+end
 
 implement frustum_new ( ntr, ntl, nbr, nbl, ftr, ftl, fbr, fbl ) =
   @{
@@ -1939,7 +1939,7 @@ in
   total := vec3_add(total, f.fbr);
   total := vec3_add(total, f.nbl);
   total := vec3_add(total, f.fbl);
-  vec3_div(total, 8)
+  vec3_div(total, 8.f)
 end
 
 implement frustum_maximums ( f ) = let
@@ -1984,15 +1984,17 @@ implement frustum_translate ( f, v ) =
     vec3_add(f.fbl, v)
   )
 
-implement frustum_box ( f ) =
-  box_new(
-    plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.ftr, f.ntr), vec3_sub(f.ntl, f.ntr)))),
-    plane_new(f.nbr, vec3_normalize(vec3_cross(vec3_sub(f.nbl, f.nbr), vec3_sub(f.fbr, f.nbr)))),
-    plane_new(f.ntl, vec3_normalize(vec3_cross(vec3_sub(f.ftl, f.ntl), vec3_sub(f.nbl, f.ntl)))),
-    plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.nbr, f.ntr), vec3_sub(f.ftr, f.ntr)))),
-    plane_new(f.ftr, vec3_normalize(vec3_cross(vec3_sub(f.ftl, f.ftr), vec3_sub(f.fbr, f.ftr)))),
-    plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.nbr, f.ntr), vec3_sub(f.ntl, f.ntr))))
-  )
+implement frustum_box ( f ) = let
+  var b: box
+in
+  b.top := plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.ftr, f.ntr), vec3_sub(f.ntl, f.ntr))));
+  b.bottom := plane_new(f.nbr, vec3_normalize(vec3_cross(vec3_sub(f.nbl, f.nbr), vec3_sub(f.fbr, f.nbr))));
+  b.left := plane_new(f.ntl, vec3_normalize(vec3_cross(vec3_sub(f.ftl, f.ntl), vec3_sub(f.nbl, f.ntl))));
+  b.right := plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.nbr, f.ntr), vec3_sub(f.ftr, f.ntr))));
+  b.front := plane_new(f.ftr, vec3_normalize(vec3_cross(vec3_sub(f.ftl, f.ftr), vec3_sub(f.fbr, f.ftr))));
+  b.back := plane_new(f.ntr, vec3_normalize(vec3_cross(vec3_sub(f.nbr, f.ntr), vec3_sub(f.ntl, f.ntr))));
+  b
+end
 
 //  this function is unimplemented
 implement frustum_outside_box ( f, b ) = false
@@ -2072,17 +2074,15 @@ implement sphere_merge ( bs1, bs2 ) = let
 in
   sphere_new(center, dist)
 end
-
-implement sphere_merge_many {n} ( s, count ) = let
-  fun loop {i:nat} .<i>. ( s: @[sphere][n], ret: sphere, i: int i ): sphere =
-    if (i > 0) then
-      loop(s, sphere_merge(ret, s[i]), i-1)
-    else
-      ret
+////
+implement sphere_merge_many ( s, count ) = let
+  fun loop {i:nat | i < n} .<n-i>. ( sphere_arr: &(@[sphere][n]), i: int i, ret: sphere ) : sphere =
+    if i < count then loop(sphere_arr, i+1, sphere_merge(ret, sphere_arr[i]))
+    else ret
 in
-  loop(s, s[0], count-1)
+  loop(s, 0, s[0])//C3NSTRprop(C3TKmain(); S2Eapp(S2Ecst(<); S2EVar(6970->S2Eintinf(0)), S2Evar(n(8781))))
 end
-
+////
 implement sphere_inside_box ( s, b ) =
   if not(sphere_inside_plane(s, b.front)) then false
   else if not(sphere_inside_plane(s, b.back)) then false
