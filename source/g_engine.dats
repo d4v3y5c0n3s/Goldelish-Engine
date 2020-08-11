@@ -17,28 +17,33 @@ extern castfn float_to_uint ( x: float ): uint
 extern castfn double_to_uint ( x: double ): uint
 extern castfn double_to_float ( x: double ): float
 extern castfn uint_to_uint32 ( x: uint ): uint32
+extern castfn int_to_uint ( x: int ): uint
+extern castfn uint_to_int ( x: uint ): int
 
+local
+  assume fpath = string
+in
 implement P ( path ) =
   if strlen (path) >= PATH_MAX
-    then ( println!("Path too long: ", path); @{path=""} : fpath)
-  else @{path=path} : fpath
+    then ( println!("Path too long: ", path); (""):fpath)
+  else (path):fpath
 
-//  use call by reference (&) instead of passing a pointer to a string (because it's easier to deal with)
 implement fpath_full ( path_in ) = ret where {
-  val ret = @{path=SDL_PathFullName(path_in.path)}:fpath
+  val ret = (SDL_PathFullName(path_in)):fpath
 }
 
 implement fpath_file ( path ) = ret where {
-  val ret = @{path=SDL_PathFileName(path.path)}:fpath
+  val ret = (SDL_PathFileName(path)):fpath
 }
 
 implement fpath_file_location ( path ) = ret where {
-  val ret = @{path=SDL_PathFileLocation(path.path)}:fpath
+  val ret = (SDL_PathFileLocation(path)):fpath
 }
 
 implement fpath_file_extension ( path ) = ret where {
-  val ret = @{path=SDL_PathFileExtension(path.path)}:fpath
+  val ret = (SDL_PathFileExtension(path)):fpath
 }
+end
 
 //  timing functions
 implement timer_start ( id, tag ) = (
@@ -290,14 +295,7 @@ implement vec2_to_array ( v, out ) =
   out[1] := v.y
 )
 
-extern fn bin_xor ( x1: int, x2: int ) : int = "ext#bin_xor_c"
-%{
-int bin_xor_c ( int x1, int x2 ) {
-  return x1 ^ x2
-}
-%}
-
-implement vec2_hash ( v ) = abs(bin_xor(rawcast(v.x), rawcast(v.y)))
+implement vec2_hash ( v ) = abs(uint_to_int(int_to_uint(rawcast(v.x)) lxor int_to_uint(rawcast(v.y))))
 
 implement vec2_mix_hash ( v ) = let
 	  val raw_vx = abs(rawcast(v.x))
@@ -319,12 +317,12 @@ implement vec2_mix_hash ( v ) = let
 	  val h11 = raw_vx >> 21
 	  val h12 = raw_vy >> 13
 
-	  val res1 = bin_xor(bin_xor(h1, h2), h3)
-	  val res2 = bin_xor(bin_xor(h4, h5), h6)
-	  val res3 = bin_xor(bin_xor(h7, h8), h9)
-	  val res4 = bin_xor(bin_xor(h10, h11), h12)
+	  val res1 = (int_to_uint(h1) lxor int_to_uint(h2)) lxor int_to_uint(h3)
+	  val res2 = (int_to_uint(h4) lxor int_to_uint(h5)) lxor int_to_uint(h6)
+	  val res3 = (int_to_uint(h7) lxor int_to_uint(h8)) lxor int_to_uint(h9)
+	  val res4 = (int_to_uint(h10) lxor int_to_uint(h11)) lxor int_to_uint(h12)
 in
-	bin_xor(bin_xor(bin_xor((res1 * 10252247), (res2 * 70209673)), (res3 * 104711)), (res4 * 63589))
+	uint_to_int((res1 * int_to_uint(10252247)) lxor (res2 * int_to_uint(70209673)) lxor (res3 * int_to_uint(104711)) lxor (res4 * int_to_uint(63589)))
 end
 
 implement vec2_saturate ( v ) =
@@ -481,7 +479,7 @@ implement vec3_to_array ( v, out ) = begin
 end
 
 implement vec3_hash ( v ) =
-	  abs( bin_xor(bin_xor(rawcast(v.x), rawcast(v.y)), rawcast(v.z)) )
+	  abs( uint_to_int(int_to_uint(rawcast(v.x)) lxor int_to_uint(rawcast(v.y)) lxor int_to_uint(rawcast(v.z))) )
 
 implement vec3_to_homogeneous ( v ) =
 	  vec4_new(v.x, v.y, v.z, 1.0f)
@@ -637,7 +635,7 @@ implement vec4_from_homogeneous ( v ) =
 	  vec3_div(vec3_new(v.x, v.y, v.z), v.w)
 
 implement vec4_hash ( v ) =
-	  abs( bin_xor(bin_xor(bin_xor(rawcast(v.x), rawcast(v.y)), rawcast(v.z)), rawcast(v.w)) )
+	  abs( uint_to_int(int_to_uint(rawcast(v.x)) lxor int_to_uint(rawcast(v.y)) lxor int_to_uint(rawcast(v.z)) lxor int_to_uint(rawcast(v.w))) )
 
 implement vec4_saturate ( v ) =
 	  @{x=saturate(v.x), y=saturate(v.y), z=saturate(v.z), w=saturate(v.w)}:vec4
@@ -2075,13 +2073,16 @@ in
   sphere_new(center, dist)
 end
 ////
-implement sphere_merge_many ( s, count ) = let
-  fun loop {i:nat | i < n} .<n-i>. ( sphere_arr: &(@[sphere][n]), i: int i, ret: sphere ) : sphere =
+implement sphere_merge_many {n} ( s, count ) = let
+  fun loop {i:nat | 0 <= i+1; i+1 <= n} .<n-i>. ( sphere_arr: &(@[sphere][n]), i: int i, ret: sphere ) : sphere =
     if i < count then loop(sphere_arr, i+1, sphere_merge(ret, sphere_arr[i]))
     else ret
 in
-  loop(s, 0, s[0])//C3NSTRprop(C3TKmain(); S2Eapp(S2Ecst(<); S2EVar(6970->S2Eintinf(0)), S2Evar(n(8781))))
+  loop(s, 0, s[0])
 end
+
+//  I think what's going on, is that ATS cannot verify that i+1 is less than the last index of the array.
+
 ////
 implement sphere_inside_box ( s, b ) =
   if not(sphere_inside_plane(s, b.front)) then false

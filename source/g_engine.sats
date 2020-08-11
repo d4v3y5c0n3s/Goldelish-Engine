@@ -19,7 +19,7 @@ This file has code for general things & math operations in the engine.
 #define WARNING_BUFFER_SIZE	2048 * 4
 
 (*  ###  file system path  ###  *)
-typedef fpath = @{ path=string }
+abstype fpath
 
 fun P ( path: string ) : fpath = "sta#"
 
