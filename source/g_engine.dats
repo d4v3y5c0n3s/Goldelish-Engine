@@ -2072,18 +2072,19 @@ implement sphere_merge ( bs1, bs2 ) = let
 in
   sphere_new(center, dist)
 end
-////
-implement sphere_merge_many {n} ( s, count ) = let
-  fun loop {i:nat | 0 <= i+1; i+1 <= n} .<n-i>. ( sphere_arr: &(@[sphere][n]), i: int i, ret: sphere ) : sphere =
-    if i < count then loop(sphere_arr, i+1, sphere_merge(ret, sphere_arr[i]))
-    else ret
+
+implement sphere_merge_many ( s, count ) = let
+  fun loop {n,m:nat | 0 <= m+1; m+1 <= n} .<m+1>. ( sphere_arr: &(@[sphere][n]), m: int m, ret: sphere ) : sphere =
+  if m <= 0 then ret
+  else let
+    val cur_sphere = sphere_arr[m]
+  in
+    loop ( sphere_arr, m-1, sphere_merge(ret, cur_sphere) )
+  end
 in
-  loop(s, 0, s[0])
+  loop(s, count, s[0])
 end
 
-//  I think what's going on, is that ATS cannot verify that i+1 is less than the last index of the array.
-
-////
 implement sphere_inside_box ( s, b ) =
   if not(sphere_inside_plane(s, b.front)) then false
   else if not(sphere_inside_plane(s, b.back)) then false
@@ -2097,22 +2098,23 @@ implement sphere_outside_box ( s, b ) =
   not(sphere_inside_box(s, b) || sphere_intersects_box(s, b))
 
 implement sphere_intersects_box ( s, b ) = let
-  var point: vec3
+  var point = vec3_new(0.f, 0.f, 0.f)
   var radius = 0.f
-  val plane_size_check = lam@(): bool => if (
+  val plane_size_check = if (
     plane_distance(b.left, point) <= radius &&
     plane_distance(b.right, point) <= radius &&
     plane_distance(b.front, point) <= radius &&
     plane_distance(b.back, point) <= radius
-  ) then true
+  ) then true else false
 in
-  if sphere_intersects_plane_point(s, b.top, addr@(point), addr@(radius)) then plane_size_check()
-  else if sphere_intersects_plane_point(s, b.bottom, addr@(point), addr@(radius)) then plane_size_check()
-  else if sphere_intersects_plane_point(s, b.left, addr@(point), addr@(radius)) then plane_size_check()
-  else if sphere_intersects_plane_point(s, b.right, addr@(point), addr@(radius)) then plane_size_check()
-  else if sphere_intersects_plane_point(s, b.front, addr@(point), addr@(radius)) then plane_size_check()
-  else if sphere_intersects_plane_point(s, b.back, addr@(point), addr@(radius)) then plane_size_check()
-  else false
+  ifcase
+  | sphere_intersects_plane_point(view@(point), view@(radius) | s, b.top, addr@(point), addr@(radius)) && plane_size_check => true
+  | sphere_intersects_plane_point(view@(point), view@(radius) | s, b.bottom, addr@(point), addr@(radius)) && plane_size_check => true
+  | sphere_intersects_plane_point(view@(point), view@(radius) | s, b.left, addr@(point), addr@(radius)) && plane_size_check => true
+  | sphere_intersects_plane_point(view@(point), view@(radius) | s, b.right, addr@(point), addr@(radius)) && plane_size_check => true
+  | sphere_intersects_plane_point(view@(point), view@(radius) | s, b.front, addr@(point), addr@(radius)) && plane_size_check => true
+  | sphere_intersects_plane_point(view@(point), view@(radius) | s, b.back, addr@(point), addr@(radius)) && plane_size_check => true
+  | _ => false
 end
 
 implement sphere_transform ( s, world ) = let
@@ -2122,15 +2124,9 @@ in
   sphere_new(center, radius)
 end
 
-implement sphere_translate ( s, x ) = begin
-  s.center := vec3_add(s.center, x);
-  s
-end
+implement sphere_translate ( s, x ) = sphere_new(vec3_add(s.center, x), s.radius)
 
-implement sphere_scale ( s, x ) = begin
-  s.radius := s.radius * x;
-  s
-end
+implement sphere_scale ( s, x ) = sphere_new(s.center, s.radius * x)
 
 implement sphere_transform_space ( s, space ) = let
   val center = mat3_mul_vec3(space, s.center)
@@ -2146,7 +2142,7 @@ implement point_outside_sphere ( s, point ) =
   vec3_dist(s.center, point) > s.radius
 
 implement point_intersects_sphere ( s, point ) =
-  vec3_dist(s.center, point) == s.radius
+  vec3_dist(s.center, point) = s.radius
 
 implement line_inside_sphere ( s, l_start, l_end ) =
   point_swept_inside_sphere(s, vec3_sub(l_end, l_start), l_start)
@@ -2213,7 +2209,7 @@ in
     between_or(t0, 0.f, 1.f) || between_or(t1, 0.f, 1.f)
   end
 end
-
+////
 fn quadratic {l1,l2:addr} ( pf1: !float @ l1, pf2: !float @ l2 | a: float, b: float, c: float, t0: ptr l1, t1: ptr l2 ) : bool = let
   val descrim = b*b - 4.f*a*c
 in
