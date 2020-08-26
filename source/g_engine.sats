@@ -28,21 +28,8 @@ fun fpath_file (path: fpath) : fpath = "sta#fpath_file"
 fun fpath_file_location (path: fpath) : fpath = "sta#fpath_file_location"
 fun fpath_file_extension (path: fpath) : fpath = "sta#fpath_file_extension"
 
-(*
-(*  #  OpenGL error checking  #  *)
-#ifdef RELEASE
-#define SDL_GL_CheckError()
-#else
-#define SDL_GL_CheckError() { GLenum __glerror = glGetError(); if (__glerror) { error("OpenGL Error: %s", SDL_GL_ErrorString(__glerror)); } }
-#endif
-*)
-
 (*  ###  timing  ###  *)
-typedef
-timer = @{ id=int,
-      start_time=ulint,
-      end_time=ulint,
-      split=ulint }
+abst@ype timer
 
 fun timer_start (id: int, tag: string) : timer = "sta#"
 fun timer_split (t: timer, tag: string) : timer = "sta#timer_split"
@@ -528,27 +515,27 @@ fun vertex_equal ( v1: vertex, v2: vertex ) : bool = "sta#%"
 fun vertex_print ( v: vertex ) : void = "sta#%"
 
 //  mesh type
-vtypedef mesh = [i,j:nat][l1,l2:addr] ( @{ num_verts=int i, num_triangles=int j, verticies=(array_v(vertex, l1, i), mfree_gc_v(l1) | ptr l1), triangles=(array_v(uint32, l2, j), mfree_gc_v(l2) | ptr l2) })
+absvt@ype mesh
 
-fun mesh_new () : [l:addr] ( mesh? @ l, mfree_gc_v(l) | ptr l ) = "str#%"
-fun mesh_delete {l:addr} ( pfm: mesh @ l, pfmf: mfree_gc_v(l) | m: ptr l ) : void = "sta#%"
+fun mesh_new () : ( mesh ) = "str#%"
+fun mesh_delete ( m: mesh ) : void = "sta#%"
 
-fun mesh_generate_normals {l:addr} ( m: ptr ) : void = "sta#%"
-fun mesh_generate_tangents {l:addr} ( m: ptr ) : void = "sta#%"
-fun mesh_generate_orthagonal_tangents {l:addr} ( m: ptr ) : void = "sta#%"
-fun mesh_generate_texcoords_cylinder {l:addr} ( m: ptr ) : void = "sta#%"
+fun mesh_generate_normals ( m: mesh ) : void = "sta#%"
+fun mesh_generate_tangents ( m: mesh ) : void = "sta#%"
+fun mesh_generate_orthagonal_tangents ( m: mesh ) : void = "sta#%"
+fun mesh_generate_texcoords_cylinder ( m: mesh ) : void = "sta#%"
 
-fun mesh_print {l:agz} ( pfm: !mesh @ l | m: ptr l ) : void = "sta#%"
-fun mesh_surface_area {l:addr} ( m: ptr ) : float = "sta#%"
+fun mesh_print ( m: mesh ) : void = "sta#%"
+fun mesh_surface_area ( m: mesh ) : float = "sta#%"
 
-fun mesh_transform {l:addr} ( m: ptr, transform: mat4 ) : void = "sta#%"
-fun mesh_translate {l:addr} ( m: ptr, translation: vec3 ) : void = "sta#%"
-fun mesh_scale {l:addr} ( m: ptr, scale: float ) : void = "sta#%"
+fun mesh_transform ( m: mesh, transform: mat4 ) : void = "sta#%"
+fun mesh_translate ( m: mesh, translation: vec3 ) : void = "sta#%"
+fun mesh_scale ( m: mesh, scale: float ) : void = "sta#%"
 
-fun mesh_bounding_sphere {l:addr} ( m: ptr ) : sphere = "sta#%"
+fun mesh_bounding_sphere ( m: mesh ) : sphere = "sta#%"
 
 //  model type
-typedef model = @{ num_meshes=int, meshes=ptr }//  look up exactly what '**' means in C later to get this working
+typedef model = @{ num_meshes=int, meshes=ptr }
 
 fun model_new () : ptr = "sta#%"
 fun model_delete ( m: ptr ) : void = "sta#%"

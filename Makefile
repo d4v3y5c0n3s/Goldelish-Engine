@@ -27,6 +27,12 @@ ifeq ($(findstring Linux, $(PLATFORM)), Linux)
 	CFLAGS0 += -fPIC
 	LDFLAGS0 += -lGL
 endif
+ifeq ($(findstring CYGWIN, $(PLATFORM)), CYGWIN)
+	DYNAMIC = libgoldelish.so
+	STATIC = libgoldelish.a
+	CFLAGS0 += -fPIC
+	LDFLAGS0 += -lGL
+endif
 ifeq ($(findstring Darwin, $(PLATFORM)), Darwin)
 	DYNAMIC = libgoldelish.so
 	STATIC = libgoldelish.a
@@ -48,6 +54,10 @@ display_sources:
 	@echo $(SOURCES_SATS)
 	@echo "SOURCES_DATS:"
 	@echo $(SOURCES_DATS)
+
+display_platform:
+	@echo "the platform you are using is:"
+	@echo $(PLATFORM)
 
 all:: $(DYNAMIC) $(STATIC)
 $(DYNAMIC): $(SOURCES_OBJ)

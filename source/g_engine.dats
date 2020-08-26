@@ -46,28 +46,34 @@ implement fpath_file_extension ( path ) = ret where {
 end
 
 //  timing functions
+local
+
+assume timer = ( int, ulint, ulint, ulint )
+
+in
+
 implement timer_start ( id, tag ) = (
 	  println!("Timer ", id, tag, "Start: ", (0.0f));
-          @{id=id, start_time=SDL_GetTicks(), end_time=int_to_ulint(0), split=SDL_GetTicks()}:timer
+          (id, SDL_GetTicks(), int_to_ulint(0), SDL_GetTicks()):timer
 )
 
 implement timer_split ( t, tag ) = let
   val curr = SDL_GetTicks()
-  val difference = (curr - t.split) / int_to_ulint(1000)
+  val difference = (curr - t.2) / int_to_ulint(1000)
   var ret = t
 in
-  println!("Timer ", t.id, tag, "Split: ", difference);
-  ret.split := curr;
+  println!("Timer ", t.0, tag, "Split: ", difference);
+  ret.2 := curr;
   ret
 end
 
 implement timer_stop ( t, tag ) = let
   val curr = SDL_GetTicks()
-  val difference = (curr - t.split) / int_to_ulint(1000)
+  val difference = (curr - t.2) / int_to_ulint(1000)
   var ret = t
 in
-  println!("Timer ", t.id, tag, "End: ", difference);
-  ret.end_time := SDL_GetTicks();
+  println!("Timer ", t.0, tag, "End: ", difference);
+  ret.3 := SDL_GetTicks();
   ret
 end
 
@@ -89,6 +95,8 @@ in
   time_value.tm_sec,
   ts_counter);
   (ts_counter + 1)
+end
+
 end
 
 var frame_rate_var: int = 0
@@ -2209,17 +2217,17 @@ in
     between_or(t0, 0.f, 1.f) || between_or(t1, 0.f, 1.f)
   end
 end
-////
-fn quadratic {l1,l2:addr} ( pf1: !float @ l1, pf2: !float @ l2 | a: float, b: float, c: float, t0: ptr l1, t1: ptr l2 ) : bool = let
+
+fn quadratic ( a: float, b: float, c: float, t0: &float, t1: &float ) : bool = let
   val descrim = b*b - 4.f*a*c
 in
   if descrim < 0 then false
   else let
-    val d = $MATH.sqrt(descrim)
-    val q = if (b < 0) then ((~b - d) / 2.f) else ((~b + d) / 2.f)
+    val d: float = $MATH.sqrt(descrim)
+    val q = (if (b < 0.f) then ((~b - d) / 2.f) else ((~b + d) / 2.f)):float
   in
-    !t0 := q / a;
-    !t1 := c / q;
+    t0 := q / a;
+    t1 := c / q;
     true
   end
 end
@@ -2236,12 +2244,11 @@ in
     val A = vec3_dot(v, v)
     val B = 2.f * vec3_dot(v, o)
     val C = vec3_dot(o, o) - (s.radius * s.radius)
-    var t0: float
-    var t1: float
-    var t: float
+    var t0: float = 0.f
+    var t1: float = 0.f
   in
-    if not(quadratic(A, B, C, addr@(t0), addr@(t1))) then true
-    else not(between_or(t0, 0.f 1.f)) && not(between_or(t1, 0.f, 1.f))
+    if not(quadratic(A, B, C, t0, t1)) then true
+    else not(between_or(t0, 0.f, 1.f)) && not(between_or(t1, 0.f, 1.f))
   end
 end
 
@@ -2258,11 +2265,10 @@ in
     val A = vec3_dot(v, v)
     val B = 2.f * vec3_dot(v, v)
     val C = vec3_dot(o, o) - (rtot * rtot)
-    var t0: float
-    var t1: float
-    var t: float
+    var t0: float = 0.f
+    var t1: float = 0.f
   in
-    if not(quadratic(A, B, C, addr@(t0), addr@(t1))) then true
+    if not(quadratic(A, B, C, t0, t1)) then true
     else not(between_or(t0, 0.f, 1.f)) && not(between_or(t1, 0.f, 1.f))
   end
 end
@@ -2306,12 +2312,7 @@ in
   ellipsoid_new(s.center, radiuses)
 end
 
-implement ellipsoid_transform ( e, m ) = let
-in
-  e.center := mat4_mul_vec3(m, e.center);
-  e.radiuses := mat3_mul_vec3(mat4_to_mat3(m), e.radiuses);
-  e
-end
+implement ellipsoid_transform ( e, m ) = ellipsoid_new( mat4_mul_vec3(m, e.center), mat3_mul_vec3(mat4_to_mat3(m), e.radiuses) )
 
 implement ellipsoid_space ( e ) =
   mat3_new(
@@ -2346,11 +2347,7 @@ implement capsule_outside_plane ( c, p ) =
 implement capsule_intersects_plane ( c, p ) =
   not(capsule_inside_plane(c, p)) && not(capsule_outside_plane(c, p))
 
-implement vertex_new (  ) = let
-  var vert: vertex
-in
-  vert
-end
+implement vertex_new (  ) = @{position=vec3_zero(), normal=vec3_zero(), tangent=vec3_zero(), binormal=vec3_zero(), color=vec4_zero(), uvs=vec2_zero()}:vertex
 
 implement vertex_equal ( v1, v2 ) =
   if not(vec3_equ(v1.position, v2.position)) then false
@@ -2369,43 +2366,62 @@ implement vertex_print ( v ) =
   println!(")")
 )
 
-implement mesh_print ( pfm | m ) = let
-  val verts_from_m = !m.verticies
-  val tris_from_m = !m.triangles
-  fun vert_print_loop {i:nat} .<i>. ( i: int i ): void =
-    if not(i < 0) then begin
-      vertex_print(verts_from_m[i]);
-      vert_print_loop(i-1)
-    end else ()
-  fun tri_print_loop {i:nat} .<i>. ( i: int i ): void =
-    if not(i < 0) then begin
-      println!(tris_from_m[i]);
-      tri_print_loop(i-1)
-    end else ()
+local
+
+vtypedef mesh_flat =
+[v,t:nat]
+[v_ar_p,t_ar_p:agz]
+@{
+  pf_var=array_v(vertex?, v_ar_p, v), pf_vf=mfree_gc_v(v_ar_p),
+  pf_tar=array_v(uint32?, t_ar_p, t), pf_tf=mfree_gc_v(t_ar_p)
+  |
+  v=int v, t=int t, vp=ptr v_ar_p, tp=ptr t_ar_p
+}
+
+assume mesh = [l:agz] (mesh_flat @ l | ptr l)
+
 in
-  println!("Num Verts: ", !m.num_verts);
-  vert_print_loop(!m.num_verts - 1);
-  println!("Num Tris: ", !m.num_triangles);
-  println!("Triangle Indicies");
-  tri_print_loop(!m.num_triangles - 1)
+
+fn test_mesh ( m: !mesh_flat ) : void = let
+in
+  println!( m.v )
 end
 
-//  use malloc_gc & mfree_gc to alloc & dealloc ptrs for mesh_new & mesh_delete (may need to rework mesh type)
-implement mesh_new (  ) = let
-  var res = ptr_alloc{mesh}()
+(*
+implement mesh_print ( m ) = let
+  fun vert_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i>. ( i: int i, v_arr: &(@[vertex][j]) ): void =
+    if not(i < 0) then begin
+      vertex_print(v_arr[i]);
+      vert_print_loop(i-1, v_arr)
+    end else ()
+  fun tri_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i>. ( i: int i, t_arr: &(@[uint32][j]) ): void =
+    if not(i < 0) then begin
+      println!(t_arr[i]);
+      tri_print_loop(i-1, t_arr)
+    end else ()
 in
-  res.num_verts := 0;
-  res.num_triangles := 0;
-  res.verticies := array_ptr_alloc<vertex>(1);
-  res.triangles := array_ptr_alloc<uint32>(1);
+  println!("Num Verts: ", m.0);
+  vert_print_loop(m.0 - 1, m.2);
+  println!("Num Tris: ", m.1);
+  println!("Triangle Indicies");
+  tri_print_loop(m.1 - 1, m.3)
+end
+
+implement mesh_new (  ) = let
+  val (pfres, fpfres | res) = ptr_alloc<mesh>()
+  val (pfarpv, fpfarpv | arr_p_v) = array_ptr_alloc<vertex>(size_of_int(0))
+  val (pfarpt, fpfarpt | arr_p_t) = array_ptr_alloc<uint32>(size_of_int(0))
+  val new_mesh = (0, 0, !arr_p_v, !arr_p_t):mesh
+in
+  ptr_set(pfres, fpfres | res, new_mesh);
   res
 end
 
-implement mesh_delete ( pfm, pfmf | m ) =
+implement mesh_delete ( m ) =
 (
   array_ptr_free(m.verticies)
   array_ptr_free(m.triangles)
-  ptr_free(pfm, pfmf | m)
+  ptr_free(m)
 )
 
 implement mesh_generate_tangents ( m ) =
@@ -2443,7 +2459,11 @@ implement mesh_transform ( m, transform ) =
 implement mesh_bounding_sphere ( m ) =
 (
 )
+*)
 
+end
+
+////
 implement model_print ( m ) =
 (
 )
