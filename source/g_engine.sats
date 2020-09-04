@@ -517,22 +517,22 @@ fun vertex_print ( v: vertex ) : void = "sta#%"
 //  mesh type
 absvt@ype mesh
 
-fun mesh_new () : ( mesh ) = "str#%"
-fun mesh_delete ( m: mesh ) : void = "sta#%"
+fun mesh_new () : [l:addr] ( mesh @ l, mfree_gc_v(l) | ptr l ) = "str#%"
+fun mesh_delete {l:addr} ( mpf: mesh @ l, mpff: mfree_gc_v(l) | m: ptr l ) : void = "sta#%"
 
-fun mesh_generate_normals ( m: mesh ) : void = "sta#%"
-fun mesh_generate_tangents ( m: mesh ) : void = "sta#%"
-fun mesh_generate_orthagonal_tangents ( m: mesh ) : void = "sta#%"
-fun mesh_generate_texcoords_cylinder ( m: mesh ) : void = "sta#%"
+fun mesh_generate_normals ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_tangents ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_orthagonal_tangents ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_texcoords_cylinder ( m: &mesh ) : void = "sta#%"
 
-fun mesh_print ( m: mesh ) : void = "sta#%"
-fun mesh_surface_area ( m: mesh ) : float = "sta#%"
+fun mesh_print ( m: &mesh ) : void = "sta#%"
+fun mesh_surface_area ( m: &mesh ) : float = "sta#%"
 
 fun mesh_transform ( m: mesh, transform: mat4 ) : void = "sta#%"
 fun mesh_translate ( m: mesh, translation: vec3 ) : void = "sta#%"
 fun mesh_scale ( m: mesh, scale: float ) : void = "sta#%"
 
-fun mesh_bounding_sphere ( m: mesh ) : sphere = "sta#%"
+fun mesh_bounding_sphere ( m: &mesh ) : sphere = "sta#%"
 
 //  model type
 typedef model = @{ num_meshes=int, meshes=ptr }

@@ -2368,62 +2368,57 @@ implement vertex_print ( v ) =
 
 local
 
-vtypedef mesh_flat =
+assume mesh =
 [v,t:nat]
-[v_ar_p,t_ar_p:agz]
+[vl,tl:addr]
 @{
-  pf_var=array_v(vertex?, v_ar_p, v), pf_vf=mfree_gc_v(v_ar_p),
-  pf_tar=array_v(uint32?, t_ar_p, t), pf_tf=mfree_gc_v(t_ar_p)
-  |
-  v=int v, t=int t, vp=ptr v_ar_p, tp=ptr t_ar_p
+  v=int v, t=int t, vap=arrayptr(vertex, vl, v), tap=arrayptr(uint32, tl, t)
 }
 
-assume mesh = [l:agz] (mesh_flat @ l | ptr l)
-
 in
 
-fn test_mesh ( m: !mesh_flat ) : void = let
-in
-  println!( m.v )
-end
-
-(*
 implement mesh_print ( m ) = let
-  fun vert_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i>. ( i: int i, v_arr: &(@[vertex][j]) ): void =
+  fun vert_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i+1>. ( i: int i, v_arr: &(arrayptr(vertex, j)) ): void =
     if not(i < 0) then begin
       vertex_print(v_arr[i]);
       vert_print_loop(i-1, v_arr)
     end else ()
-  fun tri_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i>. ( i: int i, t_arr: &(@[uint32][j]) ): void =
+  fun tri_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i+1>. ( i: int i, t_arr: &(arrayptr(uint32, j)) ): void =
     if not(i < 0) then begin
       println!(t_arr[i]);
       tri_print_loop(i-1, t_arr)
     end else ()
 in
-  println!("Num Verts: ", m.0);
-  vert_print_loop(m.0 - 1, m.2);
-  println!("Num Tris: ", m.1);
+  println!("Num Verts: ", m.v);
+  vert_print_loop(m.v-1, m.vap);
+  println!("Num Tris: ", m.t);
   println!("Triangle Indicies");
-  tri_print_loop(m.1 - 1, m.3)
+  tri_print_loop(m.t-1, m.tap)
 end
 
 implement mesh_new (  ) = let
-  val (pfres, fpfres | res) = ptr_alloc<mesh>()
-  val (pfarpv, fpfarpv | arr_p_v) = array_ptr_alloc<vertex>(size_of_int(0))
-  val (pfarpt, fpfarpt | arr_p_t) = array_ptr_alloc<uint32>(size_of_int(0))
-  val new_mesh = (0, 0, !arr_p_v, !arr_p_t):mesh
+  val vert_array = arrayptr_make_uninitized<vertex>(size_of_int(0))
+  val tri_array = arrayptr_make_uninitized<uint32>(size_of_int(0))
+  val (res_mpf, res_gcpf | res_ptr) = ptr_alloc<mesh>()
 in
-  ptr_set(pfres, fpfres | res, new_mesh);
-  res
+  arrayptr_initize(vert_array, size_of_int(0));
+  arrayptr_initize(tri_array, size_of_int(0));
+  !res_ptr := (@{
+    v=0, t=0,
+    vap=vert_array,
+    tap=tri_array
+  }:mesh);
+  (res_mpf, res_gcpf | res_ptr)
 end
 
-implement mesh_delete ( m ) =
-(
-  array_ptr_free(m.verticies)
-  array_ptr_free(m.triangles)
-  ptr_free(m)
-)
-
+implement mesh_delete ( mpf, mpff | m ) = let
+  val m1 = !m
+in
+  arrayptr_free(m1.vap);
+  arrayptr_free(m1.tap);
+  ptr_free(mpff, mpf | m)
+end
+end////
 implement mesh_generate_tangents ( m ) =
 (
 )
@@ -2459,11 +2454,9 @@ implement mesh_transform ( m, transform ) =
 implement mesh_bounding_sphere ( m ) =
 (
 )
-*)
 
 end
 
-////
 implement model_print ( m ) =
 (
 )
