@@ -1,7 +1,5 @@
 (*
 ###  g_engine.dats  ###
-
-
 *)
 
 #include "share/atspre_staload.hats"
@@ -2303,6 +2301,12 @@ implement sphere_intersects_face ( s, v0, v1, v2, norm ) =
     point_inside_triangle(c, v0, v1, v2)
   end
 
+local
+
+assume ellipsoid = @{ center=vec3, radiuses=vec3 }
+
+in
+
 implement ellipsoid_new ( center, radiuses ) =
   @{center=center, radiuses=radiuses}:ellipsoid
 
@@ -2328,6 +2332,14 @@ implement ellipsoid_inv_space ( e ) =
     0.f, 0.f, e.radiuses.z
   )
 
+end
+
+local
+
+assume capsule = @{ c_start=vec3, c_end=vec3, radius=float }
+
+in
+
 implement capsule_new ( c_start, c_end, radius ) =
   @{c_start=c_start, c_end=c_end, radius=radius}:capsule
 
@@ -2344,8 +2356,16 @@ implement capsule_inside_plane ( c, p ) =
 implement capsule_outside_plane ( c, p ) =
   sphere_outside_plane(sphere_new(c.c_start, c.radius), p) && sphere_inside_plane(sphere_new(c.c_end, c.radius), p)
 
+end
+
 implement capsule_intersects_plane ( c, p ) =
   not(capsule_inside_plane(c, p)) && not(capsule_outside_plane(c, p))
+
+local
+
+//assume vertex = @{ position=vec3, normal=vec3, tangent=vec3, binormal=vec3, color=vec4, uvs=vec2 }
+
+in
 
 implement vertex_new (  ) = @{position=vec3_zero(), normal=vec3_zero(), tangent=vec3_zero(), binormal=vec3_zero(), color=vec4_zero(), uvs=vec2_zero()}:vertex
 
@@ -2366,24 +2386,28 @@ implement vertex_print ( v ) =
   println!(")")
 )
 
+end
+
 local
 
+typedef tri_uint32(v:int) = [un:int | 0 <= un; un <= v] uint32(un)
+
 assume mesh =
-[v,t:nat]
+[v,t:nat | v == t*3]
 [vl,tl:addr]
 @{
-  v=int v, t=int t, vap=arrayptr(vertex, vl, v), tap=arrayptr(uint32, tl, t)
+  v=int v, t=int t, vap=arrayptr(vertex, vl, v), tap=arrayptr(tri_uint32(v), tl, t*3)
 }
 
 in
 
 implement mesh_print ( m ) = let
-  fun vert_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i+1>. ( i: int i, v_arr: &(arrayptr(vertex, j)) ): void =
+  fun vert_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i+1>. ( i: int i, v_arr: !arrayptr(vertex, j) ): void =
     if not(i < 0) then begin
       vertex_print(v_arr[i]);
       vert_print_loop(i-1, v_arr)
     end else ()
-  fun tri_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i+1>. ( i: int i, t_arr: &(arrayptr(uint32, j)) ): void =
+  fun tri_print_loop {i,j:int | 0 <= i+1; i+1 <= j} .<i+1>. ( i: int i, t_arr: !arrayptr(tri_uint32(j), j) ): void =
     if not(i < 0) then begin
       println!(t_arr[i]);
       tri_print_loop(i-1, t_arr)
@@ -2393,12 +2417,12 @@ in
   vert_print_loop(m.v-1, m.vap);
   println!("Num Tris: ", m.t);
   println!("Triangle Indicies");
-  tri_print_loop(m.t-1, m.tap)
+  tri_print_loop((m.t * 3)-1, m.tap)
 end
 
 implement mesh_new (  ) = let
   val vert_array = arrayptr_make_uninitized<vertex>(size_of_int(0))
-  val tri_array = arrayptr_make_uninitized<uint32>(size_of_int(0))
+  val tri_array = arrayptr_make_uninitized<tri_uint32(0)>(size_of_int(0))
   val (res_mpf, res_gcpf | res_ptr) = ptr_alloc<mesh>()
 in
   arrayptr_initize(vert_array, size_of_int(0));
@@ -2418,10 +2442,64 @@ in
   arrayptr_free(m1.tap);
   ptr_free(mpff, mpf | m)
 end
-end////
-implement mesh_generate_tangents ( m ) =
-(
-)
+
+(*implement mesh_generate_tangents ( m ) = let
+  fun clear_tan_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( ar: !arrayptr(vertex, l, j), i: int i ): void =
+    if i >= 0 then let
+      var v_ = ar[i]
+    in
+      v_.tangent := vec3_zero();
+      v_.binormal := vec3_zero();
+      ar[i] := v_;
+      clear_tan_loop(ar, i-1)
+    end else ()
+  (*var tri_array = m.tap
+  var vert_array = m.vap
+  fnx calc_tan_t_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (t_ar: !arrayptr(uint32, l, j), i: int i): void =
+  if i-2 >= 0 then let
+    val t_i1 = t_ar[i]
+    val t_i2 = t_ar[i+1]
+    val t_i3 = t_ar[i+2]
+  in
+    calc_tan_v_loop(vert_array, i)
+  end else ()
+  and calc_tan_v_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (v_ar: !arrayptr(vertex, l, j), i: int i, t1: int, t2: int, t3: int): void =
+  if i-2 >= 0 then let
+    var v1 = v_ar[i]//  issue: these use t_i1 in Corange
+    var v2 = v_ar[i+1]
+    var v3 = v_ar[i+2]
+    val face_tangent = triangle_tangent(v1, v2, v3)
+    val face_binormal = triangle_binormal(v1, v2, v3)
+  in
+    v1.tangent = vec3_add(face_tangent, v1.tangent);
+    v2.tangent = vec3_add(face_tangent, v2.tangent);
+    v3.tangent = vec3_add(face_tangent, v3.tangent);
+    v1.binormal = vec3_add(face_binormal, v1.binormal);
+    v2.binormal = vec3_add(face_binormal, v2.binormal);
+    v3.binormal = vec3_add(face_binormal, v3.binormal);
+    v_ar[] = v1;//  issue: indexes using the t_i1 in Corange
+    v_ar[] = v2;
+    v_ar[] = v3;//  partial solution: modify mesh type to require that the number of verts be 3 times more than the number of tris ()
+    //  look further at Corange to see if you can constrain the values for the uint32 tris
+    calc_tan_t_loop(tri_array, i-3)
+  end else ()
+  fun calc_tangents_loop {l1,l2:addr}{i,j1,j2:int | 0 <= i+1; i+1 <= j1; i+1 <= j2} .<i+1>.
+  ( v_ar: !arrayptr(vertex, l1, j1), t_ar: !arrayptr(uint32, l2, j2), i: int i ): void =
+    if i >= 0 then let
+    in
+      m.vap[t_i1] := v1;
+      m.vap[t_i2] := v2;
+      m.vap[t_i3] := v3;
+      calc_tangents_loop(v_ar, t_ar, i-3)
+    end else*)
+  //fun normalize_tangents_loop (): void =
+in
+  clear_tan_loop(m.vap, m.v)//;
+  //calc_tan_t_loop(tri_array, m.t)
+end*)
 
 implement mesh_generate_normals ( m ) =
 (
@@ -2434,7 +2512,7 @@ implement mesh_generate_orthagonal_tangents ( m ) =
 implement mesh_generate_texcoords_cylinder ( m ) =
 (
 )
-
+end////
 implement mesh_surface_area ( m ) =
 (
 )

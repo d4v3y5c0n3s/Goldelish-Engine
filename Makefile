@@ -1,5 +1,3 @@
-# the makefile (fingers crossed that this works!)
-
 include $(PATSHOME)/share/atsmake-pre.mk
 
 AR=ar
@@ -70,9 +68,9 @@ obj/%_sats.o: source/%.sats | obj
 obj/%_sats.o: source/*/%.sats | obj
 	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
 obj/%_dats.o: source/%.dats | obj
-	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
+	$(PATSCC) --debug --gline $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
 obj/%_dats.o: source/*/%.dats | obj
-	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
+	$(PATSCC) --debug --gline $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
 obj:
 	mkdir obj
 

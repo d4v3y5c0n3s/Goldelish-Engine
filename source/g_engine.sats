@@ -5,7 +5,6 @@ This file has code for general things & math operations in the engine.
 *)
 
 (*  standard lib includes  *)
-//  ATS includes the C standard libraries ready-to-use
 #include "share/HATS/atslib_staload_libats_libc.hats"
 
 (*  SDL includes  *)
@@ -488,7 +487,7 @@ fun point_inside_triangle ( p: vec3, v0: vec3, v1: vec3, v2: vec3 ) : bool = "st
 fun sphere_intersects_face ( s: sphere, v0: vec3, v1: vec3, v2: vec3, norm: vec3 ) : bool = "sta#%"
 
 //  ellipsoid shape type
-typedef ellipsoid = @{ center=vec3, radiuses=vec3 }
+abst@ype ellipsoid
 
 fun ellipsoid_new ( center: vec3, radiuses: vec3 ) : ellipsoid = "sta#%"
 fun ellipsoid_transform ( e: ellipsoid, m: mat4 ) : ellipsoid = "sta#%"
@@ -498,7 +497,7 @@ fun ellipsoid_space ( e: ellipsoid ) : mat3 = "sta#%"
 fun ellipsoid_inv_space ( e: ellipsoid ) : mat3 = "sta#%"
 
 //  capsule shape type
-typedef capsule = @{ c_start=vec3, c_end=vec3, radius=float }
+abst@ype capsule
 
 fun capsule_new ( c_start: vec3, c_end: vec3, radius: float ) : capsule = "sta#%"
 fun capsule_transform ( c: capsule, m: mat4 ) : capsule = "sta#%"
@@ -508,6 +507,7 @@ fun capsule_outside_plane ( c: capsule, p: plane ) : bool = "sta#%"
 fun capsule_intersects_plane ( c: capsule, p: plane ) : bool = "sta#%"
 
 //  vertex type
+//abst@ype vertex
 typedef vertex = @{ position=vec3, normal=vec3, tangent=vec3, binormal=vec3, color=vec4, uvs=vec2 }
 
 fun vertex_new () : vertex = "sta#%"
@@ -520,19 +520,19 @@ absvt@ype mesh
 fun mesh_new () : [l:addr] ( mesh @ l, mfree_gc_v(l) | ptr l ) = "str#%"
 fun mesh_delete {l:addr} ( mpf: mesh @ l, mpff: mfree_gc_v(l) | m: ptr l ) : void = "sta#%"
 
-fun mesh_generate_normals ( m: &mesh ) : void = "sta#%"
-fun mesh_generate_tangents ( m: &mesh ) : void = "sta#%"
-fun mesh_generate_orthagonal_tangents ( m: &mesh ) : void = "sta#%"
-fun mesh_generate_texcoords_cylinder ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_normals ( m: !mesh ) : void = "sta#%"
+fun mesh_generate_tangents ( m: !mesh ) : void = "sta#%"
+fun mesh_generate_orthagonal_tangents ( m: !mesh ) : void = "sta#%"
+fun mesh_generate_texcoords_cylinder ( m: !mesh ) : void = "sta#%"
 
-fun mesh_print ( m: &mesh ) : void = "sta#%"
-fun mesh_surface_area ( m: &mesh ) : float = "sta#%"
+fun mesh_print ( m: !mesh ) : void = "sta#%"
+fun mesh_surface_area ( m: !mesh ) : float = "sta#%"
 
 fun mesh_transform ( m: mesh, transform: mat4 ) : void = "sta#%"
 fun mesh_translate ( m: mesh, translation: vec3 ) : void = "sta#%"
 fun mesh_scale ( m: mesh, scale: float ) : void = "sta#%"
 
-fun mesh_bounding_sphere ( m: &mesh ) : sphere = "sta#%"
+fun mesh_bounding_sphere ( m: !mesh ) : sphere = "sta#%"
 
 //  model type
 typedef model = @{ num_meshes=int, meshes=ptr }

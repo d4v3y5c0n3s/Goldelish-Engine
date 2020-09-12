@@ -1,4 +1,0 @@
-// Corange Game Engine in ATS Reimplementation  //
-
-* Current Agenda:
-** rework the SDL_local.sats & SDL_local.dats to be interfaces for all the SDL functions/values needed in Goldelish

@@ -3,16 +3,16 @@
 ## Goldelish-Engine ##
 
 #### Why use ATS? ####
-ATS (http://www.ats-lang.org) in my opinion is a really great programming language with some incredible features that few have experienced.  By using ATS to make Goldelish Engine, I am hoping to spread awareness of ATS to those who've never heard of it before.  In addition, I am learning to program in ATS and wanted a long-term project I could work on to improve my programming skills.
+ATS (http://www.ats-lang.org) is, in my opinion, a really great programming language with some incredible features that too few have discovered.  By using ATS to make Goldelish Engine, I am hoping to spread awareness of ATS to those who've never heard of it before.  In addition, I am learning to program in ATS and Goldelish Engine will serve as a long-term project that I can work on to improve my programming skills.  :)
 
 #### Why a game engine? ####
-Game engines are a great way to show off a programming language's prowess by translating your code into something you can see, hear, and play.  Also, I am very interested in game programming.
+Game engines are a great way to show off a programming language's prowess by translating your code into something you can see, hear, and play.  Performance is critical in a game engine in order to maintain a stable frame rate.  Also, I just thought it would be cool to make a game engine.  :P
 
 #### What is the project's current state? ####
-The code is not yet finished, and doesn't compile (but the Makefile is FINALLY working!!! :D).  I'm still learning ATS, so as I learn more these gaps will get filled in until it works properly.  I'll make an announcement of some sort when this happens.
+The code is not yet finished, and while it passes typechecking fine, GCC can't compile the resulting C due to many of the functions being currently unimplemented.  Expect progress to be slow, as I am not able to devote large quantities of time to the project.  Although at this point I can pretty confidently say that I (mostly) know ATS, there are some instances where my progress is slowed down when I encounter something which I do not understand.  In short, some patient is required.  ;)
 
 #### How can I help? ####
-Create issues if you see some way that my code could be improved.  If you wish to help the project in some other way, then create an issue so that I can see how you'd like to help.  Thanks for any help you can provide! :D
+If you'd like to help this project, first off, thank you!  Any and all help is welcome, and if you have an idea for how to help, please don't hesitate to let me know by creating an issue in which you suggest what you'd like to do.  Feel free to create issues if you see some way that my code could be improved.  :D
 
 ##### Corange Engine Copyright Notice #####
 Copyright (c) 2010, Daniel Holden
