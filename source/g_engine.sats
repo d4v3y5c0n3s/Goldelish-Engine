@@ -528,9 +528,9 @@ fun mesh_generate_texcoords_cylinder ( m: !mesh ) : void = "sta#%"
 fun mesh_print ( m: !mesh ) : void = "sta#%"
 fun mesh_surface_area ( m: !mesh ) : float = "sta#%"
 
-fun mesh_transform ( m: mesh, transform: mat4 ) : void = "sta#%"
-fun mesh_translate ( m: mesh, translation: vec3 ) : void = "sta#%"
-fun mesh_scale ( m: mesh, scale: float ) : void = "sta#%"
+fun mesh_transform ( m: !mesh, transform: mat4 ) : void = "sta#%"
+fun mesh_translate ( m: !mesh, translation: vec3 ) : void = "sta#%"
+fun mesh_scale ( m: !mesh, scale: float ) : void = "sta#%"
 
 fun mesh_bounding_sphere ( m: !mesh ) : sphere = "sta#%"
 

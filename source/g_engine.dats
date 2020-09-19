@@ -17,6 +17,7 @@ extern castfn double_to_float ( x: double ): float
 extern castfn uint_to_uint32 ( x: uint ): uint32
 extern castfn int_to_uint ( x: int ): uint
 extern castfn uint_to_int ( x: uint ): int
+extern castfn int_to_float ( x: int ): float
 
 local
   assume fpath = string
@@ -2390,7 +2391,7 @@ end
 
 local
 
-typedef tri_uint32(v:int) = [un:int | 0 <= un; un <= v] uint32(un)
+typedef tri_uint32(v:int) = [un:int | 0 <= un; un+1 <= v] uint32(un)
 
 assume mesh =
 [v,t:nat | v == t*3]
@@ -2443,7 +2444,7 @@ in
   ptr_free(mpff, mpf | m)
 end
 
-(*implement mesh_generate_tangents ( m ) = let
+implement mesh_generate_tangents ( m ) = let
   fun clear_tan_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
   ( ar: !arrayptr(vertex, l, j), i: int i ): void =
     if i >= 0 then let
@@ -2454,91 +2455,293 @@ end
       ar[i] := v_;
       clear_tan_loop(ar, i-1)
     end else ()
-  (*var tri_array = m.tap
-  var vert_array = m.vap
-  fnx calc_tan_t_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
-  (t_ar: !arrayptr(uint32, l, j), i: int i): void =
-  if i-2 >= 0 then let
-    val t_i1 = t_ar[i]
-    val t_i2 = t_ar[i+1]
-    val t_i3 = t_ar[i+2]
-  in
-    calc_tan_v_loop(vert_array, i)
-  end else ()
-  and calc_tan_v_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
-  (v_ar: !arrayptr(vertex, l, j), i: int i, t1: int, t2: int, t3: int): void =
-  if i-2 >= 0 then let
-    var v1 = v_ar[i]//  issue: these use t_i1 in Corange
-    var v2 = v_ar[i+1]
-    var v3 = v_ar[i+2]
+
+  fun calc_tan_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j)): void =
+  if i >= 3 then let
+    val t_i1 = t_ar[i-2]
+    val t_i2 = t_ar[i-1]
+    val t_i3 = t_ar[i]
+    var v1 = v_ar[t_i1]
+    var v2 = v_ar[t_i2]
+    var v3 = v_ar[t_i3]
     val face_tangent = triangle_tangent(v1, v2, v3)
     val face_binormal = triangle_binormal(v1, v2, v3)
   in
-    v1.tangent = vec3_add(face_tangent, v1.tangent);
-    v2.tangent = vec3_add(face_tangent, v2.tangent);
-    v3.tangent = vec3_add(face_tangent, v3.tangent);
-    v1.binormal = vec3_add(face_binormal, v1.binormal);
-    v2.binormal = vec3_add(face_binormal, v2.binormal);
-    v3.binormal = vec3_add(face_binormal, v3.binormal);
-    v_ar[] = v1;//  issue: indexes using the t_i1 in Corange
-    v_ar[] = v2;
-    v_ar[] = v3;//  partial solution: modify mesh type to require that the number of verts be 3 times more than the number of tris ()
-    //  look further at Corange to see if you can constrain the values for the uint32 tris
-    calc_tan_t_loop(tri_array, i-3)
+    v1.tangent := vec3_add(face_tangent, v1.tangent);
+    v2.tangent := vec3_add(face_tangent, v2.tangent);
+    v3.tangent := vec3_add(face_tangent, v3.tangent);
+    v1.binormal := vec3_add(face_binormal, v1.binormal);
+    v2.binormal := vec3_add(face_binormal, v2.binormal);
+    v3.binormal := vec3_add(face_binormal, v3.binormal);
+    v_ar[t_i1] := v1;
+    v_ar[t_i2] := v2;
+    v_ar[t_i3] := v3;
+    calc_tan_loop(i-3, v_ar, t_ar)
   end else ()
-  fun calc_tangents_loop {l1,l2:addr}{i,j1,j2:int | 0 <= i+1; i+1 <= j1; i+1 <= j2} .<i+1>.
-  ( v_ar: !arrayptr(vertex, l1, j1), t_ar: !arrayptr(uint32, l2, j2), i: int i ): void =
-    if i >= 0 then let
-    in
-      m.vap[t_i1] := v1;
-      m.vap[t_i2] := v2;
-      m.vap[t_i3] := v3;
-      calc_tangents_loop(v_ar, t_ar, i-3)
-    end else*)
-  //fun normalize_tangents_loop (): void =
+
+  fun normalize_tangents_loop {i,j:int | 0 <= i+1; i+1 <= j}{l:addr}
+  .<i+1>. (i: int i, ar: !arrayptr(vertex, l, j)): void =
+  if i >= 0 then let
+    var v_ = ar[i]
+  in
+    v_.tangent := vec3_normalize(v_.tangent);
+    v_.binormal := vec3_normalize(v_.binormal);
+    ar[i] := v_;
+    normalize_tangents_loop(i-1, ar)
+  end else ()
 in
-  clear_tan_loop(m.vap, m.v)//;
-  //calc_tan_t_loop(tri_array, m.t)
-end*)
+  clear_tan_loop(m.vap, m.v-1);
+  calc_tan_loop(m.v-1, m.vap, m.tap);
+  normalize_tangents_loop(m.v-1, m.vap);
+end
 
-implement mesh_generate_normals ( m ) =
-(
-)
+implement mesh_generate_normals ( m ) = let
+  fun clear_normals_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j)): void =
+  if i >= 0 then let
+    var v_ = ar[i]
+  in
+    v_.normal := vec3_zero();
+    ar[i] := v_;
+    clear_normals_loop(i-1, ar)
+  end
+  fun calc_normals_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j)): void =
+    if i >= 3 then let
+      val t_i1 = t_ar[i-2]
+      val t_i2 = t_ar[i-1]
+      val t_i3 = t_ar[i]
+      var v1 = v_ar[t_i1]
+      var v2 = v_ar[t_i2]
+      var v3 = v_ar[t_i3]
+      val face_normal = triangle_normal(v1, v2, v3)
+    in
+      v1.normal := vec3_add(face_normal, v1.normal);
+      v2.normal := vec3_add(face_normal, v2.normal);
+      v3.normal := vec3_add(face_normal, v3.normal);
+      v_ar[t_i1] := v1;
+      v_ar[t_i2] := v2;
+      v_ar[t_i3] := v3;
+      calc_normals_loop(i-3, v_ar, t_ar)
+    end else ()
+  fun normalize_normals_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j)): void =
+  if i >= 0 then let
+    var v_ = ar[i]
+  in
+    v_.normal := vec3_normalize(v_.normal);
+    ar[i] := v_;
+    normalize_normals_loop(i-1, ar)
+  end else ()
+in
+  clear_normals_loop(m.v-1, m.vap);
+  calc_normals_loop(m.v-1, m.vap, m.tap);
+  normalize_normals_loop(m.v-1, m.vap)
+end
 
-implement mesh_generate_orthagonal_tangents ( m ) =
-(
-)
+implement mesh_generate_orthagonal_tangents ( m ) = let
+  fun clear_ortho_tan_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j)): void =
+  if i >= 0 then let
+    var v_ = ar[i]
+  in
+    v_.tangent := vec3_zero();
+    v_.binormal := vec3_zero();
+    clear_ortho_tan_loop(i-1, ar)
+  end else ()
+  fun calc_ortho_tan_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j)): void =
+  if i >= 3 then let
+    val t_i1 = t_ar[i-2]
+    val t_i2 = t_ar[i-1]
+    val t_i3 = t_ar[i]
+    var v1 = v_ar[t_i1]
+    var v2 = v_ar[t_i2]
+    var v3 = v_ar[t_i3]
+    val face_normal = triangle_normal(v1, v2, v3)
+    val face_binormal_temp = triangle_binormal(v1, v2, v3)
+    val face_tangent = vec3_normalize(vec3_cross(face_binormal_temp, face_normal))
+    val face_binormal = vec3_normalize(vec3_cross(face_tangent, face_normal))
+  in
+    v1.tangent := vec3_add(face_tangent, v1.tangent);
+    v2.tangent := vec3_add(face_tangent, v2.tangent);
+    v3.tangent := vec3_add(face_tangent, v3.tangent);
+    v1.binormal := vec3_add(face_tangent, v1.binormal);
+    v2.binormal := vec3_add(face_tangent, v2.binormal);
+    v3.binormal := vec3_add(face_tangent, v3.binormal);
+    v_ar[t_i1] := v1;
+    v_ar[t_i2] := v2;
+    v_ar[t_i3] := v3;
+    calc_ortho_tan_loop(i-3, v_ar, t_ar)
+  end else ()
+  fun normlz_ortho_tan_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j)): void =
+  if i >= 0 then let
+    var v_ = ar[i]
+  in
+    v_.tangent := vec3_normalize(v_.tangent);
+    v_.binormal := vec3_normalize(v_.binormal);
+    ar[i] := v_
+  end else ()
+in
+  clear_ortho_tan_loop(m.v-1, m.vap);
+  calc_ortho_tan_loop(m.v-1, m.vap, m.tap);
+  normlz_ortho_tan_loop(m.v-1, m.vap)
+end
 
-implement mesh_generate_texcoords_cylinder ( m ) =
-(
-)
-end////
-implement mesh_surface_area ( m ) =
-(
-)
+implement mesh_generate_texcoords_cylinder ( m ) = let
+  val unwrap_vector = vec2_new(1.f, 0.f)
+  fun scale_uv_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j), scale: float): void =
+  if i >= 0 then let
+    var v_ = ar[i]
+  in
+    v_.uvs := vec2_new(v_.uvs.x, v_.uvs.y/scale);
+    ar[i] := v_;
+    scale_uv_loop(i-1, ar, scale)
+  end else ()
+  fun calc_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (max_height: float, min_height: float, i: int i, ar: !arrayptr(vertex, l, j)): void =
+  if i >= 0 then let
+    val v = ar[i].position.y
+    val proj_position = vec2_new(ar[i].position.x, ar[i].position.z)
+    val from_center = vec2_normalize(proj_position)
+    val u = (vec2_dot(from_center, unwrap_vector) + 1.f) / 8.f
+    var ar_i = ar[i]
+  in
+    ar_i.uvs := vec2_new(u, v);
+    ar[i] := ar_i;
+    calc_loop(max(max_height, v), min(min_height, v), i-1, ar)
+  end else let
+    val scale = max_height - min_height
+  in
+    scale_uv_loop(m.v-1, m.vap, scale)
+  end
+in
+  calc_loop(~99999999.f, 99999999.f, m.v-1, m.vap)
+end
 
-implement mesh_translate ( m, translation ) =
-(
-)
+implement mesh_surface_area ( m ) = let
+  fun calc_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j), total: float): float =
+  if i >= 3 then let
+    val t_i1 = t_ar[i-2]
+    val t_i2 = t_ar[i-1]
+    val t_i3 = t_ar[i]
+    val v1 = v_ar[t_i1]
+    val v2 = v_ar[t_i2]
+    val v3 = v_ar[t_i3]
+  in
+    calc_loop(i-3, v_ar, t_ar, triangle_area(v1, v2, v3))
+  end else total
+in
+  calc_loop(m.v-1, m.vap, m.tap, 0.f)
+end
 
-implement mesh_scale ( m, scale ) =
-(
-)
+implement mesh_translate ( m, translation ) = let
+  fun trans_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j)): void =
+  if i >= 3 then let
+    val t_i1 = t_ar[i-2]
+    val t_i2 = t_ar[i-1]
+    val t_i3 = t_ar[i]
+    var v_ti1 = v_ar[t_i1]
+    var v_ti2 = v_ar[t_i2]
+    var v_ti3 = v_ar[t_i3]
+  in
+    v_ti1.position := vec3_add(v_ti1.position, translation);
+    v_ti2.position := vec3_add(v_ti2.position, translation);
+    v_ti3.position := vec3_add(v_ti3.position, translation);
+    v_ar[t_i1] := v_ti1;
+    v_ar[t_i2] := v_ti2;
+    v_ar[t_i3] := v_ti3;
+    trans_loop(i-3, v_ar, t_ar)
+  end else ()
+in
+  trans_loop(m.v-1, m.vap, m.tap)
+end
 
-implement mesh_transform ( m, transform ) =
-(
-)
+implement mesh_scale ( m, scale ) = let
+  fun scale_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j)): void =
+  if i >= 3 then let
+    val t_i1 = t_ar[i-2]
+    val t_i2 = t_ar[i-1]
+    val t_i3 = t_ar[i]
+    var v_ti1 = v_ar[t_i1]
+    var v_ti2 = v_ar[t_i2]
+    var v_ti3 = v_ar[t_i3]
+  in
+    v_ti1.position := vec3_mul(v_ti1.position, scale);
+    v_ti2.position := vec3_mul(v_ti2.position, scale);
+    v_ti3.position := vec3_mul(v_ti3.position, scale);
+    v_ar[t_i1] := v_ti1;
+    v_ar[t_i2] := v_ti2;
+    v_ar[t_i3] := v_ti3;
+    scale_loop(i-3, v_ar, t_ar)
+  end else ()
+in
+  scale_loop(m.v-1, m.vap, m.tap)
+end
 
-implement mesh_bounding_sphere ( m ) =
-(
-)
+implement mesh_transform ( m, transform ) = let
+  fun transf_loop {l1,l2:addr}{i,j:int | 0 <= i+3; i+1 <= j} .<i+3>.
+  (i: int i, v_ar: !arrayptr(vertex, l1, j), t_ar: !arrayptr(tri_uint32(j), l2, j)): void =
+  if i >= 3 then let
+    val t_i1 = t_ar[i-2]
+    val t_i2 = t_ar[i-1]
+    val t_i3 = t_ar[i]
+    var v_ti1 = v_ar[t_i1]
+    var v_ti2 = v_ar[t_i2]
+    var v_ti3 = v_ar[t_i3]
+  in
+    v_ti1.position := mat4_mul_vec3(transform, v_ti1.position);
+    v_ti2.position := mat4_mul_vec3(transform, v_ti2.position);
+    v_ti3.position := mat4_mul_vec3(transform, v_ti3.position);
+    v_ar[t_i1] := v_ti1;
+    v_ar[t_i2] := v_ti2;
+    v_ar[t_i3] := v_ti3;
+    transf_loop(i-3, v_ar, t_ar)
+  end else ()
+in
+  transf_loop(m.v-1, m.vap, m.tap)
+end
+
+implement mesh_bounding_sphere ( m ) = let
+  fun set_radius_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j), s: sphere): sphere =
+  if i >= 0 then let
+    var s3 = s
+    var v_ = ar[i]
+  in
+    s3.radius := max(s.radius, vec3_dist(s.center, v_.position));
+    set_radius_loop(i-1, ar, s3)
+  end else s
+  fun set_center_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  (i: int i, ar: !arrayptr(vertex, l, j), s: sphere): sphere =
+  if i >= 0 then let
+    var s1 = s
+    var v_ = ar[i]
+  in
+    s1.center := vec3_add(s1.center, v_.position);
+    set_center_loop(i-1, ar, s1)
+  end else let
+    var s2 = s
+  in
+    s2.center := vec3_div(s2.center, int_to_float(m.v));
+    set_radius_loop(m.v-1, m.vap, s2)
+  end
+in
+  set_center_loop(m.v-1, m.vap, sphere_new(vec3_zero(), 0.f))
+end
 
 end
 
 implement model_print ( m ) =
 (
 )
-
+////
 implement model_new (  ) =
 (
 )
