@@ -2424,25 +2424,21 @@ end
 implement mesh_new (  ) = let
   val vert_array = arrayptr_make_uninitized<vertex>(size_of_int(0))
   val tri_array = arrayptr_make_uninitized<tri_uint32(0)>(size_of_int(0))
-  val (res_mpf, res_gcpf | res_ptr) = ptr_alloc<mesh>()
 in
   arrayptr_initize(vert_array, size_of_int(0));
   arrayptr_initize(tri_array, size_of_int(0));
-  !res_ptr := (@{
+  (@{
     v=0, t=0,
     vap=vert_array,
     tap=tri_array
-  }:mesh);
-  (res_mpf, res_gcpf | res_ptr)
+  }:mesh)
 end
 
-implement mesh_delete ( mpf, mpff | m ) = let
-  val m1 = !m
-in
-  arrayptr_free(m1.vap);
-  arrayptr_free(m1.tap);
-  ptr_free(mpff, mpf | m)
-end
+implement mesh_delete ( m ) =
+(
+  arrayptr_free(m.vap);
+  arrayptr_free(m.tap)
+)
 
 implement mesh_generate_tangents ( m ) = let
   fun clear_tan_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
@@ -2602,7 +2598,7 @@ implement mesh_generate_texcoords_cylinder ( m ) = let
     scale_uv_loop(i-1, ar, scale)
   end else ()
   fun calc_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
-  (max_height: float, min_height: float, i: int i, ar: !arrayptr(vertex, l, j)): void =
+  (max_height: float, min_height: float, i: int i, ar: !arrayptr(vertex, l, j)): float =
   if i >= 0 then let
     val v = ar[i].position.y
     val proj_position = vec2_new(ar[i].position.x, ar[i].position.z)
@@ -2613,13 +2609,11 @@ implement mesh_generate_texcoords_cylinder ( m ) = let
     ar_i.uvs := vec2_new(u, v);
     ar[i] := ar_i;
     calc_loop(max(max_height, v), min(min_height, v), i-1, ar)
-  end else let
-    val scale = max_height - min_height
-  in
-    scale_uv_loop(m.v-1, m.vap, scale)
-  end
+  end else max_height - min_height
+  var scale: float
 in
-  calc_loop(~99999999.f, 99999999.f, m.v-1, m.vap)
+  scale := calc_loop(~99999999.f, 99999999.f, m.v-1, m.vap);
+  scale_uv_loop(m.v-1, m.vap, scale)
 end
 
 implement mesh_surface_area ( m ) = let
@@ -2719,32 +2713,57 @@ implement mesh_bounding_sphere ( m ) = let
     set_radius_loop(i-1, ar, s3)
   end else s
   fun set_center_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
-  (i: int i, ar: !arrayptr(vertex, l, j), s: sphere): sphere =
+  (i: int i, ar: !arrayptr(vertex, l, j), s: sphere, v_num: int j): sphere =
   if i >= 0 then let
     var s1 = s
     var v_ = ar[i]
   in
     s1.center := vec3_add(s1.center, v_.position);
-    set_center_loop(i-1, ar, s1)
+    set_center_loop(i-1, ar, s1, v_num)
   end else let
     var s2 = s
   in
-    s2.center := vec3_div(s2.center, int_to_float(m.v));
-    set_radius_loop(m.v-1, m.vap, s2)
+    s2.center := vec3_div(s2.center, int_to_float(v_num));
+    s2
   end
+  var new_sph: sphere
 in
-  set_center_loop(m.v-1, m.vap, sphere_new(vec3_zero(), 0.f))
+  new_sph := set_center_loop(m.v-1, m.vap, sphere_new(vec3_zero(), 0.f), m.v);
+  set_radius_loop(m.v-1, m.vap, new_sph)
 end
 
 end
 
-implement model_print ( m ) =
-(
-)
-////
-implement model_new (  ) =
-(
-)
+local
+
+assume model = [l:addr][n:nat] ( int n, arrayptr(mesh, l, n) )
+
+in
+
+implement model_print ( m ) = let
+  fun mesh_print_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_print(!ar_i)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_print_loop(i-1, ar)
+  end else ()
+in
+  mesh_print_loop((m.0)-1, m.1)
+end
+end////
+implement model_new (  ) = ()(*let
+  val mesh_array = arrayptr_make_uninitized<ptr>(size_of_int(0))
+  val (respf1, respf2 | res) = ptr_alloc<model>();
+in
+  arrayptr_initize(mesh_array, size_of_int(0));
+  !res := ( | 0, );
+  (respf1, respf2 | res)
+end*)
 
 implement model_delete ( m ) =
 (
@@ -2781,6 +2800,8 @@ implement model_scale ( m, scale ) =
 implement model_transform ( m, transform ) =
 (
 )
+
+end
 
 implement triangle_tangent ( vert1, vert2, vert3 ) =
 (

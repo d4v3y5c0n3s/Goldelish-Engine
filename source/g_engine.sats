@@ -517,40 +517,40 @@ fun vertex_print ( v: vertex ) : void = "sta#%"
 //  mesh type
 absvt@ype mesh
 
-fun mesh_new () : [l:addr] ( mesh @ l, mfree_gc_v(l) | ptr l ) = "str#%"
-fun mesh_delete {l:addr} ( mpf: mesh @ l, mpff: mfree_gc_v(l) | m: ptr l ) : void = "sta#%"
+fun mesh_new () : mesh = "str#%"
+fun mesh_delete ( m: mesh ) : void = "sta#%"
 
-fun mesh_generate_normals ( m: !mesh ) : void = "sta#%"
-fun mesh_generate_tangents ( m: !mesh ) : void = "sta#%"
-fun mesh_generate_orthagonal_tangents ( m: !mesh ) : void = "sta#%"
-fun mesh_generate_texcoords_cylinder ( m: !mesh ) : void = "sta#%"
+fun mesh_generate_normals ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_tangents ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_orthagonal_tangents ( m: &mesh ) : void = "sta#%"
+fun mesh_generate_texcoords_cylinder ( m: &mesh ) : void = "sta#%"
 
-fun mesh_print ( m: !mesh ) : void = "sta#%"
-fun mesh_surface_area ( m: !mesh ) : float = "sta#%"
+fun mesh_print ( m: &mesh ) : void = "sta#%"
+fun mesh_surface_area ( m: &mesh ) : float = "sta#%"
 
-fun mesh_transform ( m: !mesh, transform: mat4 ) : void = "sta#%"
-fun mesh_translate ( m: !mesh, translation: vec3 ) : void = "sta#%"
-fun mesh_scale ( m: !mesh, scale: float ) : void = "sta#%"
+fun mesh_transform ( m: &mesh, transform: mat4 ) : void = "sta#%"
+fun mesh_translate ( m: &mesh, translation: vec3 ) : void = "sta#%"
+fun mesh_scale ( m: &mesh, scale: float ) : void = "sta#%"
 
-fun mesh_bounding_sphere ( m: !mesh ) : sphere = "sta#%"
+fun mesh_bounding_sphere ( m: &mesh ) : sphere = "sta#%"
 
 //  model type
-typedef model = @{ num_meshes=int, meshes=ptr }
+absvt@ype model
 
-fun model_new () : ptr = "sta#%"
-fun model_delete ( m: ptr ) : void = "sta#%"
+fun model_new () : model = "sta#%"
+fun model_delete ( m: model ) : void = "sta#%"
 
-fun model_generate_normals ( m: ptr ) : void = "sta#%"
-fun model_generate_tangents ( m: ptr ) : void = "sta#%"
-fun model_generate_orthagonal_tangents ( m: ptr ) : void = "sta#%"
-fun model_generate_texcoords_cylinder ( m: ptr ) : void = "sta#%"
+fun model_generate_normals ( m: &model ) : void = "sta#%"
+fun model_generate_tangents ( m: &model ) : void = "sta#%"
+fun model_generate_orthagonal_tangents ( m: &model ) : void = "sta#%"
+fun model_generate_texcoords_cylinder ( m: &model ) : void = "sta#%"
 
-fun model_print ( m: ptr ) : void = "sta#%"
-fun model_surface_area ( m: ptr ) : float = "sta#%"
+fun model_print ( m: &model ) : void = "sta#%"
+fun model_surface_area ( m: &model ) : float = "sta#%"
 
-fun model_transform ( m: ptr, transform: mat4 ) : void = "sta#%"
-fun model_translate ( m: ptr, translation: vec3 ) : void = "sta#%"
-fun model_scale ( m: ptr, scale: float ) : void = "sta#%"
+fun model_transform ( m: &model, transform: mat4 ) : void = "sta#%"
+fun model_translate ( m: &model, translation: vec3 ) : void = "sta#%"
+fun model_scale ( m: &model, scale: float ) : void = "sta#%"
 
 //  triangle
 fun triangle_tangent ( v1: vertex, v2: vertex, v3: vertex ) : vec3 = "sta#%"
