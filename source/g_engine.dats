@@ -2755,98 +2755,305 @@ implement model_print ( m ) = let
 in
   mesh_print_loop((m.0)-1, m.1)
 end
-end////
-implement model_new (  ) = ()(*let
-  val mesh_array = arrayptr_make_uninitized<ptr>(size_of_int(0))
-  val (respf1, respf2 | res) = ptr_alloc<model>();
+
+implement model_new (  ) = let
+  val mesh_array = arrayptr_make_uninitized<mesh>(size_of_int(0))
 in
   arrayptr_initize(mesh_array, size_of_int(0));
-  !res := ( | 0, );
-  (respf1, respf2 | res)
-end*)
+  (0, mesh_array):model
+end
 
 implement model_delete ( m ) =
 (
+  arrayptr_freelin(m.1, size_of_int(m.0))
 )
 
-implement model_generate_normals ( m ) =
-(
-)
+implement model_generate_normals ( m ) = let
+  fun mesh_gen_norm_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_generate_normals(!ar_i)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_gen_norm_loop(i-1, ar)
+  end else ()
+in
+  mesh_gen_norm_loop((m.0)-1, m.1)
+end
 
-implement model_generate_tangents ( m ) =
-(
-)
+implement model_generate_tangents ( m ) = let
+  fun mesh_gen_tan {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_generate_tangents(!ar_i)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_gen_tan(i-1, ar)
+  end else ()
+in
+  mesh_gen_tan((m.0)-1, m.1)
+end
 
-implement model_generate_orthagonal_tangents ( m ) =
-(
-)
+implement model_generate_orthagonal_tangents ( m ) = let
+  fun mesh_gen_ortho_tan_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_generate_orthagonal_tangents(!ar_i)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_gen_ortho_tan_loop(i-1, ar)
+  end else ()
+in
+  mesh_gen_ortho_tan_loop((m.0)-1, m.1)
+end
 
-implement model_generate_texcoords_cylinder ( m ) =
-(
-)
+implement model_generate_texcoords_cylinder ( m ) = let
+  fun mesh_gen_tex_cyl_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_generate_texcoords_cylinder(!ar_i)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_gen_tex_cyl_loop(i-1, ar)
+  end else ()
+in
+  mesh_gen_tex_cyl_loop((m.0)-1, m.1)
+end
 
-implement model_surface_area ( m ) =
-(
-)
+implement model_surface_area ( m ) = let
+  fun mesh_surf_area_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j), mesh_area: float): float =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val m_area = mesh_area + mesh_surface_area(!ar_i)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_surf_area_loop(i-1, ar, m_area)
+  end else mesh_area
+in
+  mesh_surf_area_loop((m.0)-1, m.1, 0.f)
+end
 
-implement model_translate ( m, translation ) =
-(
-)
+implement model_translate ( m, translation ) = let
+  fun mesh_trans_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_translate(!ar_i, translation)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_trans_loop(i-1, ar)
+  end else ()
+in
+  mesh_trans_loop((m.0)-1, m.1)
+end
 
-implement model_scale ( m, scale ) =
-(
-)
+implement model_scale ( m, scale ) = let
+  fun mesh_scale_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_scale(!ar_i, scale)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_scale_loop(i-1, ar)
+  end else ()
+in
+  mesh_scale_loop((m.0)-1, m.1)
+end
 
-implement model_transform ( m, transform ) =
-(
-)
+implement model_transform ( m, transform ) = let
+  fun mesh_transf_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.
+  ( i: int i, ar: !arrayptr(mesh, l, j)): void =
+  if i >= 0 then let
+    val (pf_ar | ar_p) = arrayptr_takeout_viewptr(ar)
+    val (ari_pf, ari_fpf | ar_i) = array_ptr_takeout(pf_ar | ar_p, size_of_int(i))
+    val () = mesh_transform(!ar_i, transform)
+    prval () = pf_ar := ari_fpf(ari_pf)
+    prval () = arrayptr_addback(pf_ar | ar)
+  in
+    mesh_transf_loop(i-1, ar)
+  end else ()
+in
+  mesh_transf_loop((m.0)-1, m.1)
+end
 
 end
 
-implement triangle_tangent ( vert1, vert2, vert3 ) =
-(
-)
+implement triangle_tangent ( vert1, vert2, vert3 ) = let
+  val pos1 = vert1.position
+  val pos2 = vert2.position
+  val pos3 = vert3.position
+  val uv1 = vert1.uvs
+  val uv2 = vert2.uvs
+  val uv3 = vert3.uvs
+  val x1 = pos2.x - pos1.x
+  val x2 = pos3.x - pos1.x
+  val y1 = pos2.y - pos1.y
+  val y2 = pos3.y - pos1.y
+  val z1 = pos2.z - pos1.z
+  val z2 = pos3.z - pos1.z
+  val s1 = uv2.x - uv1.x
+  val s2 = uv3.x - uv1.x
+  val t1 = uv2.y - uv1.y
+  val t2 = uv3.y - uv1.y
+  val r = 1.f / ((s1 * t2) - (s2 * t1))
+  val tdir = vec3_new(
+    (s1 * x2 - s2 * x1) * r,
+    (s1 * y2 - s2 * y1) * r,
+    (s1 * z2 - s2 * z1) * r
+  )
+in
+  vec3_normalize(tdir)
+end
 
-implement triangle_binormal ( vert1, vert2, vert3 ) =
-(
-)
+implement triangle_binormal ( vert1, vert2, vert3 ) = let
+  val pos1 = vert1.position
+  val pos2 = vert2.position
+  val pos3 = vert3.position
+  val uv1 = vert1.uvs
+  val uv2 = vert2.uvs
+  val uv3 = vert3.uvs
+  val x1 = pos2.x - pos1.x
+  val x2 = pos3.x - pos1.x
+  val y1 = pos2.y - pos1.y
+  val y2 = pos3.y - pos1.y
+  val z1 = pos2.z - pos1.z
+  val z2 = pos3.z - pos1.z
+  val s1 = uv2.x - uv1.x
+  val s2 = uv3.x - uv1.x
+  val t1 = uv2.y - uv1.y
+  val t2 = uv3.y - uv1.y
+  val r = 1.f / ((s1 * t2) - (s2 * t1))
+  val sdir = vec3_new(
+    (t2 * x1 - t1 * x2) * r,
+    (t2 * y1 - t1 * y2) * r,
+    (t2 * z1 - t1 * z2) * r
+  )
+in
+  vec3_normalize(sdir)
+end
 
-implement triangle_normal ( v1, v2, v3 ) =
-(
-)
+implement triangle_normal ( v1, v2, v3 ) = let
+  val edge1 = vec3_sub(v2.position, v1.position)
+  val edge2 = vec3_sub(v3.position, v1.position)
+  val normal = vec3_cross(edge1, edge2)
+in
+  vec3_normalize(normal)
+end
 
-implement triangle_area ( v1, v2, v3 ) =
-(
-)
+implement triangle_area ( v1, v2, v3 ) = let
+  val ab = vec3_sub(v1.position, v2.position)
+  val ac = vec3_sub(v1.position, v3.position)
+  val area = 0.5f * vec3_length(vec3_cross(ab, ac))
+in
+  area
+end
 
-implement triangle_random_position ( v1, v2, v3 ) =
-(
-)
+implement triangle_random_position ( v1, v2, v3 ) = let
+  var r1: float = int_to_float($STDLIB.rand()) / int_to_float(RAND_MAX)
+  var r2: float = int_to_float($STDLIB.rand()) / int_to_float(RAND_MAX)
+  var a = v1.position
+  val ab = vec3_sub(v1.position, v2.position)
+  val ac = vec3_sub(v1.position, v3.position)
+in
+  if r1 + r2 >= 1.f then (
+    r1 := 1.f - r1;
+    r2 := 1.f - r2
+  );
+  a := vec3_sub(a, vec3_mul(ab, r1));
+  a := vec3_sub(a, vec3_mul(ac, r2));
+  a
+end
 
-implement triangle_random_position_interpolation ( v1, v2, v3 ) =
-(
-)
+implement triangle_random_position_interpolation ( v1, v2, v3 ) = let
+  var r1: float = int_to_float($STDLIB.rand()) / int_to_float(RAND_MAX)
+  var r2: float = int_to_float($STDLIB.rand()) / int_to_float(RAND_MAX)
+  var v: vertex
+  var v_pos: vec3 = v1.position
+  var v_norm: vec3 = v1.normal
+  var v_tang: vec3 = v1.tangent
+  var v_binorm: vec3 = v1.binormal
+  var v_col: vec4 = v1.color
+  var v_uv: vec2 = v1.uvs
+in
+  if r1 + r2 >= 1.f then (
+    r1 := 1.f - r1;
+    r2 := 1.f - r2
+  );
+  v_pos := vec3_sub(v_pos, vec3_mul(vec3_sub(v1.position, v2.position), r1));
+  v_pos := vec3_sub(v_pos, vec3_mul(vec3_sub(v1.position, v3.position), r2));
+  v_norm := vec3_sub(v_norm, vec3_mul(vec3_sub(v1.normal, v2.normal), r1));
+  v_norm := vec3_sub(v_norm, vec3_mul(vec3_sub(v1.normal, v3.normal), r2));
+  v_tang := vec3_sub(v_tang, vec3_mul(vec3_sub(v1.tangent, v2.tangent), r1));
+  v_tang := vec3_sub(v_tang, vec3_mul(vec3_sub(v1.tangent, v3.tangent), r2));
+  v_binorm := vec3_sub(v_binorm, vec3_mul(vec3_sub(v1.binormal, v2.binormal), r1));
+  v_binorm := vec3_sub(v_binorm, vec3_mul(vec3_sub(v1.binormal, v3.binormal), r1));
+  v_col := vec4_sub(v_col, vec4_mul(vec4_sub(v1.color, v2.color), r1));
+  v_col := vec4_sub(v_col, vec4_mul(vec4_sub(v1.color, v3.color), r2));
+  v_uv := vec2_sub(v_uv, vec2_mul(vec2_sub(v1.uvs, v2.uvs), r1));
+  v_uv := vec2_sub(v_uv, vec2_mul(vec2_sub(v1.uvs, v3.uvs), r2));
+  v.position := v_pos;
+  v.normal := v_norm;
+  v.tangent := v_tang;
+  v.binormal := v_binorm;
+  v.color := v_col;
+  v.uvs := v_uv;
+  v
+end
 
-implement triangle_difference_u ( v1, v2, v3 ) =
-(
-)
+implement triangle_difference_u ( v1, v2, v3 ) = let
+  val max = v1.uvs.x
+  val max2 = (if ((v2.uvs.x):float) > max then v2.uvs.x else max)
+  val max3 = (if ((v3.uvs.x):float) > ((max2):float) then v3.uvs.x else max2)
+  val min = v1.uvs.x
+  val min2 = (if ((v2.uvs.x):float) < min then v2.uvs.x else min)
+  val min3 = (if ((v3.uvs.x):float) < ((min2):float) then v3.uvs.x else min2)
+in
+  ((max3):float) - ((min3):float)
+end
 
-implement triangle_difference_v ( v1, v2, v3 ) =
-(
-)
+implement triangle_difference_v ( v1, v2, v3 ) = let
+  val max = v1.uvs.y
+  val max2 = (if ((v2.uvs.y):float) > max then v2.uvs.y else max)
+  val max3 = (if ((v3.uvs.y):float) > ((max2):float) then v3.uvs.y else max2)
+  val min = v1.uvs.y
+  val min2 = (if ((v2.uvs.y):float) < min then v2.uvs.y else min)
+  val min3 = (if ((v3.uvs.y):float) < ((min2):float) then v3.uvs.y else min2)
+in
+  ((max3):float) - ((min3):float)
+end
 
 implement tween_approach ( curr, target, timestep, steepness ) =
-(
-)
+  lerp(curr, target, saturate(steepness * timestep))
 
 implement tween_linear ( curr, target, timestep, max ) =
-(
-)
+  curr + clamp(target - curr, ~max * timestep, max * timestep)
 
 implement vec3_tween_approach ( curr, target, timestep, steepness ) =
-(
-)
+  vec3_lerp(curr, target, saturate(steepness * timestep))
 
-implement vec3_tween_linear ( curr, target, timestep, max ) =
-(
-)
+implement vec3_tween_linear ( curr, target, timestep, max ) = let
+  val dist = vec3_dist(curr, target)
+  val dirr = vec3_normalize(vec3_sub(target, curr))
+in
+  vec3_add(curr, vec3_mul(dirr, min(dist, max * timestep)))
+end

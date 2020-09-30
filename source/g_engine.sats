@@ -10,6 +10,8 @@ This file has code for general things & math operations in the engine.
 (*  SDL includes  *)
 #include "./SDL2/SDL_local.sats"
 
+#define RAND_MAX 32767
+
 #ifndef MAX_PATH
 #define MAX_PATH 512
 #endif
