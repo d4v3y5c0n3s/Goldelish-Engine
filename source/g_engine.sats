@@ -20,7 +20,7 @@ This file has code for general things & math operations in the engine.
 #define WARNING_BUFFER_SIZE	2048 * 4
 
 (*  ###  file system path  ###  *)
-abstype fpath
+absvtype fpath
 
 fun P ( path: string ) : fpath = "sta#"
 
@@ -43,17 +43,7 @@ fun frame_begin () : ulint = "sta#frame_begin"
 fun frame_end ( fstartt: ulint, fendt: ulint, ftimev: ulint, facct: ulint, fcntr: ulint, frv: ulint ) : (ulint, ulint, ulint, ulint, ulint, ulint) = "sta#frame_end"
 fun frame_end_at_rate ( fps: double, fstartt: ulint, fendt: ulint, ftimev: ulint, facct: ulint, fcntr: ulint, frv: ulint ) : void = "sta#%"
 
-(*  ###  types  ###  *)
-typedef type_id = int
-
-//  WILL NEED REVISION
-//#define typeid(TYPE) type_find(#TYPE, sizeof(TYPE))
-fun type_find( type: string, size: size_t ) : type_id = "sta#%"
-fun type_id_name ( id: int ) : string = "sta#%"
-
 (*  ###  floating point math  ###  *)
-
-//  min(x, y) & max(x, y) are already implemented in the ATS prelude
 
 fn clamp ( x:float, bottom:float, top:float ): float = "sta#%"
 fn saturate ( x:float ): float = "sta#%"

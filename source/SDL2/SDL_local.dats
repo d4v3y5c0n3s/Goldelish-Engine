@@ -9,16 +9,7 @@ the full function definitions for SDL & the initial values for the OpenGL extens
 //  include statements go here
 staload "SDL_local.sats"
 
-//  standard lib includes
-staload STDLIB = "libats/libc/SATS/stdlib.sats"//  stdlib.h
-staload _(*STDLIB*) = "libats/libc/DATS/stdlib.dats"
-staload STDIO = "libats/libc/SATS/stdio.sats"//  stdio.h
-staload _(*STDIO*) = "libats/libc/DATS/stdio.dats"
-staload DIRENT = "libats/libc/SATS/direct.sats"//  dirent.h
-staload _(*DIRENT*) = "libats/libc/DATS/direct.dats"
-staload UNISTD = "libats/libc/SATS/unistd.sats"
-staload _(*UNISTD*) = "libats/libc/DATS/unistd.dats"
-
+////
 #ifdef _WIN32
 #include <windows.h>
 #include <winbase.h>

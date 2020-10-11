@@ -20,27 +20,43 @@ extern castfn uint_to_int ( x: uint ): int
 extern castfn int_to_float ( x: int ): float
 
 local
-  assume fpath = string
+  assume fpath = Strptr1
 in
 implement P ( path ) =
   if strlen (path) >= PATH_MAX
-    then ( println!("Path too long: ", path); (""):fpath)
-  else (path):fpath
+    then ( println!("Path too long: ", path); ($UNSAFE.castvwtp0{Strptr1}("")):fpath)
+  else ($UNSAFE.castvwtp0{Strptr1}(path)):fpath
 
 implement fpath_full ( path_in ) = ret where {
-  val ret = (SDL_PathFullName(path_in)):fpath
+  val ret = (
+    $UNSAFE.castvwtp0{Strptr1}(
+      SDL_PathFullName(strptr2string(path_in))
+    )
+  ):fpath
 }
 
 implement fpath_file ( path ) = ret where {
-  val ret = (SDL_PathFileName(path)):fpath
+  val ret = (
+    $UNSAFE.castvwtp0{Strptr1}(
+      SDL_PathFileName(strptr2string(path))
+    )
+  ):fpath
 }
 
 implement fpath_file_location ( path ) = ret where {
-  val ret = (SDL_PathFileLocation(path)):fpath
+  val ret = (
+    $UNSAFE.castvwtp0{Strptr1}(
+      SDL_PathFileLocation(strptr2string(path))
+    )
+  ):fpath
 }
 
 implement fpath_file_extension ( path ) = ret where {
-  val ret = (SDL_PathFileExtension(path)):fpath
+  val ret = (
+    $UNSAFE.castvwtp0{Strptr1}(
+      SDL_PathFileExtension(strptr2string(path))
+    )
+  ):fpath
 }
 end
 
