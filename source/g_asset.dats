@@ -21,8 +21,8 @@ assume path_variable = @{ variable=fpath, mapping=fpath }
 
 in
 
-This compiles, proof-of-concept for handling assets
 (*
+This compiles, proof-of-concept for handling assets
 
 vtypedef asset_hndl_tst = [l:addr][a:vt@ype] @{ path=strptr, asset_ptr=(a? @ l | ptr l), timestamp=usint }
 fn test ( ah: &asset_hndl_tst ): void = (
