@@ -4,7 +4,8 @@
 same as button, but created in groups where only one may be selected
 *)
 
-#include "./ui_button.sats"
+staload "./../g_engine.sats"
+staload "./ui_button.sats"
 
 typedef ui_option = @{
 	label=(*ui_button*) ptr, num_options=int, options=(*ui_button ptr*) ptr, active=bool, selected=int(*, onselect=ui_option ptr -> void(*function pointer*)*)

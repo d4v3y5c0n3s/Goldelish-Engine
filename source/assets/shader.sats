@@ -4,8 +4,8 @@
 defines a GLSL shader program
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
 
 vtypedef shader = $extype"GLuint"
 vtypedef shader_print = $extype"GLuint"

@@ -4,10 +4,10 @@
 defines a font's data
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
 
-typedef font = @{
+vtypedef font = @{
 	texture_map=asset_hndl,
 	width=int,
 	height=int,

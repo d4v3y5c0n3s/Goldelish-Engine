@@ -4,8 +4,10 @@
 a box which allows text to be entered
 *)
 
-#include "./ui_rectangle.sats"
-#include "./ui_text.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./ui_rectangle.sats"
+staload "./ui_text.sats"
 
 typedef ui_textbox = @{
 	outer=(*ui_rectangle*) ptr,

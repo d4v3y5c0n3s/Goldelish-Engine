@@ -4,21 +4,22 @@
 a relatively simple deferred renderer implementation
 *)
 
-#include "./../g_engine.sats"
-#include "./../assets/texture.sats"
-#include "./../assets/shader.sats"
-#include "./../assets/cmesh.sats"
-#include "./../assets/config.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./../assets/texture.sats"
+staload "./../assets/shader.sats"
+staload "./../assets/cmesh.sats"
+staload "./../assets/config.sats"
 
-#include "./../entities/camera.sats"
-#include "./../entities/light.sats"
-#include "./../entities/static_object.sats"
-#include "./../entities/instance_object.sats"
-#include "./../entities/animated_object.sats"
-#include "./../entities/particles.sats"
-#include "./../entities/landscape.sats"
+staload "./../entities/camera.sats"
+staload "./../entities/light.sats"
+staload "./../entities/static_object.sats"
+staload "./../entities/instance_object.sats"
+staload "./../entities/animated_object.sats"
+staload "./../entities/particles.sats"
+staload "./../entities/landscape.sats"
 
-#include "./sky.sats"
+staload "./sky.sats"
 
 (*val RENDERER_LIGHTS = @{
     RENDERER_MAX_LIGHTS=16,

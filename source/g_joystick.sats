@@ -4,7 +4,7 @@
 a basic layer for SDL controls
 *)
 
-#include "./g_engine.sats"
+staload "./g_engine.sats"
 
 fun joystick_init () : void = "sta#%"
 fun joystick_finish () : void = "sta#%"

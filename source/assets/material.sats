@@ -4,11 +4,11 @@
 definition of object materials
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
-#include "./shader.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./shader.sats"
 
-typedef material_item = @{
+vtypedef material_item = @{
 	as_int=int,
 	as_float=float,
 	as_vec2=vec2,

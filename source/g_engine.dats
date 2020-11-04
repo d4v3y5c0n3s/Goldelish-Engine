@@ -58,6 +58,10 @@ implement fpath_file_extension ( path ) = ret where {
     )
   ):fpath
 }
+
+implement fpath_delete ( path ) = strptr_free(path)
+
+implement fpath_string ( path ) = strptr2string(path)
 end
 
 //  timing functions

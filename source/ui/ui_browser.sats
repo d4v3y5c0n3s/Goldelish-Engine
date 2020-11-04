@@ -4,11 +4,12 @@
 (unclear what this is) maybe a ui window of some kind?
 *)
 
-#include "./ui_rectangle.sats"
-#include "./ui_text.sats"
-#include "./ui_listbox.sats"
+staload "./../g_engine.sats"
+staload "./ui_rectangle.sats"
+staload "./ui_text.sats"
+staload "./ui_listbox.sats"
 
-typedef ui_browser = @{
+vtypedef ui_browser = @{
 	outer=(*ui_rectangle*) ptr,
 	inner=(*ui_listbox*) ptr,
 	directory=fpath,

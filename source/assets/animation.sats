@@ -4,7 +4,7 @@
 defines an animation as an array of frames & times
 *)
 
-#include "./skeleton.sats"
+staload "./skeleton.sats"
 
 typedef animation = @{ frame_count=int, frame_time=float, frames=(*frame ptr*) ptr }
 

@@ -4,8 +4,8 @@
 definition WIP heightmap-based terrain LOD system
 *)
 
-#include "./../g_engine.sats"
-#include "./cmesh.sats"
+staload "./../g_engine.sats"
+staload "./cmesh.sats"
 
 #define NUM_TERRAIN_SUBDIVISIONS 0
 #define NUM_TERRAIN_BUFFERS 7

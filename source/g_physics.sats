@@ -4,8 +4,8 @@
 a basic physics system definition
 *)
 
-#include "./g_engine.sats"
-#include "./assets/cmesh.sats"
+staload "./g_engine.sats"
+staload "./assets/cmesh.sats"
 
 fun vec3_gravity () : vec3 = "sta#%"
 

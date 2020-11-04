@@ -4,10 +4,11 @@
 an object which utilizes the physics system
 *)
 
-#include "./../g_engine.sats"
-#include "./static_object.sats"
+staload "./../g_engine.sats"
+staload "./static_object.sats"
+staload "./../g_asset.sats"
 
-typedef physics_object = @{
+vtypedef physics_object = @{
 	position=vec3,
 	scale=vec3,
 	velocity=vec3,

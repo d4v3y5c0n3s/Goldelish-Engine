@@ -4,8 +4,8 @@
 defines textures
 *)
 
-#include "./../g_engine.sats"
-#include "./../assets/image.sats"
+staload "./../g_engine.sats"
+staload "./../assets/image.sats"
 
 vtypedef texture = @{ handle=$extype"GLuint", type=$extype"GLuint" }
 

@@ -4,10 +4,10 @@
 a menu/information dialog
 *)
 
-#include "./../g_engine.sats"
-
-#include "./ui_text.sats"
-#include "./ui_button.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./ui_text.sats"
+staload "./ui_button.sats"
 
 //extern val dialog_count = 0//  int, also, needs to be defined in the .dats file instead
 

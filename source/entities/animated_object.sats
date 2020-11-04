@@ -4,11 +4,11 @@
 an object animated by a skeleton
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
-#include "./../assets/skeleton.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./../assets/skeleton.sats"
 
-typedef animated_object = @{
+vtypedef animated_object = @{
 	position=vec3,
 	scale=vec3,
 	rotation=quat,

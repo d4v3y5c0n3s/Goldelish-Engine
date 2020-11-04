@@ -56,6 +56,8 @@ provides an interface to SDL
 #define gldlsh_sdl_bind_SDL_GetTicks SDL_GetTicks
 #define gldlsh_sdl_bind_SDL_Delay SDL_Delay
 
+#define gldlsh_sdl_bind_SDL_RWFromFile SDL_RWFromFile
+
 typedef GLuint ( APIENTRY * GLCREATESHADERFN )( GLuint type );
 typedef GLuint ( APIENTRY * GLCREATEPROGRAMFN )( void );
 typedef void ( APIENTRY * GLSHADERSOURCEFN )( GLuint shader, GLsizei count, const GLchar** string, const GLint* length );

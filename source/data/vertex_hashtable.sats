@@ -4,9 +4,9 @@
 hashtable for vertices, allows duplicate vertices to be checked for
 *)
 
-#include "./../g_engine.sats"
-#include "./vertex_list.sats"
-#include "./int_list.sats"
+staload "./../g_engine.sats"
+staload "./vertex_list.sats"
+staload "./int_list.sats"
 
 typedef vertex_bucket = @{ keys=(*vertex_list*) ptr, values=(*int_list*) ptr }
 

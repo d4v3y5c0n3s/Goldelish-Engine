@@ -4,8 +4,8 @@
 a basic camera
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_joystick.sats"
+staload "./../g_engine.sats"
+staload "./../g_joystick.sats"
 
 typedef camera = @{
 	position=vec3,

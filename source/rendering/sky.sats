@@ -4,8 +4,8 @@
 allows the creation of a dynamic sky
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
 
 (*
 these need to be defined in the .dats file
@@ -18,7 +18,7 @@ and TIME_SUNSET = 0.50
 and TIME_MIDNIGHT = 0.75
 *)
 
-typedef sky = @{
+vtypedef sky = @{
 	time=float,
         seed=usint,
 	cloud_mesh=asset_hndl,//(*[14]*)// had to have the "//" otherwise this would fail to compile (potentially a bug, should probably mention it to the ATS community)

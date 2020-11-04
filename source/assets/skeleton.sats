@@ -4,7 +4,7 @@
 defines a skeleton for 3D animations
 *)
 
-#include "./../g_engine.sats"
+staload "./../g_engine.sats"
 
 typedef frame = @{
 	joint_count=int,

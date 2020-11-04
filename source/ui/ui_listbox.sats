@@ -4,8 +4,9 @@
 used to display arrays of objects
 *)
 
-#include "./ui_rectangle.sats"
-#include "./ui_text.sats"
+staload "./../g_engine.sats"
+staload "./ui_rectangle.sats"
+staload "./ui_text.sats"
 
 typedef ui_listbox = @{
 	back=(*ui_rectangle*) ptr,

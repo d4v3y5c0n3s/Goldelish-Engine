@@ -4,8 +4,8 @@
 allows the usage of text in the ui
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
 
 datatype TEXT_HORIZ_ALIGN =
 | TEXT_ALIGN_LEFT of ()
@@ -16,8 +16,7 @@ datatype TEXT_VERT_ALIGN =
 | TEXT_ALIGN_TOP of ()
 | TEXT_ALIGN_BOTTOM of ()
 
-//  changed to "viewtypedef" because it wouldn't accept "typedef" with the $extype"GLuint" values, come back to this later
-viewtypedef ui_text = @{
+vtypedef ui_text = @{
 	string=string,
 	positions_buffer=$extype"GLuint",
 	texcoords_buffer=$extype"GLuint",

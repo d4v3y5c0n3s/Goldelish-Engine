@@ -4,7 +4,9 @@
 defines a sound
 *)
 
-#include "./../g_engine.sats"
+staload "./../g_engine.sats"
+staload "./../SDL2/SDL_mixer.sats"
+staload "./../SDL2/SDL_mixer.sats"
 
 typedef sound = @{ sample = Mix_Chunk }
 

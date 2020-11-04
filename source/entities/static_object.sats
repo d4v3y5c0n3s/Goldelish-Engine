@@ -1,13 +1,13 @@
 (*
 ###  static_object.sats  ###
 
-an unmovable object that interacts with physics-affected objects\
+an unmovable object that interacts with physics-affected objects
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
 
-typedef static_object = @{
+vtypedef static_object = @{
 	position=vec3,
 	scale=vec3,
 	rotation=quat,

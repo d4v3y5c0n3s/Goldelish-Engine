@@ -4,10 +4,10 @@
 object for rendering instance of terrain
 *)
 
-#include "./../g_engine.sats"
-#include "./../g_asset.sats"
-#include "./../assets/image.sats"
-#include "./../assets/terrain.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./../assets/image.sats"
+staload "./../assets/terrain.sats"
 
 typedef landscape_blobtree = @{
 	bound=sphere,
@@ -19,7 +19,7 @@ typedef landscape_blobtree = @{
 	child3=(*landscape_blobtree*) ptr
 }
 
-typedef landscape = @{
+vtypedef landscape = @{
 	heightmap=asset_hndl,
 	attribmap=asset_hndl,
 	attribimage=(*image*) ptr,

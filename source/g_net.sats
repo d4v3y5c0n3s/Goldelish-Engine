@@ -4,7 +4,7 @@
 a basic networking layer
 *)
 
-#include "./g_engine.sats"
+staload "./g_engine.sats"
 
 fun net_init () : void = "sta#%"
 fun net_finish () : void = "sta#%"

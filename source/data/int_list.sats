@@ -4,7 +4,7 @@
 a dynamically resizable array of integers
 *)
 
-#include "./../g_engine.sats"
+staload "./../g_engine.sats"
 
 typedef int_list = @{ num_items=int, num_slots=int, items=(*int*) ptr }
 

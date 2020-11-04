@@ -4,7 +4,7 @@
 This is an interface for interacting with entities
 *)
 
-#include "./g_engine.sats"
+staload "./g_engine.sats"
 
 typedef entity = void
 

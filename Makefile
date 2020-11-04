@@ -8,15 +8,12 @@ LDFLAGS0 = $(LDFLAGS)
 CFLAGS0 += -I ./include -std=gnu99 -O3 -g
 LDFLAGS0 += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 
-SOURCES_C += $(wildcard source/*.cats) $(wildcard source/*/*.cats)#  the ".cats" files in the project
-SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)#  the static files in the project
-SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)#  the dynamic files in the project
+SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)  #the static files in the project
+SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)  #the dynamic files in the project
 
-SOURCES_C_OBJ += $(addprefix obj/,$(notdir $(SOURCES_C:.cats=.o)))
-SOURCES_SATS_OBJ += $(addprefix obj/,$(notdir $(SOURCES_SATS:.sats=_sats.o)))
 SOURCES_DATS_OBJ += $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
 
-SOURCES_OBJ = $(SOURCES_SATS_OBJ) $(SOURCES_DATS_OBJ) #$(SOURCES_C_OBJ)
+SOURCES_OBJ = $(SOURCES_DATS_OBJ)
 
 PLATFORM = $(shell uname)
 ifeq ($(findstring Linux, $(PLATFORM)), Linux)
@@ -46,8 +43,6 @@ endif
 INCLUDE += $(LDFLAGS0)
 
 display_sources:
-	@echo "SOURCES_C:"
-	@echo $(SOURCES_C)
 	@echo "SOURCES_SATS:"
 	@echo $(SOURCES_SATS)
 	@echo "SOURCES_DATS:"
@@ -63,10 +58,10 @@ $(DYNAMIC): $(SOURCES_OBJ)
 	$(CC) $(SOURCES_OBJ) $(LDFLAGS0) -o $@
 $(STATIC): $(SOURCES_OBJ)
 	$(AR) rcs $@ $(SOURCES_OBJ)
-obj/%_sats.o: source/%.sats | obj
-	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
-obj/%_sats.o: source/*/%.sats | obj
-	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
+#obj/%_sats.o: source/%.sats | obj
+#	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
+#obj/%_sats.o: source/*/%.sats | obj
+#	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
 obj/%_dats.o: source/%.dats | obj
 	$(PATSCC) --debug --gline $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
 obj/%_dats.o: source/*/%.dats | obj

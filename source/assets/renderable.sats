@@ -4,8 +4,9 @@
 defines a renderable mesh (may be rigged or not)
 *)
 
-#include "./../g_engine.sats"
-#include "./material.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
+staload "./material.sats"
 
 typedef vertex_weight = @{ bone_ids=int, bone_weights=float }//  bone_ids[3] & bone_weights[3] in C
 
@@ -15,7 +16,7 @@ fun renderable_surface_new ( m: (*mesh*) ptr ) : (*renderable_surface*) ptr = "s
 fun renderable_surface_new_rigged ( m: (*mesh*) ptr, weights: (*vertex_weight*) ptr ) : (*renderable_surface*) ptr = "sta#%"
 fun renderable_surface_delete ( surface: (*renderable_surface*) ptr ) : void = "sta#%"
 
-typedef renderable = @{ surfaces=(*renderable_surface ptr*) ptr, num_surfaces=int, is_rigged=bool, material=asset_hndl }
+vtypedef renderable = @{ surfaces=(*renderable_surface ptr*) ptr, num_surfaces=int, is_rigged=bool, material=asset_hndl }
 
 fun renderable_new () : (*renderable*) ptr = "sta#%"
 fun renderable_delete ( r: (*renderable*) ptr ) : void = "sta#%"

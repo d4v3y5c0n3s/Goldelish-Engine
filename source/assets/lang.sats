@@ -4,8 +4,8 @@
 defines languages for the game to use
 *)
 
-#include "./../data/dict.sats"
-#include "./../g_asset.sats"
+staload "./../data/dict.sats"
+staload "./../g_asset.sats"
 
 typedef lang =  @{ map=(*dict*) ptr }
 

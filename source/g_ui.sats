@@ -4,8 +4,8 @@
 user interface manager
 *)
 
-#include "./ui/ui_style.sats"
-#include "./g_engine.sats"
+staload "./ui/ui_style.sats"
+staload "./g_engine.sats"
 
 typedef ui_elem = ()//  defined as void, perhaps revise this
 
