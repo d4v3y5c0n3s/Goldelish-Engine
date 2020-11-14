@@ -21,9 +21,8 @@ vtypedef asset_hndl_out_get_asset (a:vt@ype) = [l:addr] @{ path=fpath, x=(unit_p
 fn{a:vt@ype} asset_hndl_new ( filename: fpath ): asset_hndl(a)
 fn{a:vt@ype} asset_hndl_get_path ( ah: !asset_hndl(a) >> asset_hndl_out_get_path(a) ): fpath
 fn{a:vt@ype} asset_hndl_get_asset ( ah: !asset_hndl(a) >> asset_hndl_out_get_asset(a) ): a
-fn{a:vt@ype} asset_hndl_set_path ( ah: &asset_hndl(a) ): void
-fn{a:vt@ype} asset_hndl_set_asset ( ah: &asset_hndl(a), x: a ): void
+fn{a:vt@ype} asset_hndl_set_path ( ah: &asset_hndl(a), path: fpath ): void
+fn{a:t@ype} asset_hndl_set_asset ( ah: &asset_hndl(a), x: a ): void
 
-fn map_filename ( filename: !fpath ) : fpath//  renamed asset_map_filename();  need to check that you know what this means first
 fn map_fullpath ( filename: !fpath ): fpath//  renamed asset_map_fullpath()//  takes in a filename, returns the full system path for that file
 fn map_shortpath ( filename: !fpath ): fpath//  renamed asset_map_shortpath()//  takes in a filename, returns the relative path for that file

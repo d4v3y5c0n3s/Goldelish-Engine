@@ -11,7 +11,7 @@ staload "./g_engine.sats"
 staload "./SDL2/SDL_local.sats"
 
 implmnt file_exists ( filename ) = let
-  val mapped = map_filename(filename)
+  val mapped = map_fullpath(filename)
   val file = SDL_RWFromFile(fpath_string(mapped), "r")
 in
   if ptr_isnot_null(file) then true
@@ -41,12 +41,21 @@ in
 	ret
 end
 
-//implmnt{a} asset_hndl_set_path ( ah ) =
-
-//implmnt{a} asset_hndl_set_asset ( ah ) =
-
+implmnt{a} asset_hndl_set_path ( ah, path ) = begin
+	fpath_delete(ah.path);
+	ah.path := path;
+	()
 end
 
-//implmnt map_filename ( filename ) =
-//implmnt map_fullpath ( filename ) =
-//implmnt map_shortpath ( filename ) =
+implmnt{a} asset_hndl_set_asset ( ah, x ) = let
+	val (pfat, pfgc | p) = ah.x
+	val () = !p := x
+	val () = ah.x := (pfat, pfgc | p)
+in
+end
+
+end
+////
+implmnt map_fullpath ( filename ) = P(SDL_PathFullName(fpath_string(filename)))
+
+implmnt map_shortpath ( filename ) = P(SDL_PathRelative(fpath_string(filename)))
