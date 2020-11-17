@@ -13,6 +13,7 @@ staload "./SDL2/SDL_local.sats"
 implmnt file_exists ( filename ) = let
   val mapped = map_fullpath(filename)
   val file = SDL_RWFromFile(fpath_string(mapped), "r")
+  val () = fpath_delete(mapped)
 in
   if ptr_isnot_null(file) then true
   else false
@@ -55,7 +56,7 @@ in
 end
 
 end
-////
+
 implmnt map_fullpath ( filename ) = P(SDL_PathFullName(fpath_string(filename)))
 
 implmnt map_shortpath ( filename ) = P(SDL_PathRelative(fpath_string(filename)))

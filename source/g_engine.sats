@@ -24,13 +24,13 @@ absvtype fpath
 
 fn P ( path: string ) : fpath = "sta#"
 
-fn fpath_full (path_in: fpath) : fpath = "sta#fpath_full"
-fn fpath_file (path: fpath) : fpath = "sta#fpath_file"
-fn fpath_file_location (path: fpath) : fpath = "sta#fpath_file_location"
-fn fpath_file_extension (path: fpath) : fpath = "sta#fpath_file_extension"
+fn fpath_full (path_in: !fpath) : fpath = "sta#fpath_full"
+fn fpath_file (path: !fpath) : fpath = "sta#fpath_file"
+fn fpath_file_location (path: !fpath) : fpath = "sta#fpath_file_location"
+fn fpath_file_extension (path: !fpath) : fpath = "sta#fpath_file_extension"
 
 fn fpath_delete (path: fpath) : void
-fn fpath_string (path: fpath) : string
+fn fpath_string (path: !fpath) : string
 
 (*  ###  timing  ###  *)
 abst@ype timer

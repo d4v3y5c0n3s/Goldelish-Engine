@@ -5,6 +5,7 @@
 #include "share/atspre_staload.hats"
 
 staload "./g_engine.sats"
+staload "./SDL2/SDL_local.sats"
 
 val PATH_MAX = 256
 
@@ -30,7 +31,7 @@ implement P ( path ) =
 implement fpath_full ( path_in ) = ret where {
   val ret = (
     $UNSAFE.castvwtp0{Strptr1}(
-      SDL_PathFullName(strptr2string(path_in))
+      SDL_PathFullName(strptr2string(strptr1_copy(path_in)))
     )
   ):fpath
 }
@@ -38,7 +39,7 @@ implement fpath_full ( path_in ) = ret where {
 implement fpath_file ( path ) = ret where {
   val ret = (
     $UNSAFE.castvwtp0{Strptr1}(
-      SDL_PathFileName(strptr2string(path))
+      SDL_PathFileName(strptr2string(strptr1_copy(path)))
     )
   ):fpath
 }
@@ -46,7 +47,7 @@ implement fpath_file ( path ) = ret where {
 implement fpath_file_location ( path ) = ret where {
   val ret = (
     $UNSAFE.castvwtp0{Strptr1}(
-      SDL_PathFileLocation(strptr2string(path))
+      SDL_PathFileLocation(strptr2string(strptr1_copy(path)))
     )
   ):fpath
 }
@@ -54,14 +55,14 @@ implement fpath_file_location ( path ) = ret where {
 implement fpath_file_extension ( path ) = ret where {
   val ret = (
     $UNSAFE.castvwtp0{Strptr1}(
-      SDL_PathFileExtension(strptr2string(path))
+      SDL_PathFileExtension(strptr2string(strptr1_copy(path)))
     )
   ):fpath
 }
 
 implement fpath_delete ( path ) = strptr_free(path)
 
-implement fpath_string ( path ) = strptr2string(path)
+implement fpath_string ( path ) = strptr2string(strptr1_copy(path))
 end
 
 //  timing functions
