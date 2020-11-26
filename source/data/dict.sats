@@ -7,33 +7,33 @@ allows void pointers to be accessed with strings as keys
 staload "./../g_engine.sats"
 
 (*  buckets (aka linked lists)  *)
-typedef bucket = @{ key=string, item=ptr, next=ptr }
+absvt@ype bucket//typedef bucket = @{ key=string, item=ptr, next=ptr }
 
-fun bucket_new {s:int} {l:addr | l > null} ( string: string s, item: ptr l ) : ptr
+fn{a:vt@ype} bucket_new ( string, a ) : bucket
 
-fun bucket_map {l:addr | l > null} ( b: ptr l, func: ptr -> void ) : void
-fun bucket_filter_map {l:addr | l > null} ( b: ptr l, filter: ptr -> int, func: ptr -> void ) : void
+fn{a:vt@ype} bucket_map ( &bucket, (&a) -<cloref1> void ) : void
+fn{a:vt@ype} bucket_filter_map ( b: &bucket, filter: !a -<cloref1> int, mapper: &a -<cloref1> void ) : void
 
-fun bucket_delete_with {l:addr | l > null} ( b: ptr l, func: ptr -> void ) : void
-fun bucket_delete_recursive {l:addr | l > null} ( b: ptr l ) : void
+fn{a:vt@ype} bucket_delete_with ( bucket, a -<cloref1> void ) : void
+fn{a:vt@ype} bucket_delete_recursive ( b: bucket ) : void
 
-fun bucket_print {l:addr | l > null} ( b: ptr l ) : void
+fn{a:vt@ype} bucket_print ( b: !bucket ) : void
 
 (*  dictionaries  *)
-typedef dict = @{ size=int, buckets=arrszref(bucket) }
+absvt@ype dict//typedef dict = @{ size=int, buckets=arrszref(bucket) }
 
-fun dict_new {a:int | a > 0} ( size: int a ) : ptr
-fun dict_delete {l:addr | l > null} ( d: ptr l ) : void
+fn dict_new {s:int | s > 0} ( int s ) : dict
+fn dict_delete ( d: dict ) : void
 
-fun dict_contains {l:addr | l > null} {s:int} ( d: ptr l, string: string s ) : bool
-fun dict_get {l: addr | l > null} {s:int} ( d: ptr l, string: string s ) : ptr
-fun dict_set {l1:addr | l1 > null} {s:int} {l2:addr | l2 > null} ( d: ptr l1, string: string s, item: ptr l2 ) : void
+fn dict_contains ( &dict, string ) : bool
+fn{a:vt@ype} dict_get ( &dict, string ) : a
+fn{a:vt@ype} dict_set ( &dict, string, a ) : void
 
-fun dict_remove_with {l:addr | l > null} {s:int} ( d: ptr l, string: string s, func: ptr -> void ) : void
+fn{a:vt@ype} dict_remove_with ( &dict, string, a -<cloref1> void ) : void
 
-fun dict_map {l:addr | l > null} ( d: ptr l, func: ptr -> void ) : void
-fun dict_filter_map {l:addr | l > null} ( d: ptr l, filter: ptr -> int, func: ptr -> void ) : void
+fn{a:vt@ype} dict_map ( &dict, &a -<cloref1> void ) : void
+fn{a:vt@ype} dict_filter_map ( d: &dict, filter: !a -> int, mapper: &a -<cloref1> void ) : void
 
-fun dict_print {l:addr | l > null} ( d: ptr l ) : void
+fn dict_print ( d: !dict ) : void
 
-fun dict_find {l1:addr | l1 > null} {l2:addr | l2 > null} ( d: ptr l1, item: ptr l2 ) : string
+fn{a:vt@ype} dict_find ( &dict, !a ) : string
