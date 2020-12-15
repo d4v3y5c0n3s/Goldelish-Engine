@@ -7,9 +7,11 @@ allows void pointers to be accessed with strings as keys
 staload "./../g_engine.sats"
 
 (*  buckets (aka linked lists)  *)
-absvt@ype bucket//typedef bucket = @{ key=string, item=ptr, next=ptr }
+absvt@ype bucket
 
 fn{a:vt@ype} bucket_new ( string, a ) : bucket
+
+fn bucket_empty () : bucket
 
 fn{a:vt@ype} bucket_map ( &bucket, (&a) -<cloref1> void ) : void
 fn{a:vt@ype} bucket_filter_map ( b: &bucket, filter: !a -<cloref1> int, mapper: &a -<cloref1> void ) : void
@@ -20,7 +22,7 @@ fn{a:vt@ype} bucket_delete_recursive ( b: bucket ) : void
 fn{a:vt@ype} bucket_print ( b: !bucket ) : void
 
 (*  dictionaries  *)
-absvt@ype dict//typedef dict = @{ size=int, buckets=arrszref(bucket) }
+absvt@ype dict
 
 fn dict_new {s:int | s > 0} ( int s ) : dict
 fn dict_delete ( d: dict ) : void
