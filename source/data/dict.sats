@@ -11,8 +11,6 @@ absvt@ype bucket
 
 fn{a:vt@ype} bucket_new ( string, a ) : bucket
 
-fn bucket_empty () : bucket
-
 fn{a:vt@ype} bucket_map ( &bucket, (&a) -<cloref1> void ) : void
 fn{a:vt@ype} bucket_filter_map ( b: &bucket, filter: !a -<cloref1> int, mapper: &a -<cloref1> void ) : void
 
@@ -22,20 +20,23 @@ fn{a:vt@ype} bucket_delete_recursive ( b: bucket ) : void
 fn{a:vt@ype} bucket_print ( b: !bucket ) : void
 
 (*  dictionaries  *)
-absvt@ype dict
+sortdef dsz = {s:int | s > 0}
+absvt@ype dict(n:int)
 
-fn dict_new {s:int | s > 0} ( int s ) : dict
-fn dict_delete ( d: dict ) : void
+fn dict_new {s:dsz} ( int s ) : dict(s)
+fn dict_delete {s:dsz} ( d: dict(s) ) : void
 
-fn dict_contains ( &dict, string ) : bool
-fn{a:vt@ype} dict_get ( &dict, string ) : a
-fn{a:vt@ype} dict_set ( &dict, string, a ) : void
+vtypedef dict_out(n:int) = @{ size=int n, buckets=ptr }
 
-fn{a:vt@ype} dict_remove_with ( &dict, string, a -<cloref1> void ) : void
+fn dict_contains {s:dsz} ( !dict(s), string s ) : bool
+fn{a:vt@ype} dict_get {s:dsz} ( !dict(s), string s ) : a
+fn{a:vt@ype} dict_set {s:dsz} ( &dict(s), string s, a ) : void
 
-fn{a:vt@ype} dict_map ( &dict, &a -<cloref1> void ) : void
-fn{a:vt@ype} dict_filter_map ( d: &dict, filter: !a -> int, mapper: &a -<cloref1> void ) : void
+fn{a:vt@ype} dict_remove_with {s:dsz} ( &dict(s), string s, a -<cloref1> void ) : void
 
-fn dict_print ( d: !dict ) : void
+fn{a:vt@ype} dict_map {s:dsz} ( &dict(s), &a -<cloref1> void ) : void
+fn{a:vt@ype} dict_filter_map {s:dsz} ( d: &dict(s), filter: !a -> int, mapper: &a -<cloref1> void ) : void
 
-fn{a:vt@ype} dict_find ( &dict, !a ) : string
+fn dict_print {s:dsz} ( d: !dict(s) ) : void
+
+fn{a:vt@ype} dict_find {s:dsz} ( !dict(s), !a ) : string

@@ -8,19 +8,27 @@
 
 staload "./dict.sats"
 
-fn hash {n:int | n >= 0} ( s: string(n), size: int(n) ) : int = let
-	fun hash_num {i:nat | i <= n} ( i: int i, h: int ) : int =
+fn hash {n:int | n > 0}
+( s: string(n), size: int(n) ) : [o:int | o >= 0; o < n] int o = let
+	fun hash_num {i:nat | i <= n}
+	( i: int i, h: int ) : int =
 		if i < size then let
 			val c_at_i = string_get_at_gint(s, i)
 		in
 			hash_num(i+1, h * 101 + g0int_of_char(c_at_i))
 		end else h
 in
-	abs( hash_num(0, 0) ) % size
+	g1int_nmod(abs(g1ofg0(hash_num(0, 0))), size)
 end
 
 local
-assume dict = [n:nat][l:addr] @{ size=int n, buckets=arrayptr(bucket, l, n) }
+assume dict(n:int) = [l:addr] @{ size=int n, buckets=arrayptr(bucket, l, n) }
+
+datavtype BUCKET =
+| bucket_empty of ()
+| {a:vt@ype} bucket_filled of (Strptr1, a, BUCKET)
+
+assume bucket = BUCKET
 in
 
 implmnt dict_new {s} ( size ) = let
@@ -38,20 +46,32 @@ implmnt dict_new {s} ( size ) = let
     
     val () = init_arr(ptrcast(bucket_arr), size_st)
 in
-    @{size=size, buckets=$UNSAFE.castvwtp0{arrayptr(bucket, b, s)}(bucket_arr)}:dict
+    @{size=size, buckets=$UNSAFE.castvwtp0{arrayptr(bucket, b, s)}(bucket_arr)}:dict(s)
 end
-end////
-implmnt dict_delete ( d ) = let
-    fun loop {l:addr} {n:nat}
-    ( arr: &arrayptr(bucket, l, n) >> arrayptr(bucket?, l, n) ) : void = let
+
+implmnt dict_delete ( d ) = arrayptr_freelin(d.buckets, size_of_int(d.size))
+
+implmnt dict_contains {s} ( d, key ) = let
+    fn b_array_index {n:int}{i:nat | i < n}{l:addr}
+    (ar: !arrayptr(bucket, l, n), i: int i) : bucket = let
+        val p = ptrcast(ar)
     in
+        $UNSAFE.ptr0_get<bucket>(ptr1_add_gint(p, i))
     end
+    fun loop ( b: !bucket ) : bool = case+ b of
+        | bucket_empty() => false
+        | bucket_filled(str, _, next_bucket) => if eq_strptr_string(str, key) then true else loop(next_bucket)
+    val d2 = d
+    val index = hash(key, d2.size)
+    val b_i = b_array_index(d2.buckets, index)
+    val ret = loop(b_i)
+    val () = bucket_delete_recursive(b_i)
+    val () = d := d2
 in
-    arrayptr_freelin(d.buckets, size_of_int(d.size))
+    ret
 end
 
-implmnt dict_contains ( d, key ) =
-
+end////
 implmnt{a} dict_get ( d, key ) =
 
 implmnt{a} dict_set ( d, key, item ) =
@@ -66,19 +86,7 @@ implmnt dict_print ( d ) =
 
 implmnt{a} dict_find ( d, item ) =
 
-end
-
-datavtype BUCKET =
-| bucket_empty of ()
-| {a:vt@ype} bucket_filled of (Strptr1, a, BUCKET)
-
-local
-assume bucket = BUCKET
-in
-
 implmnt{a} bucket_new ( key, item ) =
-
-implmnt bucket_empty () = bucket_empty()
 
 implmn{a}{a} bucket_map ( b, mapper ) =
 
