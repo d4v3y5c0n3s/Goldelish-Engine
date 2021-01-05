@@ -74,8 +74,10 @@ implmnt dict_contains {s} ( d, key ) = let
     val index = hash(key, d2.size)
     val b_i = b_array_index(d2.buckets, index)
     val ret = loop(b_i)
-    val () = bucket_delete_recursive(b_i)
     val () = d := d2
+    prval () = _consume_buk(b_i) where {
+        extern praxi _consume_buk( b: bucket ): void
+    }
 in
     ret
 end
@@ -92,8 +94,10 @@ implmnt dict_get ( d, key ) = let
     val index = hash(key, d2.size)
     val b_i = b_array_index(d2.buckets, index)
     val ret = loop(b_i)
-    val () = bucket_delete_recursive(b_i)
     val () = d := d2
+    prval () = _consume_buk(b_i) where {
+        extern praxi _consume_buk( b: bucket ): void
+    }
 in
     ret
 end
@@ -103,16 +107,16 @@ implmnt{a} dict_set ( d, key, item ) = {
     case+ b of
         | ~bucket_empty() => b := bucket_filled($UNSAFE.castvwtp0{Strptr1}(key), itm, bucket_empty())
         | @bucket_filled(str, x, next_bucket) =>
-            if eq_strptr_string(str, key) then let
+            if eq_strptr_string(str, key) then {
                 val b2 = bucket_filled(str, itm, next_bucket)
                 val () = del_bucket_a(x)
                 val () = free@(b)
                 val () = b := b2
-            in () end
-            else let
+            }
+            else {
                 val () = loop(next_bucket, itm)
                 prval () = fold@(b)
-            in () end
+            }
     val d2 = d
     val index = hash(key, d2.size)
     var new_b = b_array_index(d2.buckets, index)
@@ -121,27 +125,101 @@ implmnt{a} dict_set ( d, key, item ) = {
     val () = d := d2
 }
 
-end////
-implmnt{a} dict_remove_with ( d, key, remove_func ) =
+implmnt{a} dict_remove ( d, key ) = {
+    fun loop ( b: &bucket ) : void =
+        case+ b of
+        | bucket_empty() => ()
+        | @bucket_filled(str, x, next_bucket) =>
+        if eq_strptr_string(str, key) then {
+            val nb = next_bucket
+            val () = del_bucket_a(x)
+            val () = strptr_free(str)
+            val () = free@(b)
+            val () = b := nb
+        } else {
+            val () = loop(next_bucket)
+            prval () = fold@(b)
+        }
+    val d2 = d
+    val index = hash(key, d2.size)
+    var b_i = b_array_index(d2.buckets, index)
+    val () = loop(b_i)
+    val () = d := d2
+    prval () = _consume_buk(b_i) where {
+        extern praxi _consume_buk( b: bucket ): void
+    }
+}
 
-implmnt{a} dict_map ( d, mapper ) =
+implmnt{a} dict_map ( d ) = {
+    fun loop {l:addr} {n,i:int | 0 <= i+1; i+1 <= n} .<i+1>.
+    ( arr: !arrayptr(bucket, l, n), i: int i ): void =
+    if i >= 0 then {
+        var b = b_array_index(arr, i)
+        val () = bucket_map(b)
+        prval () = _consume_buk(b) where {
+            extern praxi _consume_buk( b: bucket ): void
+        }
+        val () = loop(arr, i-1)
+    } else ()
+    val d2 = d
+    val () = loop(d2.buckets, d2.size-1)
+    val () = d := d2
+}
 
-implmnt{a} dict_filter_map ( d, filter, mapper ) =
+implmnt{a} dict_filter_map ( d ) = {
+    fun loop {l:addr} {n,i:int | 0 <= i+1; i+1 <= n} .<i+1>.
+    ( arr: !arrayptr(bucket, l, n), i: int i ): void =
+    if i >= 0 then {
+        var b = b_array_index(arr, i)
+        val () = bucket_filter_map(b)
+        prval () = _consume_buk(b) where {
+            extern praxi _consume_buk( b: bucket ): void
+        }
+        val () = loop(arr, i-1)
+    } else ()
+    val d2 = d
+    val () = loop(d2.buckets, d2.size-1)
+    val () = d := d2
+}
 
-implmnt dict_print ( d ) =
+implmnt dict_print ( d ) = {
+    fun loop {l:addr} {n,i:int | 0 <= i+1; i+1 <= n} .<i+1>.
+    ( arr: !arrayptr(bucket, l, n), i: int i ): void =
+    if i >= 0 then {
+        var b = b_array_index(arr, i)
+        val () = print(i)
+        val () = print(" - ")
+        val () = bucket_print(b)
+        val () = print("\n")
+        prval () = _consume_buk(b) where {
+            extern praxi _consume_buk( b: bucket ): void
+        }
+        val () = loop(arr, i-1)
+    } else ()
+    val d2 = d
+    val () = loop(d2.buckets, d2.size-1)
+    val () = d := d2
+}
 
-implmnt{a} dict_find ( d, item ) =
+implmnt{a} bucket_new ( key, item ) = bucket_filled($UNSAFE.castvwtp0{Strptr1}(key), item, bucket_empty())
+(*
+implmnt{a} bucket_map ( b ) =
+    case+ b of
+    | bucket_empty() => ()
+    | bucket_filled(_, x, next_bucket) => {
+        var x2 = x
+        val () = map_bucket_a(x2)
+        val () = x := x2
+        val () = del_bucket_a(x2)
+        val () = bucket_map(next_bucket)
+    }
+*)
+//implmnt{a} bucket_filter_map ( b ) =
 
-implmnt{a} bucket_new ( key, item ) =
+//implmnt{a} bucket_delete_with ( b ) =
 
-implmn{a}{a} bucket_map ( b, mapper ) =
+//implmnt{a} bucket_delete_recursive ( b ) =//  this should have the "potentially infinite recursion" effect
 
-implmnt{a} bucket_filter_map ( b, filter, mapper ) =
-
-implmnt{a} bucket_delete_with ( b, deleter ) =
-
-implmnt{a} bucket_delete_recursive ( b ) =//  this should have the "potentially infinite recursion" effect
-
-implmnt{a} bucket_print ( b ) =
+//implmnt{a} bucket_print ( b ) =
 
 end
