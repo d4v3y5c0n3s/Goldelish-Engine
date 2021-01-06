@@ -90,11 +90,9 @@ implmnt dict_get ( d, key ) = let
         | bucket_filled(str, x, next_bucket) =>
             if eq_strptr_string(str, key) then Some_vt(gcopy_val(x))
             else loop(next_bucket)
-    val d2 = d
-    val index = hash(key, d2.size)
-    val b_i = b_array_index(d2.buckets, index)
+    val index = hash(key, d.size)
+    val b_i = b_array_index(d.buckets, index)
     val ret = loop(b_i)
-    val () = d := d2
     prval () = _consume_buk(b_i) where {
         extern praxi _consume_buk( b: bucket ): void
     }
@@ -117,12 +115,10 @@ implmnt{a} dict_set ( d, key, item ) = {
                 val () = loop(next_bucket, itm)
                 prval () = fold@(b)
             }
-    val d2 = d
-    val index = hash(key, d2.size)
-    var new_b = b_array_index(d2.buckets, index)
+    val index = hash(key, d.size)
+    var new_b = b_array_index(d.buckets, index)
     val () = loop(new_b, item)
-    val () = b_array_mutate(d2.buckets, index, new_b)
-    val () = d := d2
+    val () = b_array_mutate(d.buckets, index, new_b)
 }
 
 implmnt{a} dict_remove ( d, key ) = {
@@ -140,11 +136,9 @@ implmnt{a} dict_remove ( d, key ) = {
             val () = loop(next_bucket)
             prval () = fold@(b)
         }
-    val d2 = d
-    val index = hash(key, d2.size)
-    var b_i = b_array_index(d2.buckets, index)
+    val index = hash(key, d.size)
+    var b_i = b_array_index(d.buckets, index)
     val () = loop(b_i)
-    val () = d := d2
     prval () = _consume_buk(b_i) where {
         extern praxi _consume_buk( b: bucket ): void
     }
@@ -161,9 +155,7 @@ implmnt{a} dict_map ( d ) = {
         }
         val () = loop(arr, i-1)
     } else ()
-    val d2 = d
-    val () = loop(d2.buckets, d2.size-1)
-    val () = d := d2
+    val () = loop(d.buckets, d.size-1)
 }
 
 implmnt{a} dict_filter_map ( d ) = {
@@ -177,9 +169,7 @@ implmnt{a} dict_filter_map ( d ) = {
         }
         val () = loop(arr, i-1)
     } else ()
-    val d2 = d
-    val () = loop(d2.buckets, d2.size-1)
-    val () = d := d2
+    val () = loop(d.buckets, d.size-1)
 }
 
 implmnt dict_print ( d ) = {
@@ -202,7 +192,7 @@ implmnt dict_print ( d ) = {
 }
 
 implmnt{a} bucket_new ( key, item ) = bucket_filled($UNSAFE.castvwtp0{Strptr1}(key), item, bucket_empty())
-(*
+
 implmnt{a} bucket_map ( b ) =
     case+ b of
     | bucket_empty() => ()
@@ -210,16 +200,48 @@ implmnt{a} bucket_map ( b ) =
         var x2 = x
         val () = map_bucket_a(x2)
         val () = x := x2
-        val () = del_bucket_a(x2)
+        prval () = _consume_b_a(x2) where {
+            extern praxi {a:vt@ype} _consume_b_a( x: a ): void
+        }
         val () = bucket_map(next_bucket)
     }
-*)
-//implmnt{a} bucket_filter_map ( b ) =
 
-//implmnt{a} bucket_delete_with ( b ) =
+implmnt{a} bucket_filter_map ( b ) =
+    case+ b of
+    | bucket_empty() => ()
+    | bucket_filled(_, x, next_bucket) =>
+    if filt_bucket_a(x) then {
+        var x2 = x
+        val () = map_bucket_a(x2)
+        val () = x := x2
+        prval () = _consume_b_a(x2) where {
+            extern praxi {a:vt@ype} _consume_b_a( x: a ): void
+        }
+        val () = bucket_filter_map(next_bucket)
+    }
+    else bucket_filter_map(next_bucket)
 
-//implmnt{a} bucket_delete_recursive ( b ) =//  this should have the "potentially infinite recursion" effect
+implmnt{a} bucket_delete_recursive ( b ) =
+    case+ b of
+    | ~bucket_empty() => ()
+    | ~bucket_filled(str, x, next_bucket) => let
+        val () = strptr_free(str)
+        val () = del_bucket_a(x)
+    in
+        bucket_delete_recursive(next_bucket)
+    end
 
-//implmnt{a} bucket_print ( b ) =
+implmnt{a} bucket_print ( b ) =
+    case+ b of
+    | bucket_empty() => ()
+    | bucket_filled(str, x, next_bucket) => let
+        val () = print("\(")
+        val () = print(str)
+        val () = print(" : ")
+        val () = print( str_of_bucket_a(x) )
+        val () = print(")")
+    in
+        bucket_print(next_bucket)
+    end
 
 end
