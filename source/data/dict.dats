@@ -22,52 +22,57 @@ in
 end
 
 local
-assume dict(n:int) = [l:addr] @{ size=int n, buckets=arrayptr(bucket, l, n) }
 
-datavtype BUCKET =
+datavtype BUCKET (a:vt@ype) =
 | bucket_empty of ()
-| {a:vt@ype} bucket_filled of (Strptr1, a, BUCKET)
+| bucket_filled of (Strptr1, a, BUCKET(a))
 
-assume bucket = BUCKET
+assume bucket(a:vt@ype) = BUCKET(a)
 
-fn b_array_index {n:int}{i:nat | i < n}{l:addr}
-(ar: !arrayptr(bucket, l, n), i: int i) : bucket = let
+assume dict(a:vt@ype, n:int) = [l:addr]
+@{
+    size=int n,
+    buckets=arrayptr(bucket(a), l, n)
+}
+
+fn{a:vt@ype} b_array_index {n:int}{i:nat | i < n}{l:addr}
+(ar: !arrayptr(bucket(a), l, n), i: int i) : bucket(a) = let
     val p = ptrcast(ar)
 in
-    $UNSAFE.ptr0_get<bucket>(ptr1_add_gint(p, i))
+    $UNSAFE.ptr0_get<bucket(a)>(ptr1_add_gint(p, i))
 end
 
-fn b_array_mutate {n:int}{i:nat | i < n}{l:addr}
-(ar: !arrayptr(bucket, l, n), i: int i, x: bucket) : void = let
+fn{a:vt@ype} b_array_mutate {n:int}{i:nat | i < n}{l:addr}
+(ar: !arrayptr(bucket(a), l, n), i: int i, x: bucket(a)) : void = let
     val p = ptrcast(ar)
 in
-    $UNSAFE.ptr0_set<bucket>(ptr1_add_gint(p, i), x)
+    $UNSAFE.ptr0_set<bucket(a)>(ptr1_add_gint(p, i), x)
 end
 
 in
 
-implmnt dict_new {s} ( size ) = let
+implmnt{a} dict_new {s} ( size ) = let
     val size_st = size_of_int(size)
-    val [b:addr] bucket_arr = arrayptr_make_uninitized<bucket>(size_st)
+    val [b:addr] bucket_arr = arrayptr_make_uninitized<bucket(a)>(size_st)
     fun init_arr {n:nat} .<n>.
     ( p: ptr, asz: size_t n ) : void = let
     in
         if asz > 0 then let
-            val () = $UNSAFE.ptr0_set<bucket>(p, bucket_empty())
+            val () = $UNSAFE.ptr0_set<bucket(a)>(p, bucket_empty())
         in
-            init_arr(ptr0_succ<bucket>(p), asz - size_of_int(1))
+            init_arr(ptr0_succ<bucket(a)>(p), asz - size_of_int(1))
         end else ()
     end
     
     val () = init_arr(ptrcast(bucket_arr), size_st)
 in
-    @{size=size, buckets=$UNSAFE.castvwtp0{arrayptr(bucket, b, s)}(bucket_arr)}:dict(s)
+    @{size=size, buckets=$UNSAFE.castvwtp0{arrayptr(bucket(a), b, s)}(bucket_arr)}:dict(a, s)
 end
 
-implmnt dict_delete ( d ) = arrayptr_freelin(d.buckets, size_of_int(d.size))
+implmnt{a} dict_delete ( d ) = arrayptr_freelin(d.buckets, size_of_int(d.size))
 
-implmnt dict_contains {s} ( d, key ) = let
-    fun loop ( b: !bucket ) : bool = case+ b of
+implmnt{a} dict_contains {s} ( d, key ) = let
+    fun loop ( b: !bucket(a) ) : bool = case+ b of
         | bucket_empty() => false
         | bucket_filled(str, _, next_bucket) => if eq_strptr_string(str, key) then true else loop(next_bucket)
     val d2 = d
@@ -76,15 +81,15 @@ implmnt dict_contains {s} ( d, key ) = let
     val ret = loop(b_i)
     val () = d := d2
     prval () = _consume_buk(b_i) where {
-        extern praxi _consume_buk( b: bucket ): void
+        extern praxi _consume_buk( b: bucket(a) ): void
     }
 in
     ret
 end
 
-implmnt dict_get ( d, key ) = let
+implmnt{a} dict_get ( d, key ) = let
     fun loop
-    ( b: !bucket ) : [a:vt@ype] Option_vt(a) =
+    ( b: !bucket(a) ) : Option_vt(a) =
     case+ b of
         | bucket_empty() => None_vt()
         | bucket_filled(str, x, next_bucket) =>
@@ -94,14 +99,14 @@ implmnt dict_get ( d, key ) = let
     val b_i = b_array_index(d.buckets, index)
     val ret = loop(b_i)
     prval () = _consume_buk(b_i) where {
-        extern praxi _consume_buk( b: bucket ): void
+        extern praxi _consume_buk( b: bucket(a) ): void
     }
 in
     ret
 end
 
 implmnt{a} dict_set ( d, key, item ) = {
-    fun loop ( b: &bucket, itm: a ) : void =
+    fun loop ( b: &bucket(a), itm: a ) : void =
     case+ b of
         | ~bucket_empty() => b := bucket_filled($UNSAFE.castvwtp0{Strptr1}(key), itm, bucket_empty())
         | @bucket_filled(str, x, next_bucket) =>
@@ -122,7 +127,7 @@ implmnt{a} dict_set ( d, key, item ) = {
 }
 
 implmnt{a} dict_remove ( d, key ) = {
-    fun loop ( b: &bucket ) : void =
+    fun loop ( b: &bucket(a) ) : void =
         case+ b of
         | bucket_empty() => ()
         | @bucket_filled(str, x, next_bucket) =>
@@ -140,18 +145,18 @@ implmnt{a} dict_remove ( d, key ) = {
     var b_i = b_array_index(d.buckets, index)
     val () = loop(b_i)
     prval () = _consume_buk(b_i) where {
-        extern praxi _consume_buk( b: bucket ): void
+        extern praxi _consume_buk( b: bucket(a) ): void
     }
 }
 
 implmnt{a} dict_map ( d ) = {
     fun loop {l:addr} {n,i:int | 0 <= i+1; i+1 <= n} .<i+1>.
-    ( arr: !arrayptr(bucket, l, n), i: int i ): void =
+    ( arr: !arrayptr(bucket(a), l, n), i: int i ): void =
     if i >= 0 then {
         var b = b_array_index(arr, i)
         val () = bucket_map(b)
         prval () = _consume_buk(b) where {
-            extern praxi _consume_buk( b: bucket ): void
+            extern praxi _consume_buk( b: bucket(a) ): void
         }
         val () = loop(arr, i-1)
     } else ()
@@ -160,21 +165,21 @@ implmnt{a} dict_map ( d ) = {
 
 implmnt{a} dict_filter_map ( d ) = {
     fun loop {l:addr} {n,i:int | 0 <= i+1; i+1 <= n} .<i+1>.
-    ( arr: !arrayptr(bucket, l, n), i: int i ): void =
+    ( arr: !arrayptr(bucket(a), l, n), i: int i ): void =
     if i >= 0 then {
         var b = b_array_index(arr, i)
         val () = bucket_filter_map(b)
         prval () = _consume_buk(b) where {
-            extern praxi _consume_buk( b: bucket ): void
+            extern praxi _consume_buk( b: bucket(a) ): void
         }
         val () = loop(arr, i-1)
     } else ()
     val () = loop(d.buckets, d.size-1)
 }
 
-implmnt dict_print ( d ) = {
+implmnt{a} dict_print ( d ) = {
     fun loop {l:addr} {n,i:int | 0 <= i+1; i+1 <= n} .<i+1>.
-    ( arr: !arrayptr(bucket, l, n), i: int i ): void =
+    ( arr: !arrayptr(bucket(a), l, n), i: int i ): void =
     if i >= 0 then {
         var b = b_array_index(arr, i)
         val () = print(i)
@@ -182,7 +187,7 @@ implmnt dict_print ( d ) = {
         val () = bucket_print(b)
         val () = print("\n")
         prval () = _consume_buk(b) where {
-            extern praxi _consume_buk( b: bucket ): void
+            extern praxi _consume_buk( b: bucket(a) ): void
         }
         val () = loop(arr, i-1)
     } else ()
