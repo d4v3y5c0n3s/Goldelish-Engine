@@ -5,15 +5,38 @@ This is an interface for interacting with entities
 *)
 
 staload "./g_engine.sats"
-staload "./data/dict.sats"
 
 #define MAX_ENTITIES 512
 
-fn entity_init () : dict//  makes a dictionary for the entities of size MAX_ENTITIES
-fn entity_finish ( dict ) : void//  deletes a dictionary (intended for deleting an entity dictionary)
+absvt@ype entity_table
 
-fn{a:vt@ype} entity_new ( string ) : void//  implemented for each entity type
+absvt@ype animated_object
+abst@ype camera
+absvt@ype instance_object
+absvt@ype landscape
+abst@ype light
+absvt@ype particles
+absvt@ype physics_object
+absvt@ype static_object
 
-fn entity_exists ( string ) : bool
-fn{a:vt@ype} entity_get ( string ) : a//  implemented for each entity type
-fn{a:vt@ype} entity_delete ( string ) : void//  implemented for each entity type
+datavtype ENTITY =
+| entity_empty of ()
+| entity_AO of animated_object
+| entity_C of camera
+| entity_IO of instance_object
+| entity_LD of landscape
+| entity_LT of light
+| entity_P of particles
+| entity_PO of physics_object
+| entity_SO of static_object
+
+vtypedef entity = ENTITY
+
+fn entity_table_init () : entity_table
+fn entity_table_finish ( entity_table ) : void
+
+fn{a:vt@ype} entity_new ( !entity_table, string ) : void
+
+fn{a:vt@ype} entity_exists ( !entity_table, string ) : bool
+fn{a:vt@ype} entity_get ( !entity_table, string ) : Option_vt(a)
+fn{a:vt@ype} entity_delete ( !entity_table, string ) : void

@@ -1,7 +1,7 @@
 (*
 ###  dict.sats  ###
 
-allows void pointers to be accessed with strings as keys
+
 *)
 
 staload "./../g_engine.sats"
