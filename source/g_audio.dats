@@ -13,7 +13,6 @@ val audio_format = AUDIO_S16
 val audio_rate: int = 22050
 val audio_channels: int = 2
 val audio_buffers: int = 4096
-var volume: float = 1.0f
 
 extern castfn float_to_int( f:float ): int
 extern castfn int_to_float( i: int ): float

@@ -7,7 +7,7 @@ the full function definitions for SDL & the initial values for the OpenGL extens
 #include "share/atspre_staload.hats"
 
 //  include statements go here
-staload "SDL_local.sats"
+staload "./SDL_local.sats"
 
 ////
 #ifdef _WIN32

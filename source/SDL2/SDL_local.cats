@@ -5,6 +5,12 @@ provides an interface to SDL
 */
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_thread.h>
+#include <SDL2/SDL_rwops.h>
+#include <SDL2/SDL_net.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_audio.h>
 
 #include "../SDL2/SDL_mixer.cats"
 #include "../SDL2/SDL_net.cats"
@@ -28,35 +34,70 @@ provides an interface to SDL
 #endif
 
 //  SDL functions
-#define gldlsh_sdl_bind_SDL_PrintStackTrace SDL_PrintStackTrace
+#define sdl_SDL_PrintStackTrace SDL_PrintStackTrace
 
-#define gldlsh_sdl_bind_SDL_PathFullName SDL_PathFullName
-#define gldlsh_sdl_bind_SDL_PathFileName SDL_PathFileName
-#define gldlsh_sdl_bind_SDL_PathFileExtension SDL_PathFileExtension
-#define gldlsh_sdl_bind_SDL_PathFileLocation SDL_PathFileLocation
-#define gldlsh_sdl_bind_SDL_PathRelative SDL_PathRelative
-#define gldlsh_sdl_bind_SDL_PathForwardSlashes SDL_PathForwardSlashes
-#define gldlsh_sdl_bind_SDL_PathJoin SDL_PathJoin
-#define gldlsh_sdl_bind_SDL_PathIsFile SDL_PathIsFile
-#define gldlsh_sdl_bind_SDL_PathIsDirectory SDL_PathIsDirectory
-#define gldlsh_sdl_bind_SDL_PathParentDirectory SDL_PathParentDirectory
+#define sdl_SDL_PathFullName SDL_PathFullName
+#define sdl_SDL_PathFileName SDL_PathFileName
+#define sdl_SDL_PathFileExtension SDL_PathFileExtension
+#define sdl_SDL_PathFileLocation SDL_PathFileLocation
+#define sdl_SDL_PathRelative SDL_PathRelative
+#define sdl_SDL_PathForwardSlashes SDL_PathForwardSlashes
+#define sdl_SDL_PathJoin SDL_PathJoin
+#define sdl_SDL_PathIsFile SDL_PathIsFile
+#define sdl_SDL_PathIsDirectory SDL_PathIsDirectory
+#define sdl_SDL_PathParentDirectory SDL_PathParentDirectory
 
-#define gldlsh_sdl_bind_SDL_GetWorkingDir SDL_GetWorkingDir
-#define gldlsh_sdl_bind_SDL_SetWorkingDir SDL_SetWorkingDir
+#define sdl_SDL_GetWorkingDir SDL_GetWorkingDir
+#define sdl_SDL_SetWorkingDir SDL_SetWorkingDir
 
-#define gldlsh_sdl_bind_SDL_GL_FrameBufferErrorString SDL_GL_FrameBufferErrorString
-#define gldlsh_sdl_bind_SDL_GL_ErrorString SDL_GL_ErrorString
+#define sdl_SDL_GL_FrameBufferErrorString SDL_GL_FrameBufferErrorString
+#define sdl_SDL_GL_ErrorString SDL_GL_ErrorString
 
-#define gldlsh_sdl_bind_SDL_GL_PrintInfo SDL_GL_PrintInfo
-#define gldlsh_sdl_bind_SDL_GL_PrintExtensions SDL_GL_PrintExtensions
-#define gldlsh_sdl_bind_SDL_GL_LoadExtensions SDL_GL_LoadExtensions
-#define gldlsh_sdl_bind_SDL_GL_ExtensionPresent SDL_GL_ExtensionPresent
-#define gldlsh_sdl_bind_SDL_GL_ExtensionFunctionLoaded SDL_GL_ExtensionFunctionLoaded
+#define sdl_SDL_GL_PrintInfo SDL_GL_PrintInfo
+#define sdl_SDL_GL_PrintExtensions SDL_GL_PrintExtensions
+#define sdl_SDL_GL_LoadExtensions SDL_GL_LoadExtensions
+#define sdl_SDL_GL_ExtensionPresent SDL_GL_ExtensionPresent
+#define sdl_SDL_GL_ExtensionFunctionLoaded SDL_GL_ExtensionFunctionLoaded
 
-#define gldlsh_sdl_bind_SDL_GetTicks SDL_GetTicks
-#define gldlsh_sdl_bind_SDL_Delay SDL_Delay
+#define sdl_SDL_GetTicks SDL_GetTicks
+#define sdl_SDL_Delay SDL_Delay
 
-#define gldlsh_sdl_bind_SDL_RWFromFile SDL_RWFromFile
+#define sdl_SDL_RWFromFile SDL_RWFromFile
+
+#define sdl_SDL_InitSubSystem SDL_InitSubSystem
+#define sdl_SDL_CreateWindow SDL_CreateWindow
+#define sdl_SDL_DestroyWindow SDL_DestroyWindow
+#define sdl_SDL_SetWindowSize SDL_SetWindowSize
+#define sdl_SDL_GetWindowSize SDL_GetWindowSize
+#define sdl_SDL_SetWindowTitle SDL_SetWindowTitle
+
+#define sdl_SDL_LoadBMP SDL_LoadBMP
+#define sdl_SDL_SetWindowIcon SDL_SetWindowIcon
+#define sdl_SDL_FreeSurface SDL_FreeSurface
+#define sdl_SDL_GetWindowTitle() ((char*)(SDL_GetWindowTitle()))
+
+#define sdl_SDL_GL_SetAttribute SDL_GL_SetAttribute
+#define sdl_SDL_GL_CreateContext SDL_GL_CreateContext
+#define sdl_SDL_GL_DeleteContext SDL_GL_DeleteContext
+#define sdl_SDL_GL_MakeCurrent SDL_GL_MakeCurrent
+
+#define sdl_SDL_GL_SetSwapInterval SDL_GL_SetSwapInterval
+
+#define sdl_Mix_OpenAudio Mix_OpenAudio
+#define sdl_Mix_QuerySpec Mix_QuerySpec
+#define sdl_Mix_CloseAudio Mix_CloseAudio
+#define sdl_Mix_PlayChannel Mix_PlayChannel
+#define sdl_Mix_Pause Mix_Pause
+#define sdl_Mix_Resume Mix_Resume
+#define sdl_Mix_HaltChannel Mix_HaltChannel
+#define sdl_Mix_FadeInMusic Mix_FadeInMusic
+#define sdl_Mix_GetError() ((char*)(Mix_GetError()))
+#define sdl_Mix_PauseMusic Mix_PauseMusic
+#define sdl_Mix_ResumeMusic Mix_ResumeMusic
+#define sdl_Mix_FadeOutMusic Mix_FadeOutMusic
+#define sdl_Mix_VolumeMusic Mix_VolumeMusic
+
+#define sdl_glViewport glViewport
 
 typedef GLuint ( APIENTRY * GLCREATESHADERFN )( GLuint type );
 typedef GLuint ( APIENTRY * GLCREATEPROGRAMFN )( void );

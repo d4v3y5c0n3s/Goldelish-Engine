@@ -5,8 +5,7 @@ defines a sound
 *)
 
 staload "./../g_engine.sats"
-staload "./../SDL2/SDL_mixer.sats"
-staload "./../SDL2/SDL_mixer.sats"
+staload "./../SDL2/SDL_local.sats"
 
 typedef sound = @{ sample = Mix_Chunk }
 

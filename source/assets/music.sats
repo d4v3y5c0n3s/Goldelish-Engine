@@ -5,7 +5,7 @@ defines music files
 *)
 
 staload "./../g_engine.sats"
-staload "./../SDL2/SDL_mixer.sats"
+staload "./../SDL2/SDL_local.sats"
 
 typedef music = @{
 	handle=Mix_Music
