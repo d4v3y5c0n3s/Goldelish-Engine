@@ -81,6 +81,9 @@ macdef SDL_INIT_VIDEO = $extval(uint32, "SDL_INIT_VIDEO")
 macdef SDL_WINDOWPOS_UNDEFINED = $extval(int, "SDL_WINDOWPOS_UNDEFINED")
 macdef SDL_GL_SHARE_WITH_CURRENT_CONTEXT = $extval(SDL_GLattr, "SDL_GL_SHARE_WITH_CURRENT_CONTEXT")
 macdef SDL_WINDOW_FULLSCREEN_DESKTOP = $extval(uint32, "SDL_WINDOW_FULLSCREEN_DESKTOP")
+macdef SDL_DISABLE = $extval(int, "SDL_DISABLE")
+macdef SDL_ENABLE = $extval(int, "SDL_ENABLE")
+macdef SDL_QUERY = $extval(int, "SDL_QUERY")
 
 fn Mix_OpenAudio ( frequency: int, format: uint16, channels: int, chunksize: int ) : int = "mac#%"
 fn Mix_QuerySpec (frequency: &int, format: &uint16, channels: &int ) : int = "mac#%"
@@ -101,6 +104,7 @@ fn SDL_GL_CreateContext ( !SDL_Window_ptr1 ) : SDL_GLContext0 = "mac#%"
 fn SDL_GL_SetSwapInterval ( int ) : int = "mac#%"
 fn SDL_GL_DeleteContext ( SDL_GLContext0 ) : void = "mac#%"
 fn SDL_GL_MakeCurrent ( !SDL_Window_ptr1, !SDL_GLContext1 ) : int = "mac#%"
+fn SDL_GL_SwapWindow ( !SDL_Window_ptr1 ) : void = "mac#%"
 
 //  this is an OpenGL function, not an SDL one
 fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
@@ -119,6 +123,7 @@ fn SDL_SetWindowTitle ( !SDL_Window_ptr1, string ) : void = "mac#%"
 
 fn SDL_GetTicks() : ulint = "mac#%"
 fn SDL_Delay ( ms:uint32 ) : void = "mac#%"
+fn SDL_ShowCursor ( int ) : int = "mac#%"
 
 fn SDL_RWFromFile ( file: string, mode: string ) : SDL_RWops = "mac#%"
 

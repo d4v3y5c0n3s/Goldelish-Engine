@@ -153,15 +153,29 @@ end
 implmnt graphics_viewport_title ( gvp ) = SDL_GetWindowTitle(gvp.screen)
 
 implmnt graphics_viewport_screenshot (  ) = {
+(*
+    val image_data =
+    val () = glReadPixels()
+    val i = image_new()
+    val () = image_flip_vertical(i)
+    val () = image_bgr_to_rgb(i)
+    val () =
+    val () = timestamp()
+    val () = strcat()
+    val () = strcat()
+    val () = strcat()
+    val () = image_write_to_file(i, )
+    val () = image_delete(i)
+*)
 }
-end////
+
 implmnt graphics_set_cursor_hidden ( hidden ) =
-    if  then
-    else
+    if hidden then { val i = SDL_ShowCursor(SDL_DISABLE) }
+    else { val i = SDL_ShowCursor(SDL_ENABLE) }
 
 implmnt graphics_get_cursor_hidden (  ) =
-    if  then
-    else
+    if SDL_ShowCursor(SDL_QUERY) = SDL_ENABLE then false
+    else true
 
 implmnt graphics_swap ( gvp ) = SDL_GL_SwapWindow(gvp.screen)
 

@@ -12,12 +12,6 @@ provides an interface to SDL
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_audio.h>
 
-#include "../SDL2/SDL_mixer.cats"
-#include "../SDL2/SDL_net.cats"
-#include "../SDL2/SDL_opengl.cats"
-#include "../SDL2/SDL_rwops.cats"
-#include "../SDL2/SDL_thread.cats"
-
 #ifdef MAX_PATH
        //do nothing
 #elif PATH_MAX
@@ -61,6 +55,7 @@ provides an interface to SDL
 
 #define sdl_SDL_GetTicks SDL_GetTicks
 #define sdl_SDL_Delay SDL_Delay
+#define sdl_SDL_ShowCursor SDL_ShowCursor
 
 #define sdl_SDL_RWFromFile SDL_RWFromFile
 
@@ -80,6 +75,7 @@ provides an interface to SDL
 #define sdl_SDL_GL_CreateContext SDL_GL_CreateContext
 #define sdl_SDL_GL_DeleteContext SDL_GL_DeleteContext
 #define sdl_SDL_GL_MakeCurrent SDL_GL_MakeCurrent
+#define sdl_SDL_GL_SwapWindow SDL_GL_SwapWindow
 
 #define sdl_SDL_GL_SetSwapInterval SDL_GL_SetSwapInterval
 
