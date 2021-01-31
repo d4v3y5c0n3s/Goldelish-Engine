@@ -7,55 +7,72 @@
 #include "share/atspre_staload.hats"
 
 staload "./g_joystick.sats"
+staload "./SDL2/SDL_local.sats"
 
 #define MAX_STICKS 8
 
-////
-var num_sticks = 0
-var sticks: SDL_Joystick ptr//  [MAX_STICKS]
+local
 
-implement joystick_init () =
-(
-val error = SDL_InitSubSystem ( SDL_INIT_JOYSTICK )
-if error == -1 then error ("Cannot initialize SDL joystick!")
+assume joysticks = [l:addr] arrayptr(SDL_Joystick_ptr0, l, MAX_STICKS)
 
-num_sticks = SDL_NumJoysticks ()
-debug ("Cannot initialize SDL joystick!")
+in
 
-fun iterate ( i: int ) : void = (
-    if i >= num_sticks then ()
-    else (
-    sticks[i] := SDL_JoystickOpen( i )
-    if sticks[i] == null then ( error ( "Couldn't open joystick %i!", i ) )
-    else ( debug ( "JoyStick %i (%s) loaded.", i, SDL_JoystickName( sticks[i] ) ) )
-    iterate ( i + 1 )
+implmnt joystick_init () = let
+    val error = SDL_InitSubSystem(SDL_INIT_JOYSTICK)
+in
+    if error = ~1 then None_vt()
+    else let
+        val num_sticks = SDL_NumJoysticks()
+        val [j:addr] joy_arr = arrayptr_make_uninitized<SDL_Joystick_ptr0>(size_of_int(MAX_STICKS))
+        
+        fun init_arr {i:int | i >= 0 && i <= MAX_STICKS} ( p: ptr, i: int i ) : void =
+        if i < MAX_STICKS then let
+            val stick_i = SDL_JoystickOpen(i)
+            val () = $UNSAFE.ptr0_set<SDL_Joystick_ptr0>(p, stick_i)
+        in
+            init_arr(ptr0_succ<SDL_Joystick_ptr0>(p), i+1)
+        end else ()
+        
+        val () = init_arr(ptrcast(joy_arr), 0)
+    in
+        Some_vt(
+            ($UNSAFE.castvwtp0{arrayptr(SDL_Joystick_ptr0, j, MAX_STICKS)}(joy_arr)):joysticks
+        )
+    end
+end
+
+implmnt joystick_finish ( jstks ) = let
+    fun loop {i:int | i >= 0 && i <= MAX_STICKS}
+    ( i: int i, p: ptr(*!arrayptr(SDL_Joystick_ptr0, MAX_STICKS)*) ) : void =
+    if i < MAX_STICKS then let
+        val p_i = $UNSAFE.ptr0_get<SDL_Joystick_ptr0>(p)
+        val () = SDL_JoystickClose(p_i)
+    in
+        loop(i+1, ptr0_succ<SDL_Joystick_ptr0>(p))
+    end else ()
+in
+    loop(0, ptrcast(jstks));
+    arrayptr_freelin(
+        $UNSAFE.castvwtp0{arrayptr(SDL_Joystick_ptr0, MAX_STICKS)}(jstks),
+        size_of_int(MAX_STICKS)
     )
-)
+end
 
-iterate ( 0 )
-)
+implmnt joystick_count ( jstks ) = SDL_NumJoysticks()
 
-implement joystick_finish () =
-(
-fun iterate ( i: int ) : void = (
-    if i >= num_sticks then ()
-    else (
-    SDL_JoystickClose ( sticks[i] )
-    iterate ( i + 1 )
-    )
-)
+implmnt joystick_get ( jstks, i ) =
+    if i >= MAX_STICKS then None_vt()
+    else let
+        val p = $UNSAFE.ptr0_get_at_int<SDL_Joystick_ptr0>(ptrcast(jstks), i)
+    in
+        if ptrcast(p) > 0 then Some_vt(p)
+        else let
+            prval () = _consume_null(p) where {
+                extern praxi _consume_null ( SDL_Joystick_ptr0 ) : void
+            }
+        in
+            None_vt()
+        end
+    end
 
-iterate ( 0 )
-)
-
-implement joystick_count () =
-(
-num_sticks
-)
-
-implement joystick_get ( i ) =
-(
-if i >= num_sticks then ( error ( "Unable to get Joystick at index %i.  Only have %i joysticks.", i, num_sticks ) )
-
-sticks[i]
-)
+end

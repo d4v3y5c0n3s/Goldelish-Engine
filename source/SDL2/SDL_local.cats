@@ -57,6 +57,10 @@ provides an interface to SDL
 #define sdl_SDL_Delay SDL_Delay
 #define sdl_SDL_ShowCursor SDL_ShowCursor
 
+#define sdl_SDL_NumJoysticks SDL_NumJoysticks
+#define sdl_SDL_JoystickOpen SDL_JoystickOpen
+#define sdl_SDL_JoystickClose SDL_JoystickClose
+
 #define sdl_SDL_RWFromFile SDL_RWFromFile
 
 #define sdl_SDL_InitSubSystem SDL_InitSubSystem

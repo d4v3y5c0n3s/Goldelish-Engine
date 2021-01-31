@@ -5,9 +5,12 @@ a basic layer for SDL controls
 *)
 
 staload "./g_engine.sats"
+staload "./SDL2/SDL_local.sats"
 
-fun joystick_init () : void = "sta#%"
-fun joystick_finish () : void = "sta#%"
+absvtype joysticks = ptr
 
-fun joystick_count () : int = "sta#%"
-fun joystick_get () : (*SDL_Joystick*) ptr = "sta#%"
+fn joystick_init () : Option_vt(joysticks) = "sta#%"
+fn joystick_finish ( joysticks ) : void = "sta#%"
+
+fn joystick_count ( !joysticks ) : int = "sta#%"
+fn joystick_get ( !joysticks, int ) : Option_vt(SDL_Joystick_ptr1) = "sta#%"

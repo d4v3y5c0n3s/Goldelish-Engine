@@ -45,6 +45,10 @@ absvtype SDL_Surface_ptr_base (l:addr) = ptr(l)
 vtypedef SDL_Surface_ptr0 = [l:addr] SDL_Surface_ptr_base(l)
 vtypedef SDL_Surface_ptr1 = [l:addr | l > null] SDL_Surface_ptr_base(l)
 
+absvtype SDL_Joystick_ptr_base (l:addr) = ptr(l)
+vtypedef SDL_Joystick_ptr0 = [l:addr] SDL_Joystick_ptr_base(l)
+vtypedef SDL_Joystick_ptr1 = [l:addr | l > null] SDL_Joystick_ptr_base(l)
+
 absvtype SDL_GLContext_base (l:addr) = ptr(l)
 vtypedef SDL_GLContext0 = [l:addr] SDL_GLContext_base(l)
 vtypedef SDL_GLContext1 = [l:addr | l > null] SDL_GLContext_base(l)
@@ -67,10 +71,12 @@ castfn int_to_GLint ( int ) : GLint
 castfn sdl_wptr_to_ptr {l:addr} ( !SDL_Window_ptr_base(l) ) : ptr l
 castfn sdl_glcptr_to_ptr {l:addr} ( !SDL_GLContext_base(l) ) : ptr l
 castfn sdl_srptr_to_ptr {l:addr} ( !SDL_Surface_ptr_base(l) ) : ptr l
+castfn sdl_jyptr_to_ptr {l:addr} ( !SDL_Joystick_ptr_base(l) ) : ptr l
 
 overload ptrcast with sdl_wptr_to_ptr
 overload ptrcast with sdl_glcptr_to_ptr
 overload ptrcast with sdl_srptr_to_ptr
+overload ptrcast with sdl_jyptr_to_ptr
 
 //  use macdef to handle the SDL constants (see examples)
 macdef SDL_WINDOW_OPENGL = $extval(uint32, "SDL_WINDOW_OPENGL")
@@ -78,6 +84,7 @@ macdef AUDIO_S16 = $extval(uint16, "AUDIO_S16")
 macdef MIX_MAX_VOLUME = $extval(int, "MIX_MAX_VOLUME")
 macdef SDL_INIT_AUDIO = $extval(uint32, "SDL_INIT_AUDIO")
 macdef SDL_INIT_VIDEO = $extval(uint32, "SDL_INIT_VIDEO")
+macdef SDL_INIT_JOYSTICK = $extval(uint32, "SDL_INIT_JOYSTICK")
 macdef SDL_WINDOWPOS_UNDEFINED = $extval(int, "SDL_WINDOWPOS_UNDEFINED")
 macdef SDL_GL_SHARE_WITH_CURRENT_CONTEXT = $extval(SDL_GLattr, "SDL_GL_SHARE_WITH_CURRENT_CONTEXT")
 macdef SDL_WINDOW_FULLSCREEN_DESKTOP = $extval(uint32, "SDL_WINDOW_FULLSCREEN_DESKTOP")
@@ -113,6 +120,10 @@ fn SDL_LoadBMP ( string ) : SDL_Surface_ptr0 = "mac#%"
 fn SDL_SetWindowIcon ( !SDL_Window_ptr1, !SDL_Surface_ptr1 ) : void = "mac#%"
 fn SDL_FreeSurface ( SDL_Surface_ptr0 ) : void = "mac#%"
 fn SDL_GetWindowTitle ( !SDL_Window_ptr1 ) : string = "mac#%"
+
+fn SDL_NumJoysticks () : int = "mac#%"
+fn SDL_JoystickOpen ( int ) : SDL_Joystick_ptr0 = "mac#%"
+fn SDL_JoystickClose ( SDL_Joystick_ptr0 ) : void = "mac#%"
 
 fn SDL_InitSubSystem ( uint32 ) : int = "mac#%"
 fn SDL_CreateWindow ( string, int, int, int, int, uint32 ) : SDL_Window_ptr0 = "mac#%"
