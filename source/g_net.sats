@@ -6,20 +6,22 @@ a basic networking layer
 
 staload "./g_engine.sats"
 
-fun net_init () : void = "sta#%"
-fun net_finish () : void = "sta#%"
+absvt0ype net_running
 
-fun net_set_server ( server: bool ) : void = "sta#%"
-fun net_is_server () : bool = "sta#%"
-fun net_is_client () : bool = "sta#%"
+fn net_init () : Option_vt(net_running) = "sta#%"
+fn net_finish ( net_running ) : void = "sta#%"
 
-datatype HTTP_ERR_TYPE =
-	 | NONE of ()
-	 | URL of ()
-	 | HOST of ()
-	 | SOCKET of ()
-	 | DATA of ()
-	 | NO_FILE of ()
+fn net_set_server ( nr: &net_running, server: bool ) : void = "sta#%"
+fn net_is_server ( !net_running ) : bool = "sta#%"
+fn net_is_client ( !net_running ) : bool = "sta#%"
 
-fun net_http_get ( out: string, max: int, fmt: string(*, ...  <- this means that there can be a variable number of arguements passed, could likely be modified to work with arrays/lists instead*) ) : int = "sta#%"
-fun net_http_upload ( filename: string, fmt: string(*, ...*) ) : int = "sta#%"
+datavtype HTTP_ERR =
+| NONE of ()
+| URL of ()
+| HOST of ()
+| SOCKET of ()
+| DATA of ()
+| NOFILE of ()
+
+fn net_http_get ( nr: !net_running, out: string, max: int, fmt: List_vt(string) ) : HTTP_ERR = "sta#%"
+fn net_http_upload ( nr: !net_running, filename: string, fmt: List_vt(string) ) : HTTP_ERR = "sta#%"

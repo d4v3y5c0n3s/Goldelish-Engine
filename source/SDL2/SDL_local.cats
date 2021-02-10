@@ -61,6 +61,9 @@ provides an interface to SDL
 #define sdl_SDL_JoystickOpen SDL_JoystickOpen
 #define sdl_SDL_JoystickClose SDL_JoystickClose
 
+#define sdl_SDLNet_Init SDLNet_Init
+#define sdl_SDLNet_Quit SDLNet_Quit
+
 #define sdl_SDL_RWFromFile SDL_RWFromFile
 
 #define sdl_SDL_InitSubSystem SDL_InitSubSystem

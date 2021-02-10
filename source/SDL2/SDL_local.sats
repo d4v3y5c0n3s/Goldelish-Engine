@@ -125,6 +125,9 @@ fn SDL_NumJoysticks () : int = "mac#%"
 fn SDL_JoystickOpen ( int ) : SDL_Joystick_ptr0 = "mac#%"
 fn SDL_JoystickClose ( SDL_Joystick_ptr0 ) : void = "mac#%"
 
+fn SDLNet_Init () : int = "mac#%"
+fn SDLNet_Quit () : void = "mac#%"
+
 fn SDL_InitSubSystem ( uint32 ) : int = "mac#%"
 fn SDL_CreateWindow ( string, int, int, int, int, uint32 ) : SDL_Window_ptr0 = "mac#%"
 fn SDL_DestroyWindow ( SDL_Window_ptr0 ) : void = "mac#%"
