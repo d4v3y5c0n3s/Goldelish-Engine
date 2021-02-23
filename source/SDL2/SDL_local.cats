@@ -78,6 +78,8 @@ provides an interface to SDL
 #define sdl_SDL_FreeSurface SDL_FreeSurface
 #define sdl_SDL_GetWindowTitle() ((char*)(SDL_GetWindowTitle()))
 
+#define sdl_SDLNet_TCP_Recv SDLNet_TCP_Recv
+
 #define sdl_SDL_GL_SetAttribute SDL_GL_SetAttribute
 #define sdl_SDL_GL_CreateContext SDL_GL_CreateContext
 #define sdl_SDL_GL_DeleteContext SDL_GL_DeleteContext

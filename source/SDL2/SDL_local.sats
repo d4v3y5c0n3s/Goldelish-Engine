@@ -10,7 +10,6 @@ more complete SDL function definitions
 #include "source/SDL2/SDL_local.cats"
 %}
 
-//  ###
 fn SDL_PrintStackTrace () : void = "mac#%"
 
 fn SDL_PathFullName ( path: string ) : string = "mac#%"
@@ -35,7 +34,6 @@ fn SDL_GL_PrintExtensions () : void = "mac#%"
 fn SDL_GL_LoadExtensions () : void = "mac#%"
 fn SDL_GL_ExtensionPresent ( name: string ) : bool = "mac#%"
 fn SDL_GL_ExtensionFunctionLoaded ( function: ptr ) : bool = "mac#%"
-//  ###
 
 absvtype SDL_Window_ptr_base (l:addr) = ptr(l)
 vtypedef SDL_Window_ptr0 = [l:addr] SDL_Window_ptr_base(l)
@@ -61,6 +59,10 @@ typedef SDL_RWops = ptr
 
 abst0ype GLsizei = $extype"GLsizei"
 abst0ype GLint = $extype"GLint"
+
+absvtype TCPsocket_base (l:addr) = ptr(l)
+vtypedef TCPsocket0 = [l:addr] TCPsocket_base(l)
+vtypedef TCPsocket1 = [l:addr | l > null] TCPsocket_base(l)
 
 castfn uint32_to_GLsizei ( uint32 ) : GLsizei
 castfn int32_to_GLint ( int32 ) : GLint
@@ -115,6 +117,8 @@ fn SDL_GL_SwapWindow ( !SDL_Window_ptr1 ) : void = "mac#%"
 
 //  this is an OpenGL function, not an SDL one
 fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
+
+fn SDLNet_TCP_Recv ( !TCPsocket1, &charNZ, int ) : int = "mac#%"
 
 fn SDL_LoadBMP ( string ) : SDL_Surface_ptr0 = "mac#%"
 fn SDL_SetWindowIcon ( !SDL_Window_ptr1, !SDL_Surface_ptr1 ) : void = "mac#%"
