@@ -79,6 +79,10 @@ provides an interface to SDL
 #define sdl_SDL_GetWindowTitle() ((char*)(SDL_GetWindowTitle()))
 
 #define sdl_SDLNet_TCP_Recv SDLNet_TCP_Recv
+#define sdl_SDLNet_ResolveHost SDLNet_ResolveHost
+#define sdl_SDLNet_GetError SDLNet_GetError() ((char*)(SDLNet_GetError()))
+#define sdl_SDLNet_TCP_Open SDLNet_TCP_Open
+#define sdl_SDLNet_TCP_Send SDLNet_TCP_Send
 
 #define sdl_SDL_GL_SetAttribute SDL_GL_SetAttribute
 #define sdl_SDL_GL_CreateContext SDL_GL_CreateContext

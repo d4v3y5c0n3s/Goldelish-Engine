@@ -64,6 +64,11 @@ absvtype TCPsocket_base (l:addr) = ptr(l)
 vtypedef TCPsocket0 = [l:addr] TCPsocket_base(l)
 vtypedef TCPsocket1 = [l:addr | l > null] TCPsocket_base(l)
 
+typedef IPaddress = $extype_struct "IPaddress" of {
+    host=uint32,
+    port=uint16
+}
+
 castfn uint32_to_GLsizei ( uint32 ) : GLsizei
 castfn int32_to_GLint ( int32 ) : GLint
 
@@ -74,13 +79,21 @@ castfn sdl_wptr_to_ptr {l:addr} ( !SDL_Window_ptr_base(l) ) : ptr l
 castfn sdl_glcptr_to_ptr {l:addr} ( !SDL_GLContext_base(l) ) : ptr l
 castfn sdl_srptr_to_ptr {l:addr} ( !SDL_Surface_ptr_base(l) ) : ptr l
 castfn sdl_jyptr_to_ptr {l:addr} ( !SDL_Joystick_ptr_base(l) ) : ptr l
+castfn sdl_tcpptr_to_ptr {l:addr} ( !TCPsocket_base(l) ) : ptr l
 
 overload ptrcast with sdl_wptr_to_ptr
 overload ptrcast with sdl_glcptr_to_ptr
 overload ptrcast with sdl_srptr_to_ptr
 overload ptrcast with sdl_jyptr_to_ptr
+overload ptrcast with sdl_tcpptr_to_ptr
 
-//  use macdef to handle the SDL constants (see examples)
+(*dataprop NET_TCP_RES ( int ) =
+| {n:int | n != ~1} RES_SUCCESS (n)
+| RES_FAIL (~1)*)
+
+//propdef net_tcp_open (l:addr) = ()
+
+//  use macdef to handle the SDL constants
 macdef SDL_WINDOW_OPENGL = $extval(uint32, "SDL_WINDOW_OPENGL")
 macdef AUDIO_S16 = $extval(uint16, "AUDIO_S16")
 macdef MIX_MAX_VOLUME = $extval(int, "MIX_MAX_VOLUME")
@@ -93,6 +106,8 @@ macdef SDL_WINDOW_FULLSCREEN_DESKTOP = $extval(uint32, "SDL_WINDOW_FULLSCREEN_DE
 macdef SDL_DISABLE = $extval(int, "SDL_DISABLE")
 macdef SDL_ENABLE = $extval(int, "SDL_ENABLE")
 macdef SDL_QUERY = $extval(int, "SDL_QUERY")
+
+//prfn net_tcp_res_open {r:int}{l:addr}( r: NET_TCP_RES(r), o: net_tcp_open(l) ): void
 
 fn Mix_OpenAudio ( frequency: int, format: uint16, channels: int, chunksize: int ) : int = "mac#%"
 fn Mix_QuerySpec (frequency: &int, format: &uint16, channels: &int ) : int = "mac#%"
@@ -119,6 +134,10 @@ fn SDL_GL_SwapWindow ( !SDL_Window_ptr1 ) : void = "mac#%"
 fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
 
 fn SDLNet_TCP_Recv ( !TCPsocket1, &charNZ, int ) : int = "mac#%"
+fn SDLNet_ResolveHost ( &IPaddress? >> IPaddress, string, uint16 ) : [n:int] (*(NET_TCP_RES(n) |*) int (*n)*) = "mac#%"
+fn SDLNet_GetError () : string = "mac#%"
+fn SDLNet_TCP_Open ( &IPaddress ) : (*[l:addr] (net_tcp_open(l) | TCPsocket_base(l))*) TCPsocket0
+fn SDLNet_TCP_Send ( !TCPsocket1, Strptr1, int ) : int = "mac#%"
 
 fn SDL_LoadBMP ( string ) : SDL_Surface_ptr0 = "mac#%"
 fn SDL_SetWindowIcon ( !SDL_Window_ptr1, !SDL_Surface_ptr1 ) : void = "mac#%"

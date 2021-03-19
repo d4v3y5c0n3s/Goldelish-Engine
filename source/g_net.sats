@@ -16,12 +16,12 @@ fn net_is_server ( !net_running ) : bool = "sta#%"
 fn net_is_client ( !net_running ) : bool = "sta#%"
 
 datavtype HTTP_ERR =
-| NONE of ()
-| URL of ()
-| HOST of ()
-| SOCKET of ()
-| DATA of ()
-| NOFILE of ()
+| HTTP_ERR_NONE of ()
+| HTTP_ERR_URL of ()
+| HTTP_ERR_HOST of ()
+| HTTP_ERR_SOCKET of ()
+| HTTP_ERR_DATA of ()
+| HTTP_ERR_NOFILE of ()
 
-fn net_http_get ( nr: !net_running, out: string, max: int, fmt: List_vt(string) ) : HTTP_ERR = "sta#%"
-fn net_http_upload ( nr: !net_running, filename: string, fmt: List_vt(string) ) : HTTP_ERR = "sta#%"
+fn net_http_get ( nr: &net_running, out: !Strptr1 >> _, max: int, host_b: Strptr1, path_b: Strptr1 ) : HTTP_ERR = "sta#%"
+fn net_http_upload ( nr: !net_running, filename: string, fmt: stream_vt(charNZ) ) : HTTP_ERR = "sta#%"

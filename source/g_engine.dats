@@ -284,7 +284,7 @@ implement vec2_min ( v, x ) = @{ x=(min(v.x, x)), y=(min(v.y, x)) }:vec2
 implement vec2_clamp ( v, b, t ) = @{ x=(clamp(v.x, b, t)), y=(clamp(v.y, b, t)) }:vec2
 
 implement vec2_print ( v ) = begin
-	  print("vec2 (");
+	  print("vec2 \(");
 	  print_float(v.x);
 	  print(", ");
 	  print_float(v.y);
@@ -443,7 +443,7 @@ implement vec3_fmod ( v, vl ) =
 	  vec3_new($MATH.fmod(v.x, vl), $MATH.fmod(v.y, vl), $MATH.fmod(v.z, vl))
 
 implement vec3_print ( v ) = begin
-	  print("vec3 (");
+	  print("vec3 \(");
 	  print_float(v.x);
 	  print(", ");
 	  print_float(v.y);
@@ -597,7 +597,7 @@ implement vec4_sqrt ( v ) =
 	  @{x=$MATH.sqrt(v.x), y=$MATH.sqrt(v.y), z=$MATH.sqrt(v.z), w=$MATH.sqrt(v.w)}:vec4
 
 implement vec4_print ( v ) = begin
-	  print("vec4 (");
+	  print("vec4 \(");
 	  print_float(v.x);
 	  print(", ");
 	  print_float(v.y);
@@ -2384,8 +2384,6 @@ implement capsule_intersects_plane ( c, p ) =
   not(capsule_inside_plane(c, p)) && not(capsule_outside_plane(c, p))
 
 local
-
-//assume vertex = @{ position=vec3, normal=vec3, tangent=vec3, binormal=vec3, color=vec4, uvs=vec2 }
 
 in
 

@@ -1,14 +1,20 @@
 (*
 ###  SDL_local.dats  ###
 
-the full function definitions for SDL & the initial values for the OpenGL extensions
+
 *)
 
 #include "share/atspre_staload.hats"
 
-//  include statements go here
 staload "./SDL_local.sats"
 
+(*primplement net_tcp_res_open {r}{l}( r, o ): void = let
+    extern praxi addr_not_null_on_success {p:addr} () : [p > null] void
+in
+case+ r of
+| RES_SUCCESS() => addr_not_null_on_success{l}()
+| RES_FAIL() => ()
+end*)
 ////
 #ifdef _WIN32
 #include <windows.h>
