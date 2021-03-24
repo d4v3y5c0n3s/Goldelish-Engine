@@ -46,32 +46,30 @@ implement net_is_server ( nr ) = nr.is_server
 
 implement net_is_client ( nr ) = ~nr.is_server
 
-// if status is ~1 or i == maxlen-1, return ~1 (either something failed or received too much data)
-// if c == '\n', then we've reached the end of the line, return the resulting stream_vt
-// if status is != 0 (continue the loop)
-//otherwise,
-//  if i is > 0, then terminate the string & return i
-//  else, return 0 (no string to make)
 fn SDLNet_TCP_RecvLine
 (
     sock: !TCPsocket1, maxlen: int
-) : Strptr1 = let
+) : Option_vt(Strptr1) = let
 
-	fun loop ( sock: !TCPsocket1, i: int, s: stream_vt(charNZ) ) : stream_vt(charNZ) =
+	fun loop ( sock: !TCPsocket1, i: int, s: stream_vt(charNZ) ) : Option_vt(stream_vt(charNZ)) =
 		let
 			var c: charNZ = ' '
 			val status = SDLNet_TCP_Recv(sock, c, 1)
 		in
 			if status = ~1 || i = maxlen-1 then let
-				val () = stream_vt_free(s) in stream_vt_make_nil()
-			end else if c = '\n' then s
+				val () = stream_vt_free(s) in None_vt()//stream_vt_make_nil()
+			end else if c = '\n' then Some_vt(s)
 			else if status != 0 then loop(sock, i+1, stream_vt_append(s, stream_vt_make_sing(c)))
-			else s
+			else Some_vt(s)
 		end
+    
+    val strm = loop(sock, 0, stream_vt_make_nil())
 in
-	string_make_stream_vt(loop(sock, 0, stream_vt_make_nil()))
+    case+ strm of
+    | None_vt() => ( option_vt_unnone(strm); None_vt() )
+    | Some_vt(_) => ( Some_vt(string_make_stream_vt(option_vt_unsome(strm))) )
 end
-
+end////
 implmnt net_http_get ( nr, out, max, host_b, path_b ) = let
     val () = strptr_free(nr.host_buffer)
     val () = strptr_free(nr.path_buffer)
@@ -83,7 +81,6 @@ in
 	if reshost = ~1 then ( println!(SDLNet_GetError()); HTTP_ERR_HOST() )
 	else let
         val sock = SDLNet_TCP_Open(ip)
-        (*prval () = net_tcp_res_open(pf_ntr, pf_nto)*)
 	in
 	if ptrcast(sock) > 0 then let
         val host_buffer_str_copy = strptr2string(strptr1_copy(nr.host_buffer))
@@ -126,21 +123,40 @@ in
 end
 
 end////
-implmnt net_http_upload ( nr, filename, fmt ) = {
-	// write fmt to the url_buffer
 
-	// get host_buffer & path_buffer by extracting the urls from url_buffer
-
-	// if exactly 2 things were not extracted from host_buffer, something went wrong, HTTP_ERR_URL()
-
-	// create IPaddress ip, set using SDLNet_ResolveHost(); if returns negative, then HTTP_ERR_HOST()
-
-	// create TCPsocket sock, using SDLNet_TCP_Open()
-	// if null, HTTP_ERR_SOCKET()
-
-	// create file with SDL_RWFromFile()
-	// if file is null, HTTP_ERR_NOFILE()
-
+implmnt net_http_upload ( nr, filename, host_b, path_b ) = let
+    val () = strptr_free(nr.host_buffer)
+    val () = strptr_free(nr.path_buffer)
+    val () = nr.host_buffer := host_b
+    val () = nr.path_buffer := path_b
+	var ip: IPaddress
+	val reshost = SDLNet_ResolveHost(ip, strptr2string(strptr1_copy(nr.host_buffer)), int_to_uint16(80))
+in
+    if reshost = ~1 then ( println!(SDLNet_GetError()); HTTP_ERR_HOST() )
+	else let
+        val sock = SDLNet_TCP_Open(ip)
+	in
+	if ptrcast(sock) > 0 then let
+        var file = SDL_RWFromFile(filename, "r")
+	in
+	if ptrcast(file) > 0 then let
+        // ###
+	in
+	end
+	else let
+        prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
+	in
+        HTTP_ERR_NOFILE()
+	end
+	end
+	else let
+        prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
+	in
+        println!(SDLNet_GetError()); HTTP_ERR_SOCKET()
+	end
+	end
+end
+(*
 	// using SDL_RWseek() to get file size, create string sized to store file,
 	//use SDL_RWread() to read file to string, use SDL_RWclose() to close file
 
@@ -159,6 +175,6 @@ implmnt net_http_upload ( nr, filename, fmt ) = {
 	// call SDLNet_TCP_RecvLine() to set line until -1 returned
 
 	// HTTP_ERR_NONE()
-}
+*)
 
 end

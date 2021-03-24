@@ -87,12 +87,6 @@ overload ptrcast with sdl_srptr_to_ptr
 overload ptrcast with sdl_jyptr_to_ptr
 overload ptrcast with sdl_tcpptr_to_ptr
 
-(*dataprop NET_TCP_RES ( int ) =
-| {n:int | n != ~1} RES_SUCCESS (n)
-| RES_FAIL (~1)*)
-
-//propdef net_tcp_open (l:addr) = ()
-
 //  use macdef to handle the SDL constants
 macdef SDL_WINDOW_OPENGL = $extval(uint32, "SDL_WINDOW_OPENGL")
 macdef AUDIO_S16 = $extval(uint16, "AUDIO_S16")
@@ -106,8 +100,6 @@ macdef SDL_WINDOW_FULLSCREEN_DESKTOP = $extval(uint32, "SDL_WINDOW_FULLSCREEN_DE
 macdef SDL_DISABLE = $extval(int, "SDL_DISABLE")
 macdef SDL_ENABLE = $extval(int, "SDL_ENABLE")
 macdef SDL_QUERY = $extval(int, "SDL_QUERY")
-
-//prfn net_tcp_res_open {r:int}{l:addr}( r: NET_TCP_RES(r), o: net_tcp_open(l) ): void
 
 fn Mix_OpenAudio ( frequency: int, format: uint16, channels: int, chunksize: int ) : int = "mac#%"
 fn Mix_QuerySpec (frequency: &int, format: &uint16, channels: &int ) : int = "mac#%"
