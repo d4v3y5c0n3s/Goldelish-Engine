@@ -84,7 +84,7 @@ in
 	in
 	if ptrcast(sock) > 0 then let
         val host_buffer_str_copy = strptr2string(strptr1_copy(nr.host_buffer))
-        var sockout: Strptr1 = $UNSAFE.castvwtp0{Strptr1}(
+        var sockout: Strptr1 =
             string_make_stream_vt(
             stream_vt_append( streamize_string_char("GET "),
             stream_vt_append( streamize_string_char(host_buffer_str_copy),
@@ -92,7 +92,6 @@ in
             stream_vt_append( streamize_string_char("Host: "),
             stream_vt_append( streamize_string_char(host_buffer_str_copy),
             streamize_string_char("\r\n\r\n")
-            )
             )
             )
             )
@@ -112,20 +111,29 @@ in
         fun loop (
             s: Strptr1,
             fail_cnt: int,
-            sck: !TCPsocket1
+            sck: !TCPsocket1,
+            header: bool
         ) : Strptr1 = let
             val (b, str) = SDLNet_TCP_RecvLine(sck, 1023)
-            val s2 = string_make_stream_vt(
-            stream_vt_append(
-                streamize_string_char(strptr2string(s)),
-                streamize_string_char(strptr2string(str))
-            )
-            )
         in
-            if b && fail_cnt > 0 then loop(s2, fail_cnt-1, sck)
-            else s2
+            if b && fail_cnt > 0 then let
+                val s2 = string_make_stream_vt(
+                stream_vt_append(
+                    streamize_string_char(strptr2string(s)),
+                    streamize_string_char(strptr2string(str))
+                )
+                )
+            in
+                if header then
+                    if strptr2string(s2) = "\r\n" then loop($UNSAFE.castvwtp0{Strptr1}(""), fail_cnt-1, sck, false)
+                    else loop($UNSAFE.castvwtp0{Strptr1}(""), fail_cnt-1, sck, header)
+                else let
+                in
+                    loop(s2, fail_cnt-1, sck, header)
+                end
+            end else ( strptr_free(str); s )
         end
-        val () = out := loop($UNSAFE.castvwtp0{Strptr1}(""), MAX_FAIL_CNT, sock)
+        val () = out := loop($UNSAFE.castvwtp0{Strptr1}(""), MAX_FAIL_CNT, sock, true)
         prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
 	in
         HTTP_ERR_NONE()
@@ -138,7 +146,7 @@ in
 	end
 end
 end////
-implmnt net_http_upload ( nr, filename, host_b, path_b ) = let
+implmnt net_http_upload ( nr, inpt, host_b, path_b ) = let
     val () = strptr_free(nr.host_buffer)
     val () = strptr_free(nr.path_buffer)
     val () = nr.host_buffer := host_b
@@ -151,12 +159,26 @@ in
         val sock = SDLNet_TCP_Open(ip)
 	in
 	if ptrcast(sock) > 0 then let
-        var file = SDL_RWFromFile(filename, "r")
+        var sockbody: Strptr1 =
+            string_make_stream_vt(
+            )
+        var sockheaders: Strptr1 =
+            string_make_stream_vt(
+            )
+        fun loop (
+            fail_cnt: int,
+            sck: !TCPsocket1
+        ) : void = let
+            val (b, str) = SDLNet_TCP_RecvLine(sck, 1023)
+        in
+            if b && fail_cnt > 0 then loop(fail_cnt-1, sck)
+            else ()
+        end
 	in
-	if ptrcast(file) > 0 then let
-        // ###
-	in
-	end
+	//
+	if  then
+	if  then
+	//
 	else let
         prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
 	in
