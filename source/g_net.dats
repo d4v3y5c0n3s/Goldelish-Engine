@@ -84,22 +84,18 @@ in
 	in
 	if ptrcast(sock) > 0 then let
         val host_buffer_str_copy = strptr2string(strptr1_copy(nr.host_buffer))
-        var sockout: Strptr1 =
+        var sockout =
             string_make_stream_vt(
             stream_vt_append( streamize_string_char("GET "),
             stream_vt_append( streamize_string_char(host_buffer_str_copy),
             stream_vt_append( streamize_string_char(" HTTP/1.1\r\n"),
             stream_vt_append( streamize_string_char("Host: "),
             stream_vt_append( streamize_string_char(host_buffer_str_copy),
-            streamize_string_char("\r\n\r\n")
-            )
-            )
-            )
-            )
-            )
+            streamize_string_char("\r\n\r\n"))))))
         )
         val sockout_len = ssize_to_int(strptr_length(sockout))
         val result = SDLNet_TCP_Send(sock, sockout, sockout_len)
+        val () = strptr_free(sockout)
 	in
 	if result < sockout_len then let
         prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
@@ -145,7 +141,7 @@ in
 	end
 	end
 end
-end////
+
 implmnt net_http_upload ( nr, inpt, host_b, path_b ) = let
     val () = strptr_free(nr.host_buffer)
     val () = strptr_free(nr.path_buffer)
@@ -159,58 +155,72 @@ in
         val sock = SDLNet_TCP_Open(ip)
 	in
 	if ptrcast(sock) > 0 then let
-        var sockbody: Strptr1 =
+        var sockbody =
             string_make_stream_vt(
+            stream_vt_append( streamize_string_char("--GoldelishUploadBoundary--\r\n"),
+            stream_vt_append( streamize_string_char("content-disposition: form-data; name=\"goldelishupload\";"),
+            stream_vt_append( streamize_string_char("Content-Type: text/plain\r\n"),
+            stream_vt_append( streamize_string_char("\r\n"),
+            stream_vt_append( streamize_string_char(strptr2string(strptr1_copy(inpt))),
+            stream_vt_append( streamize_string_char("\r\n"),
+            stream_vt_append( streamize_string_char("--GoldelishUploadBoundary--\r\n"),
+            streamize_string_char("\r\n"))))))))
             )
-        var sockheaders: Strptr1 =
+        var sockheaders =
             string_make_stream_vt(
+            stream_vt_append( streamize_string_char("POST "),
+            stream_vt_append( streamize_string_char(strptr2string(strptr1_copy(nr.path_buffer))),
+            stream_vt_append( streamize_string_char(" HTTP/1.1\r\n"),
+            stream_vt_append( streamize_string_char("Host: "),
+            stream_vt_append( streamize_string_char(strptr2string(strptr1_copy(nr.host_buffer))),
+            stream_vt_append( streamize_string_char("\r\n"),
+            stream_vt_append( streamize_string_char("Content-Length: "),
+            stream_vt_append( streamize_string_char(strptr2string(g0int2string_int(ssize_to_int(strptr_length(inpt))))),
+            stream_vt_append( streamize_string_char("\r\n"),
+            stream_vt_append( streamize_string_char("Content-Type: multipart/form-data; boundary=CorangeUploadBoundary\r\n"),
+            streamize_string_char("\r\n")))))))))))
             )
         fun loop (
             fail_cnt: int,
             sck: !TCPsocket1
         ) : void = let
             val (b, str) = SDLNet_TCP_RecvLine(sck, 1023)
+            val () = strptr_free(str)
         in
             if b && fail_cnt > 0 then loop(fail_cnt-1, sck)
             else ()
         end
+        val sockheaders_len = ssize_to_int(strptr_length(sockheaders))
+        val sockbody_len = ssize_to_int(strptr_length(sockbody))
 	in
-	//
-	if  then
-	if  then
-	//
-	else let
-        prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
-	in
-        HTTP_ERR_NOFILE()
-	end
-	end
-	else let
+        if SDLNet_TCP_Send(sock, sockheaders, sockheaders_len) < sockheaders_len then let
+            prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
+            val () = strptr_free(sockheaders)
+            val () = strptr_free(sockbody)
+        in
+            HTTP_ERR_DATA()
+        end
+        else if SDLNet_TCP_Send(sock, sockbody, sockbody_len) < sockbody_len then let
+            prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
+            val () = strptr_free(sockheaders)
+            val () = strptr_free(sockbody)
+        in
+            HTTP_ERR_DATA()
+        end
+        else let
+            val () = loop(MAX_FAIL_CNT, sock)
+            prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
+            val () = strptr_free(sockheaders)
+            val () = strptr_free(sockbody)
+        in
+            HTTP_ERR_NONE()
+        end
+	end else let
         prval () = _consume_sock(sock) where { extern praxi _consume_sock {l:addr} ( TCPsocket_base(l) ) : void }
 	in
         println!(SDLNet_GetError()); HTTP_ERR_SOCKET()
 	end
 	end
 end
-(*
-	// using SDL_RWseek() to get file size, create string sized to store file,
-	//use SDL_RWread() to read file to string, use SDL_RWclose() to close file
-
-	// alloc strings sockbody & sockheaders
-	// snprintf() strint data to sockbody & sockheaders
-
-	// create int result = 0
-
-	// result = SDLNet_TCP_Send() for sockheaders
-	// if result < strlen(sockheaders), HTTP_ERR_DATA()
-
-	// result = SDLNet_TCP_Send() for sockbody
-	// if result < strlen(sockbody), HTTP_ERR_DATA()
-
-	// alloc string line
-	// call SDLNet_TCP_RecvLine() to set line until -1 returned
-
-	// HTTP_ERR_NONE()
-*)
 
 end

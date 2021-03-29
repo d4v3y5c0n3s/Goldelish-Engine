@@ -129,7 +129,7 @@ fn SDLNet_TCP_Recv ( !TCPsocket1, &charNZ, int ) : int = "mac#%"
 fn SDLNet_ResolveHost ( &IPaddress? >> IPaddress, string, uint16 ) : int = "mac#%"
 fn SDLNet_GetError () : string = "mac#%"
 fn SDLNet_TCP_Open ( &IPaddress ) : TCPsocket0
-fn SDLNet_TCP_Send ( !TCPsocket1, Strptr1, int ) : int = "mac#%"
+fn SDLNet_TCP_Send ( !TCPsocket1, !Strptr1, int ) : int = "mac#%"
 
 fn SDL_LoadBMP ( string ) : SDL_Surface_ptr0 = "mac#%"
 fn SDL_SetWindowIcon ( !SDL_Window_ptr1, !SDL_Surface_ptr1 ) : void = "mac#%"
