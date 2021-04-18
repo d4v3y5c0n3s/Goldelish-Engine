@@ -2238,10 +2238,10 @@ in
   end
 end
 
-fn quadratic ( a: float, b: float, c: float, t0: &float, t1: &float ) : bool = let
+implmnt quadratic ( a, b, c, t0, t1 ) = let
   val descrim = b*b - 4.f*a*c
 in
-  if descrim < 0 then false
+  if descrim < 0 then (t0 := 0.f; t1 := 0.f; false)
   else let
     val d: float = $MATH.sqrt(descrim)
     val q = (if (b < 0.f) then ((~b - d) / 2.f) else ((~b + d) / 2.f)):float
@@ -2323,12 +2323,6 @@ implement sphere_intersects_face ( s, v0, v1, v2, norm ) =
     point_inside_triangle(c, v0, v1, v2)
   end
 
-local
-
-assume ellipsoid = @{ center=vec3, radiuses=vec3 }
-
-in
-
 implement ellipsoid_new ( center, radiuses ) =
   @{center=center, radiuses=radiuses}:ellipsoid
 
@@ -2354,14 +2348,6 @@ implement ellipsoid_inv_space ( e ) =
     0.f, 0.f, e.radiuses.z
   )
 
-end
-
-local
-
-assume capsule = @{ c_start=vec3, c_end=vec3, radius=float }
-
-in
-
 implement capsule_new ( c_start, c_end, radius ) =
   @{c_start=c_start, c_end=c_end, radius=radius}:capsule
 
@@ -2377,8 +2363,6 @@ implement capsule_inside_plane ( c, p ) =
 
 implement capsule_outside_plane ( c, p ) =
   sphere_outside_plane(sphere_new(c.c_start, c.radius), p) && sphere_inside_plane(sphere_new(c.c_end, c.radius), p)
-
-end
 
 implement capsule_intersects_plane ( c, p ) =
   not(capsule_inside_plane(c, p)) && not(capsule_outside_plane(c, p))

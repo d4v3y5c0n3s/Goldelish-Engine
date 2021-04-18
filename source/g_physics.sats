@@ -7,39 +7,33 @@ a basic physics system definition
 staload "./g_engine.sats"
 staload "./assets/cmesh.sats"
 
-fun vec3_gravity () : vec3 = "sta#%"
+fn vec3_gravity () : vec3
 
-fun quadratic ( a: float, b: float, c: float, t0: (*float*) ptr, t1: (*float*) ptr ) : bool = "sta#%"
+fn quadratic ( a: float, b: float, c: float, t0: &float, t1: &float ) : bool
 
-typedef collision = @{
-	collided=bool,
-	time=float,
-	point=vec3,
-	norm=vec3,
-	flags=int
-}
+abst0ype collision ( bool )
 
-fun collision_none () : collision = "sta#%"
-fun collision_new ( time: float, point: vec3, norm: vec3 ) : collision = "sta#%"
-fun collision_merge ( c0: collision, c1: collision ) : collision = "sta#%"
+fn collision_none ( suc: &bool? >> bool sc ) : #[sc:bool | sc==false] collision(sc)
+fn collision_new ( time: float, point: vec3, norm: vec3, suc: &bool? >> bool sc ) : #[sc:bool | sc==true] collision(sc)
+fn collision_merge {b0,b1:bool} ( b0: bool b0, c0: collision(b0), b1: bool b1, c1: collision(b1), suc: &bool? >> bool sc ) : #[sc:bool | sc==b0||b1] collision(sc)
 
-fun point_collide_point ( p: vec3, v: vec3, p0: vec3 ) : collision = "sta#%"
-fun point_collide_sphere ( p: vec3, v: vec3, s: sphere ) : collision = "sta#%"
-fun point_collide_ellipsoid ( p: vec3, v: vec3, e: ellipsoid ) : collision = "sta#%"
-fun point_collide_edge ( p: vec3, v: vec3, e0: vec3, e1: vec3 ) : collision = "sta#%"
-fun point_collide_face ( p: vec3, v: vec3, ct: ctri ) : collision = "sta#%"
-fun point_collide_ctri ( p: vec3, v: vec3, ct: ctri ) : collision = "sta#%"
-fun point_collide_mesh ( p: vec3, v: vec3, m: (*cmesh*) ptr, world: mat4, world_normal: mat3 ) : collision = "sta#%"
+fn point_collide_point ( p: vec3, v: vec3, p0: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn point_collide_sphere ( p: vec3, v: vec3, s: sphere, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn point_collide_ellipsoid ( p: vec3, v: vec3, e: ellipsoid, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn point_collide_edge ( p: vec3, v: vec3, e0: vec3, e1: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn point_collide_face ( p: vec3, v: vec3, ct: ctri, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn point_collide_ctri ( p: vec3, v: vec3, ct: ctri, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn point_collide_mesh ( p: vec3, v: vec3, m: &cmesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 
-fun sphere_collide_point ( s: sphere, v: vec3, p: vec3 ) : collision = "sta#%"
-fun sphere_collide_sphere ( s: sphere, v: vec3, s0: sphere ) : collision = "sta#%"
-fun sphere_collide_edge ( s: sphere, v: vec3, e0: vec3, e1: vec3 ) : collision = "sta#%"
-fun sphere_collide_face ( s: sphere, v: vec3, ct: ctri ) : collision = "sta#%"
-fun sphere_collide_ctri ( s: sphere, v: vec3, ct: ctri ) : collision = "sta#%"
-fun sphere_collide_mesh ( s: sphere, v: vec3, m: (*mesh*) ptr, world: mat4, world_normal: mat3 ) : collision = "sta#%"
+fn sphere_collide_point ( s: sphere, v: vec3, p: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn sphere_collide_sphere ( s: sphere, v: vec3, s0: sphere, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn sphere_collide_edge ( s: sphere, v: vec3, e0: vec3, e1: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn sphere_collide_face ( s: sphere, v: vec3, ct: ctri, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn sphere_collide_ctri ( s: sphere, v: vec3, ct: ctri, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn sphere_collide_mesh ( s: sphere, v: vec3, m: &mesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 
-fun ellipsoid_collide_mesh ( e: ellipsoid, v: vec3, m: (*cmesh*) ptr, world: mat4, world_normal: mat3 ) : collision = "sta#%"
-fun ellipsoid_collide_point ( e: ellipsoid, v: vec3, p: vec3 ) : collision = "sta#%"
-fun ellipsoid_collide_sphere ( e: ellipsoid, v: vec3, s: sphere ) : collision = "sta#%"
+fn ellipsoid_collide_mesh ( e: ellipsoid, v: vec3, m: &cmesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn ellipsoid_collide_point ( e: ellipsoid, v: vec3, p: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn ellipsoid_collide_sphere ( e: ellipsoid, v: vec3, s: sphere, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 
-//fun collision_response_slide ( x: ptr, position: (*vec3*) ptr, velocity: (*vec3*) ptr, collision (*colfunc)(void* x, vec3* pos, vec3* vel)(*<--this will need to be rewritten*) ) : void = "sta#%"
+fn{a:t@ype} collision_response_slide {sc:bool} ( x: &a, position: &vec3, velocity: &vec3, colfunc: &(a, vec3, vec3) -<clo1> collision(sc) ): void
