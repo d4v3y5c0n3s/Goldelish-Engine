@@ -10,11 +10,13 @@ staload "./cmesh.sats"
 staload "./../data/vertex_list.sats"
 staload "./../g_engine.sats"
 staload "./../g_asset.sats"
+staload "./../SDL2/SDL_local.sats"
 
 local
 
 datavtype CMESH_TREE =
 | CMESH_BRANCH of (plane, CMESH_TREE, CMESH_TREE)
+| CMESH_LEAF_EMPTY of sphere
 | {n:nat} CMESH_LEAF of (arrayptr(ctri, n), int n, sphere)
 
 assume cmesh = CMESH_TREE
@@ -71,6 +73,7 @@ implement{cmesh} asset_delete( cm ) = cmesh_delete($UNSAFE.castvwtp0(cm))
 implement cmesh_delete ( cm ) =
     case+ cm of
     | ~CMESH_BRANCH(_, cm1, cm2) => (cmesh_delete(cm1); cmesh_delete(cm2))
+    | ~CMESH_LEAF_EMPTY(_) => ()
     | ~CMESH_LEAF(arr, n, _) => arrayptr_free(arr)
 
 fn cmesh_center ( cm: !cmesh ): vec3 =
@@ -90,7 +93,7 @@ fn cmesh_center ( cm: !cmesh ): vec3 =
         in
             loop(arr, vec3_zero(), n, 0)
         end
-    | CMESH_BRANCH(_, _, _) => vec3_zero()
+    | _ => vec3_zero()
 
 fn cmesh_radius ( cm: !cmesh ): float =
     case+ cm of
@@ -109,7 +112,7 @@ fn cmesh_radius ( cm: !cmesh ): float =
         in
             loop(arr, cmesh_center(cm), 0.f, n, 0)
         end
-    | CMESH_BRANCH(_, _, _) => 0.f
+    | _ => 0.f
 
 fn cmesh_box ( cm: !cmesh ): box =
     case+ cm of
@@ -149,7 +152,7 @@ fn cmesh_box ( cm: !cmesh ): box =
         in
             loop(arr, ((0.f, 0.f), (0.f, 0.f), (0.f, 0.f)), n, 0)
         end
-    | CMESH_BRANCH(_, _, _) => box_new(0.f, 0.f, 0.f, 0.f, 0.f, 0.f)
+    | _ => box_new(0.f, 0.f, 0.f, 0.f, 0.f, 0.f)
 
 fn cmesh_division ( cm: !cmesh ): plane = let
     val bb = cmesh_box(cm)
@@ -166,54 +169,136 @@ end
 implement cmesh_bound ( cm ) =
     case+ cm of
     | CMESH_LEAF(_, _, _) => sphere_new(cmesh_center(cm), cmesh_radius(cm))
-    | CMESH_BRANCH(_, _, _) => sphere_new(vec3_zero(), 0.f)
-end////
+    | _ => sphere_new(vec3_zero(), 0.f)
+
 implement cmesh_subdivide ( cm, iterations ) =
+if iterations > 0 then let
+  val division = cmesh_division(cm)
+in
     case+ cm of
-    | CMESH_LEAF(arr, n, _) =>
-      if n < 10 then ()
+    | @CMESH_LEAF(arr, n, _) =>
+      if n < 10 then fold@(cm)
       else let
-        val division = cmesh_division(cm)
+        dataprop FBT_IN (int, a:addr) =
+        | FBT_NIL(0, a)
+        | {n:nat} FBT_CONS(n+1, a) of FBT_IN(n, a)
         
-        fun loop1 {i:nat}{j:nat | i <= j}
-        ( a: !arrayptr(ctri, j),
-        nfnb: (int, int),
-        j: int j, i: int i ): (int, int) =
-            if i < j then let
-                val c: ctri = a[i]
+        typedef fb_count (a:addr, f:int, b:int) = [c:nat | f >= 0; b >= 0] (FBT_IN(c, a) | int f, int b)
+        
+        fn fb_count_init {l:addr; s:nat} ( a: !arrayptr(ctri, l, s) ) : fb_count(l, 0, 0) = (FBT_NIL() | 0, 0)
+        
+        fn tri_fb_test {c:nat}{l:addr}
+        (
+        pfin: FBT_IN(c, l) | t: ctri, dv: plane
+        ): (FBT_IN(c+1, l) | intBtwe(0,2)) =
+          if ctri_inside_plane(t, dv) then (FBT_CONS(pfin) | 0)
+          else if ctri_outside_plane(t, dv) then (FBT_CONS(pfin) | 1)
+          else (FBT_CONS(pfin) | 2)
+        
+        fun loop1 {i,j:nat | i <= j}{a:addr}{f1,b1:nat}
+        ( a: !arrayptr(ctri, a, j), dv: plane,
+        fbc: fb_count(a, f1, b1),
+        j: int j, i: int i ): [f2,b2:nat] fb_count(a, f2, b2) = (
+          if i < j then let
+            val c: ctri = a[i]
+            val (pf_tr | tr) = tri_fb_test(fbc.0 | c, dv)
+            val ret_fbc = ( ifcase
+              | tr=0 => (FBT_CONS(fbc.0) | fbc.1+1, fbc.2)
+              | tr=1 => (FBT_CONS(fbc.0) | fbc.1, fbc.2+1)
+              | _ => (FBT_CONS(fbc.0) | fbc.1+1, fbc.2+1)
+            ): [f,b:nat] fb_count(a,f,b)
+          in
+            loop1(a, dv, ret_fbc, j, i+1)
+          end else fbc
+        )
+        
+        fun front_loop {a,b:addr; fi:nat; fc,bc:nat; c:nat}{i,j:nat | i <= j}
+        ( pf_in: FBT_IN(c, a) | a: !arrayptr(ctri, a, j), dv: plane,
+        fbc: fb_count(a, fc, bc), f_i: int fi, f_arr: !arrayptr(ctri, b, fc),
+        j: int j, i: int i ): void = (
+          if i < j then let
+            val c: ctri = a[i]
+            val (pf_tr | tr) = tri_fb_test(pf_in | c, dv)
+          in
+            ifcase
+            | tr=0 || tr=2 => let
+              extern praxi confirm_already_tested_array_front {a:addr}{f,b,c,i:nat}
+              (
+              pf_in: FBT_IN(c, a) | cnt: fb_count(a, f, b), ind: int i
+              ): [i < f] void
+              prval () = confirm_already_tested_array_front(pf_tr | fbc, f_i)
+              val () = f_arr[f_i] := c
             in
-                if ctri_inside_plane(c, division) then (
-                  loop1(a, (nfnb.0, nfnb.1+1), j, i+1)
-                ) else if ctri_outside_plane(c, division) then (
-                  loop1(a, (nfnb.0+1, nfnb.1), j, i+1)
-                ) else loop1(a, (nfnb.0+1, nfnb.1+1), j, i+1)
-            end else nfnb
-            val (num_front, num_back) = loop1(arr, (0, 0), n, 0)
+              front_loop(pf_tr | a, dv, fbc, f_i+1, f_arr, j, i+1)
+            end
+            | _ => front_loop(pf_tr | a, dv, fbc, f_i, f_arr, j, i+1)
+          end else ()
+        )
+        
+        fun back_loop {a,b:addr; bi:nat; fc,bc:nat; c:nat}{i,j:nat | i <= j}
+        ( pf_in: FBT_IN(c, a) | a: !arrayptr(ctri, a, j), dv: plane,
+        fbc: fb_count(a, fc, bc), b_i: int bi, b_arr: !arrayptr(ctri, b, bc),
+        j: int j, i: int i ): void = (
+          if i < j then let
+            val c: ctri = a[i]
+            val (pf_tr | tr) = tri_fb_test(pf_in | c, dv)
+          in
+            ifcase
+            | tr=1 || tr=2 => let
+              extern praxi confirm_already_tested_array_back {a:addr}{f,b,c,i:nat}
+              (
+              pf_in: FBT_IN(c, a) | cnt: fb_count(a, f, b), ind: int i
+              ): [i < b] void
+              prval () = confirm_already_tested_array_back(pf_tr | fbc, b_i)
+              val () = b_arr[b_i] := c
+            in
+              back_loop(pf_tr | a, dv, fbc, b_i+1, b_arr, j, i+1)
+            end
+            | _ => back_loop(pf_tr | a, dv, fbc, b_i, b_arr, j, i+1)
+          end else ()
+        )
+        
+        val fbc_init = fb_count_init(arr)
+        val fb_cnt = loop1(arr, division, fbc_init, n, 0)
       in
-        if num_front > n * 0.75f || num_back > n * 0.75f then ()
+        if fb_cnt.1 > n * 0.75f || fb_cnt.2 > n * 0.75f then fold@(cm)
         else let
-          val front =
-          val back =
-          val (i_front, i_back) =
-          
-          //  essentially, we need to divide the tris into "front," "back,"
-          //or both; then later we will recursively call the function again
-          //on "front" & "back" (may need to change fn to fun)
-          (*
-          as a side note, in the future it may be worth changing cmesh to
-          not require this function to have two loops (because that can be
-          slow); instead, you could use statics & t.p. to guarantee that
-          cmeshes passes can be subdivided (you won't need some of the above
-          conditionals too)
-          *)
-          fun loop2
+          val ct0 = ctri_new(vec3_zero(), vec3_zero(), vec3_zero(), vec3_zero())
+          var f_cm = ( if fb_cnt.1 > 0 then let
+            var f_arr = arrayptr_make_elt<ctri>(size_of_int(fb_cnt.1), ct0)
+            val () = front_loop(FBT_NIL() | arr, division, fb_cnt, 0, f_arr, n, 0)
+            var ret = CMESH_LEAF(f_arr, fb_cnt.1, sphere_new(vec3_zero(), 0.f))
+            val f_bound = cmesh_bound(ret)
+            val- @CMESH_LEAF(_, _, bnd) = ret
+            val () = bnd := f_bound
+            prval () = fold@(ret)
+          in
+            ret
+          end else CMESH_LEAF_EMPTY(sphere_new(vec3_zero(), 0.f))
+          ): cmesh
+          var b_cm = ( if fb_cnt.2 > 0 then let
+            var b_arr = arrayptr_make_elt<ctri>(size_of_int(fb_cnt.2), ct0)
+            val () = back_loop(FBT_NIL() | arr, division, fb_cnt, 0, b_arr, n, 0)
+            var ret = CMESH_LEAF(b_arr, fb_cnt.2, sphere_new(vec3_zero(), 0.f))
+            val b_bound = cmesh_bound(ret)
+            val- @CMESH_LEAF(_, _, bnd) = ret
+            val () = bnd := b_bound
+            prval () = fold@(ret)
+          in
+            ret
+          end else CMESH_LEAF_EMPTY(sphere_new(vec3_zero(), 0.f))
+          ): cmesh
+          val () = cmesh_subdivide(f_cm, iterations-1)
+          val () = cmesh_subdivide(b_cm, iterations-1)
+          val () = arrayptr_free(arr)
+          val () = free@{0}(cm)
         in
+          cm := CMESH_BRANCH(division, f_cm, b_cm)
         end
       end
-    | CMESH_BRANCH(_, _, _) => ()
+    | _ => ()
+end else ()
 end////
-implement SDL_RWreadline ( file, buffer, buffersize ) =
-
 implement col_load_file ( filename ) =
 
 implement{cmesh} asset_get ( filename ) =

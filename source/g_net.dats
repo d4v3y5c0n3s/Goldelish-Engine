@@ -46,28 +46,6 @@ implement net_is_server ( nr ) = nr.is_server
 
 implement net_is_client ( nr ) = ~nr.is_server
 
-fn SDLNet_TCP_RecvLine
-(
-    sock: !TCPsocket1, maxlen: int
-) : (bool, Strptr1) = let
-
-	fun loop ( sock: !TCPsocket1, i: int, s: stream_vt(charNZ) ) : (bool, stream_vt(charNZ)) =
-		let
-			var c: charNZ = ' '
-			val status = SDLNet_TCP_Recv(sock, c, 1)
-		in
-			if status = ~1 || i = maxlen-1 then let
-				val () = stream_vt_free(s) in (true, stream_vt_make_nil())
-			end else if c = '\n' then (true, s)
-			else if status != 0 then loop(sock, i+1, stream_vt_append(s, stream_vt_make_sing(c)))
-			else (false, s)
-		end
-    
-    val (b, strm) = loop(sock, 0, stream_vt_make_nil())
-in
-    (b, string_make_stream_vt(strm))
-end
-
 #define MAX_FAIL_CNT 100
 
 implmnt net_http_get ( nr, out, max, host_b, path_b ) = let

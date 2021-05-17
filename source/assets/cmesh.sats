@@ -22,4 +22,4 @@ fn col_load_file ( filename: string ) : cmesh
 fn cmesh_delete ( cm: cmesh ) : void
 
 fn cmesh_bound ( cm: !cmesh ) : sphere
-fn cmesh_subdivide {it:int | it > 0} ( cm: !cmesh, iterations: int it ) : void
+fun cmesh_subdivide {it:nat} ( cm: &cmesh, iterations: int it ) : void
