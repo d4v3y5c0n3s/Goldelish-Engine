@@ -8,6 +8,7 @@
 
 staload "./g_physics.sats"
 staload "./g_engine.sats"
+staload "./assets/cmesh.sats"
 
 local
 
@@ -180,18 +181,70 @@ implmnt point_collide_ctri ( p, v, ct, suc ) =
         end
     end
 
-(*
-need to finish cmesh before continuing
 
-don't forget to use the system outlined in g_asset by implementing the corresponding templates
-*)
-end////
-fn point_collide_mesh_space
+fun point_collide_mesh_space
 (
-    p: vec3, v: vec3, cm: &cmesh, world: mat4, world_normal: mat3,
+    p: vec3, v: vec3, cm: !cmesh, world: mat4, world_normal: mat3,
     space: mat3, space_normal: mat3, suc: &bool? >> bool sc
 ) : #[sc:bool] collision(sc) =
+  case+ cm of
+  | CMESH_BRANCH(dv, _, _) => let
+    var div1 = dv
+    var div2 = plane_transform(div1, world, world_normal)
+    var div3 = plane_transform_space(div2, space, space_normal)
+    var bl: bool
+  in
+    if point_swept_inside_plane(p, v, div3) then let
+      val-CMESH_BRANCH(_, _, back_cm) = cm
+    in
+      point_collide_mesh_space(p, v, back_cm, world, world_normal, space, space_normal, suc)
+    end else if point_swept_outside_plane(p, v, div3) then let
+      val-CMESH_BRANCH(_, front_cm, _) = cm
+    in
+      point_collide_mesh_space(p, v, front_cm, world, world_normal, space, space_normal, suc)
+    end else let
+      val-CMESH_BRANCH(_, front_cm, back_cm) = cm
+      var b0: bool
+      val c0 = point_collide_mesh_space(p, v, back_cm, world, world_normal, space, space_normal, b0)
+      var b1: bool
+      val c1 = point_collide_mesh_space(p, v, front_cm, world, world_normal, space, space_normal, b1)
+    in
+      collision_merge(b0, c0, b1, c1, suc)
+    end
+  end
+  | CMESH_LEAF_EMPTY(_) => let
+    var bl: bool
+    val ret = collision_none(bl)
+  in
+    suc := bl;
+    ret
+  end
+  | CMESH_LEAF(lf_arr, lf_sz, _) => let
+    var bl: bool
+    fun loop {i,j:nat}{ci:bool} (
+      arr_in: !arrayptr(ctri, j), j: int j, i: int i,
+      c: collision(ci), b: &bool ci >> bool sc
+    ): #[sc:bool] collision(sc) =
+      if i < j then let
+        val ci = arr_in[i]
+        val ci = ctri_transform(ci, world, world_normal)
+        val ci = ctri_transform_space(ci, space, space_normal)
+        var pc_b: bool
+        val pc = point_collide_ctri(p, v, ci, pc_b)
+        var ret_b: bool
+        val ret_c = collision_merge(b, c, pc_b, pc, ret_b)
+      in
+        b := ret_b;
+        loop(arr_in, j, i+1, ret_c, b)
+      end else c
+    val ret = collision_none(bl)
+    val ret = loop(lf_arr, lf_sz, 0, ret, bl)
+  in
+    suc := bl;
+    ret
+  end
 
+end////
 implmnt point_collide_mesh ( p, v, m, world, world_normal, suc ) =
 
 implmnt sphere_collide_face ( s, v, ct, suc ) =

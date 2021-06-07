@@ -65,6 +65,7 @@ provides an interface to SDL
 #define sdl_SDLNet_Quit SDLNet_Quit
 
 #define sdl_SDL_RWFromFile SDL_RWFromFile
+#define sdl_SDL_RWread SDL_RWread
 
 #define sdl_SDL_InitSubSystem SDL_InitSubSystem
 #define sdl_SDL_CreateWindow SDL_CreateWindow

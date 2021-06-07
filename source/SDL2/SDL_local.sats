@@ -155,6 +155,7 @@ fn SDL_Delay ( ms:uint32 ) : void = "mac#%"
 fn SDL_ShowCursor ( int ) : int = "mac#%"
 
 fn SDL_RWFromFile ( file: string, mode: string ) : SDL_RWops = "mac#%"
-//fn SDL_
+fn SDL_RWread ( SDL_RWops, &charNZ, int, int ) : size_t = "mac#%"
+fn SDL_RWreadline {bfr:nat} ( file: SDL_RWops, buffersize: int bfr ) : (bool, Strptr1)
 
 fn SDLNet_TCP_RecvLine (sock: !TCPsocket1, maxlen: int): (bool, Strptr1)

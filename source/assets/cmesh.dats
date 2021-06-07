@@ -14,13 +14,6 @@ staload "./../SDL2/SDL_local.sats"
 
 local
 
-datavtype CMESH_TREE =
-| CMESH_BRANCH of (plane, CMESH_TREE, CMESH_TREE)
-| CMESH_LEAF_EMPTY of sphere
-| {n:nat} CMESH_LEAF of (arrayptr(ctri, n), int n, sphere)
-
-assume cmesh = CMESH_TREE
-
 in
 
 fn ctri_bound ( t: ctri ): sphere = let
@@ -298,7 +291,9 @@ in
       end
     | _ => ()
 end else ()
-end////
-implement col_load_file ( filename ) =
 
-implement{cmesh} asset_get ( filename ) =
+implement{cmesh} asset_get ( filename ) = $UNSAFE.castvwtp0(col_load_file($UNSAFE.castvwtp1(filename)))
+
+//implmnt col_load_file ( filename ) =
+
+end

@@ -16,7 +16,12 @@ fn ctri_inside_plane ( t: ctri, p: plane ) : bool
 fn ctri_outside_plane ( t: ctri, p: plane ) : bool
 fn ctri_intersects_plane ( t: ctri, p: plane ) : bool
 
-absvt@ype cmesh
+datavtype CMESH_TREE =
+| CMESH_BRANCH of (plane, CMESH_TREE, CMESH_TREE)
+| CMESH_LEAF_EMPTY of sphere
+| {n:nat} CMESH_LEAF of (arrayptr(ctri, n), int n, sphere)
+
+vtypedef cmesh = CMESH_TREE
 
 fn col_load_file ( filename: string ) : cmesh
 fn cmesh_delete ( cm: cmesh ) : void
