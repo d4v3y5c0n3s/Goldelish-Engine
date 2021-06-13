@@ -30,10 +30,9 @@ fn sphere_collide_sphere ( s: sphere, v: vec3, s0: sphere, suc: &bool? >> bool s
 fn sphere_collide_edge ( s: sphere, v: vec3, e0: vec3, e1: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 fn sphere_collide_face ( s: sphere, v: vec3, ct: ctri, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 fn sphere_collide_ctri ( s: sphere, v: vec3, ct: ctri, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
-fn sphere_collide_mesh ( s: sphere, v: vec3, m: &mesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
+fn sphere_collide_mesh ( s: sphere, v: vec3, m: &cmesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 
 fn ellipsoid_collide_mesh ( e: ellipsoid, v: vec3, m: &cmesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 fn ellipsoid_collide_point ( e: ellipsoid, v: vec3, p: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
-fn ellipsoid_collide_sphere ( e: ellipsoid, v: vec3, s: sphere, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 
 fn{a:t@ype} collision_response_slide {sc:bool} ( x: &a, position: &vec3, velocity: &vec3, colfunc: &(a, vec3, vec3) -<clo1> collision(sc) ): void
