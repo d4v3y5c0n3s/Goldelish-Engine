@@ -35,7 +35,7 @@ fn sphere_collide_mesh ( s: sphere, v: vec3, m: &cmesh, world: mat4, world_norma
 fn ellipsoid_collide_mesh ( e: ellipsoid, v: vec3, m: &cmesh, world: mat4, world_normal: mat3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 fn ellipsoid_collide_point ( e: ellipsoid, v: vec3, p: vec3, suc: &bool? >> bool sc ) : #[sc:bool] collision(sc)
 
-fn{c1,c2:vt@ype} collision_collide ( c1: !c1, c2: !c2, pos: vec3, vel: vec3, suc: &bool? >> bool sc ): #[sc:bool] collision(sc)
+fn{c1,c2:vt@ype} collision$collide ( c1: !c1, c2: !c2, pos: vec3, vel: vec3, suc: &bool? >> bool sc ): #[sc:bool] collision(sc)
 fn{t1,t2:vt@ype} collision_response_slide ( position: &vec3, velocity: &vec3, t1: !t1, t2: !t2 ): void
 
 fn{t1,t2:vt@ype} collision_response_slide_fun {sc:bool} (

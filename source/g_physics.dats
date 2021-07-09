@@ -469,19 +469,19 @@ implmnt {t1,t2} collision_response_slide ( position, velocity, t1, t2 ) = let
     val () = v := vec3_reflect(v, c_vals.norm)
     val () = p := vec3_add(p, v)
     var col_b: bool
-    val col = collision_collide<t1,t2>(thing1, thing2, p, v, col_b)
+    val col = collision$collide<t1,t2>(thing1, thing2, p, v, col_b)
   in
     if i = 100 || ~col_b then p := vec3_add(p, v)
     else loop(col, col_b, thing1, thing2, p, v, i+1)
   end
   var init_cb: bool
-  val init_c = collision_collide<t1,t2>(t1, t2, position, velocity, init_cb)
+  val init_c = collision$collide<t1,t2>(t1, t2, position, velocity, init_cb)
 in
   loop(init_c, init_cb, t1, t2, position, velocity, 0)
 end
 
 implmnt {t1,t2} collision_response_slide_fun ( position, velocity, t1, t2, f ) = let
-  implement collision_collide<t1,t2>(c1,c2,pos,vel,suc) = f(c1,c2,pos,vel,suc)
+  implement collision$collide<t1,t2>(c1,c2,pos,vel,suc) = f(c1,c2,pos,vel,suc)
 in
   collision_response_slide<t1,t2>(position, velocity, t1, t2)
 end

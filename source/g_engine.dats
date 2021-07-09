@@ -19,6 +19,7 @@ extern castfn uint_to_uint32 ( x: uint ): uint32
 extern castfn int_to_uint ( x: int ): uint
 extern castfn uint_to_int ( x: uint ): int
 extern castfn int_to_float ( x: int ): float
+extern castfn int_to_uint32 ( x: int ): uint32
 
 local
   assume fpath = Strptr1
@@ -2398,10 +2399,11 @@ typedef tri_uint32(v:int) = [un:int | 0 <= un; un+1 <= v] uint32(un)
 
 assume mesh =
 [v,t:nat | v == t*3]
-[vl,tl:addr]
 @{
-  v=int v, t=int t, vap=arrayptr(vertex, vl, v), tap=arrayptr(tri_uint32(v), tl, t*3)
+  v=int v, t=int t, vap=arrayptr(vertex, v), tap=arrayptr(tri_uint32(v), t*3)
 }
+
+extern castfn int2uint32 {i:int} ( int i ) : uint32 i
 
 in
 
@@ -2425,13 +2427,11 @@ in
 end
 
 implement mesh_new (  ) = let
-  val vert_array = arrayptr_make_uninitized<vertex>(size_of_int(0))
-  val tri_array = arrayptr_make_uninitized<tri_uint32(0)>(size_of_int(0))
+  val vert_array = arrayptr_make_elt(size_of_int(3), vertex_new())
+  val tri_array = arrayptr_make_elt(size_of_int(3), (int2uint32(0)):tri_uint32(1))
 in
-  arrayptr_initize(vert_array, size_of_int(0));
-  arrayptr_initize(tri_array, size_of_int(0));
   (@{
-    v=0, t=0,
+    v=3, t=1,
     vap=vert_array,
     tap=tri_array
   }:mesh)
@@ -2761,15 +2761,17 @@ end
 
 implement model_new (  ) = let
   val mesh_array = arrayptr_make_uninitized<mesh>(size_of_int(0))
+  implmnt array_initize$init<mesh>(i, x) = x := mesh_new()
 in
   arrayptr_initize(mesh_array, size_of_int(0));
   (0, mesh_array):model
 end
 
-implement model_delete ( m ) =
-(
+implement model_delete ( m ) = let
+  implmnt array_uninitize$clear<mesh> (i, x) = mesh_delete(x)
+in
   arrayptr_freelin(m.1, size_of_int(m.0))
-)
+end
 
 implement model_generate_normals ( m ) = let
   fun mesh_gen_norm_loop {l:addr}{i,j:int | 0 <= i+1; i+1 <= j} .<i+1>.

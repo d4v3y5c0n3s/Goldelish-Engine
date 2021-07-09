@@ -13,49 +13,30 @@ staload "./SDL2/SDL_local.sats"
 
 local
 
-assume joysticks = [l:addr] arrayptr(SDL_Joystick_ptr0, l, MAX_STICKS)
+assume joysticks = arrayptr(SDL_Joystick_ptr0, MAX_STICKS)
+
+extern castfn size2int ( size_t ) : int
 
 in
 
 implmnt joystick_init () = let
-    val error = SDL_InitSubSystem(SDL_INIT_JOYSTICK)
+  val error = SDL_InitSubSystem(SDL_INIT_JOYSTICK)
 in
-    if error = ~1 then None_vt()
-    else let
-        val num_sticks = SDL_NumJoysticks()
-        val [j:addr] joy_arr = arrayptr_make_uninitized<SDL_Joystick_ptr0>(size_of_int(MAX_STICKS))
-        
-        fun init_arr {i:int | i >= 0 && i <= MAX_STICKS} ( p: ptr, i: int i ) : void =
-        if i < MAX_STICKS then let
-            val stick_i = SDL_JoystickOpen(i)
-            val () = $UNSAFE.ptr0_set<SDL_Joystick_ptr0>(p, stick_i)
-        in
-            init_arr(ptr0_succ<SDL_Joystick_ptr0>(p), i+1)
-        end else ()
-        
-        val () = init_arr(ptrcast(joy_arr), 0)
-    in
-        Some_vt(
-            ($UNSAFE.castvwtp0{arrayptr(SDL_Joystick_ptr0, j, MAX_STICKS)}(joy_arr)):joysticks
-        )
-    end
+  if error = ~1 then None_vt()
+  else let
+    val num_sticks = SDL_NumJoysticks()
+    val joy_arr = arrayptr_make_uninitized<SDL_Joystick_ptr0>(size_of_int(MAX_STICKS))
+    implmnt array_initize$init<SDL_Joystick_ptr0> (i, x) = x := SDL_JoystickOpen(size2int(i))
+    val () = arrayptr_initize<SDL_Joystick_ptr0>(joy_arr, size_of_int(MAX_STICKS))
+  in
+    Some_vt( (joy_arr):joysticks )
+  end
 end
 
 implmnt joystick_finish ( jstks ) = let
-    fun loop {i:int | i >= 0 && i <= MAX_STICKS}
-    ( i: int i, p: ptr(*!arrayptr(SDL_Joystick_ptr0, MAX_STICKS)*) ) : void =
-    if i < MAX_STICKS then let
-        val p_i = $UNSAFE.ptr0_get<SDL_Joystick_ptr0>(p)
-        val () = SDL_JoystickClose(p_i)
-    in
-        loop(i+1, ptr0_succ<SDL_Joystick_ptr0>(p))
-    end else ()
+  implmnt array_uninitize$clear<SDL_Joystick_ptr0>(i, x) = SDL_JoystickClose(x)
 in
-    loop(0, ptrcast(jstks));
-    arrayptr_freelin(
-        $UNSAFE.castvwtp0{arrayptr(SDL_Joystick_ptr0, MAX_STICKS)}(jstks),
-        size_of_int(MAX_STICKS)
-    )
+  arrayptr_freelin(jstks, size_of_int(MAX_STICKS))
 end
 
 implmnt joystick_count ( jstks ) = SDL_NumJoysticks()

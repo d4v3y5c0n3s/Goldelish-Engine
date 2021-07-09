@@ -7,7 +7,7 @@ user interface manager
 staload "./ui/ui_style.sats"
 staload "./g_engine.sats"
 
-typedef ui_elem = ()//  defined as void, perhaps revise this
+absvt@ype ui_elem
 
 fun ui_init () : void = "sta#%"
 fun ui_finish () : void = "sta#%"
