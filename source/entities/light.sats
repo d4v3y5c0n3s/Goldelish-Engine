@@ -33,7 +33,7 @@ typedef light = @{
 	aspect_ratio=float
 }
 
-fun light_new () : (*light*) ptr = "sta#%"
+fun light_new () : light
 fun light_new_position ( position: vec3 ) : (*light*) ptr = "sta#%"
 
 fun light_new_type ( position: vec3, type: int ) : (*light*) ptr = "sta#%"

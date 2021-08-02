@@ -6,6 +6,10 @@ a collection of static objects; supports instanced rendering
 
 staload "./../g_engine.sats"
 staload "./../g_asset.sats"
+staload "./../assets/renderable.sats"
+staload "./../assets/cmesh.sats"
+
+staload "./../SDL2/SDL_local.sats"
 
 typedef instance_data = @{
 	position=vec3,
@@ -18,17 +22,17 @@ typedef instance_data = @{
 vtypedef instance_object = @{
 	num_instances=int,
 	instances=instance_data,
-	world_buffer=$extype"GLuint",
+	world_buffer=GLuint,
 	bound=sphere,
-	renderable=asset_hndl,
-	collision_body=asset_hndl
+	renderable=asset_hndl(renderable),
+	collision_body=asset_hndl(cmesh)
 }
 
-fun instance_object_new () : (*instance_object*) ptr = "sta#%"
-fun instance_object_delete ( io: (*instance_object*) ptr ) : void = "sta#%"
+fun instance_object_new () : (*instance_object*) ptr
+fun instance_object_delete ( io: (*instance_object*) ptr ) : void
 
-fun instance_object_update ( io: (*instance_object*) ptr ) : void = "sta#%"
-fun instance_object_add_instance ( io: (*instance_object*) ptr, position: vec3, scale: vec3, rotation: quat ) : void = "sta#%"
-fun instance_object_rem_instance ( io: (*instance_object*) ptr, i: int ) : void = "sta#%"
-fun instance_object_world ( io: (*instance_object*) ptr, i: int ) : mat4 = "sta#%"
-fun instance_object_world_normal ( io: (*instance_object*) ptr, i: int ) : mat3 = "sta#%"
+fun instance_object_update ( io: (*instance_object*) ptr ) : void
+fun instance_object_add_instance ( io: (*instance_object*) ptr, position: vec3, scale: vec3, rotation: quat ) : void
+fun instance_object_rem_instance ( io: (*instance_object*) ptr, i: int ) : void
+fun instance_object_world ( io: (*instance_object*) ptr, i: int ) : mat4
+fun instance_object_world_normal ( io: (*instance_object*) ptr, i: int ) : mat3

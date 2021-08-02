@@ -8,13 +8,13 @@ staload "./../g_engine.sats"
 staload "./../g_asset.sats"
 staload "./shader.sats"
 
-vtypedef material_item = @{
+vtypedef material_item = [a:vt@ype] @{
 	as_int=int,
 	as_float=float,
 	as_vec2=vec2,
 	as_vec3=vec3,
 	as_vec4=vec4,
-	as_asset=asset_hndl
+	as_asset=asset_hndl(a)
 }
 
 (*

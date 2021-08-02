@@ -20,37 +20,37 @@ typedef landscape_blobtree = @{
 }
 
 vtypedef landscape = @{
-	heightmap=asset_hndl,
-	attribmap=asset_hndl,
+	heightmap=asset_hndl(image),
+	attribmap=asset_hndl(image),
 	attribimage=(*image*) ptr,
 	scale=float,
 	size_x=float,
 	size_y=float,
 	blobtree=(*landscape_blobtree*) ptr,
-	ground0=asset_hndl,
-	ground1=asset_hndl,
-	ground2=asset_hndl,
-	ground3=asset_hndl,
-	ground0_nm=asset_hndl,
-	ground1_nm=asset_hndl,
-	ground2_nm=asset_hndl,
-	ground3_nm=asset_hndl
+	ground0=asset_hndl(image),
+	ground1=asset_hndl(image),
+	ground2=asset_hndl(image),
+	ground3=asset_hndl(image),
+	ground0_nm=asset_hndl(image),
+	ground1_nm=asset_hndl(image),
+	ground2_nm=asset_hndl(image),
+	ground3_nm=asset_hndl(image)
 }
 
-fun landscape_new () : (*landscape*) ptr = "sta#%"
-fun landscape_delete ( l: (*landscape*) ptr ) : void = "sta#%"
+fun landscape_new () : (*landscape*) ptr
+fun landscape_delete ( l: (*landscape*) ptr ) : void
 
-fun landscape_blobtree_new ( ls: (*landscape*) ptr ) : (*landscape_blobtree*) ptr = "sta#%"
-fun landscape_blobtree_delete ( lbt: (*landscape_blobtree*) ptr ) : void = "sta#%"
-fun landscape_blobtree_generate ( l: (*landscape*) ptr ) : void = "sta#%"
+fun landscape_blobtree_new ( ls: (*landscape*) ptr ) : (*landscape_blobtree*) ptr
+fun landscape_blobtree_delete ( lbt: (*landscape_blobtree*) ptr ) : void
+fun landscape_blobtree_generate ( l: (*landscape*) ptr ) : void
 
-fun landscape_world ( l: (*landscape*) ptr ) : mat4 = "sta#%"
-fun landscape_world_normal ( l: (*landscape*) ptr ) : mat3 = "sta#%"
-fun landscape_height ( l: (*landscape*) ptr, pos: vec2 ) : float = "sta#%"
-fun landscape_normal ( l: (*landscape*) ptr, pos: vec2 ) : vec3 = "sta#%"
-fun landscape_axis ( l: (*landscape*) ptr, pos: vec2 ) : mat3 = "sta#%"
+fun landscape_world ( l: (*landscape*) ptr ) : mat4
+fun landscape_world_normal ( l: (*landscape*) ptr ) : mat3
+fun landscape_height ( l: (*landscape*) ptr, pos: vec2 ) : float
+fun landscape_normal ( l: (*landscape*) ptr, pos: vec2 ) : vec3
+fun landscape_axis ( l: (*landscape*) ptr, pos: vec2 ) : mat3
 
-fun landscape_paint_height ( l: (*landscape*) ptr, pos: vec2, radius: float, value: float, opacity: float ) : void = "sta#%"
-fun landscape_paint_color ( l: (*landscape*) ptr, pos: vec2, radius: float, type: int, opacity: float ) : void = "sta#%"
+fun landscape_paint_height ( l: (*landscape*) ptr, pos: vec2, radius: float, value: float, opacity: float ) : void
+fun landscape_paint_color ( l: (*landscape*) ptr, pos: vec2, radius: float, paint_type: int, opacity: float ) : void
 
-fun landscape_chunks ( l: (*landscape*) ptr, pos: vec2, chunks_out: (*terrain_chunk ptr*) ptr ) : void = "sta#%"
+fun landscape_chunks ( l: (*landscape*) ptr, pos: vec2, chunks_out: (*terrain_chunk ptr*) ptr ) : void

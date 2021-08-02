@@ -24,6 +24,6 @@ fun config_set_int ( c: (*config*) ptr, key: string, value: int ) : void = "sta#
 fun config_set_float ( c: (*config*) ptr, key: string, value: float ) : void = "sta#%"
 fun config_set_bool ( c: (*config*) ptr, key: string, value: bool ) : void = "sta#%"
 
-fun option_graphics_asset ( c: (*config*) ptr, key: string, high: asset_hndl, medium: asset_hndl, low: asset_hndl ) : asset_hndl = "sta#%"
+//fun option_graphics_asset ( c: (*config*) ptr, key: string, high: asset_hndl, medium: asset_hndl, low: asset_hndl ) : asset_hndl = "sta#%"
 fun option_graphics_int ( c: (*config*) ptr, key: string, high: int, medium: int, low: int ) : int = "sta#%"
 fun option_graphics_float ( c: (*config*) ptr, key: string, high: float, medium: float, low: float ) : float = "sta#%"

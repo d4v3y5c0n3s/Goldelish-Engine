@@ -6,6 +6,9 @@ allows the creation of a dynamic sky
 
 staload "./../g_engine.sats"
 staload "./../g_asset.sats"
+staload "./../assets/image.sats"
+staload "./../assets/texture.sats"
+staload "./../assets/renderable.sats"
 
 (*
 these need to be defined in the .dats file
@@ -21,15 +24,15 @@ and TIME_MIDNIGHT = 0.75
 vtypedef sky = @{
 	time=float,
         seed=usint,
-	cloud_mesh=asset_hndl,//(*[14]*)// had to have the "//" otherwise this would fail to compile (potentially a bug, should probably mention it to the ATS community)
-        cloud_tex=asset_hndl,//(*[14]*)
+	cloud_mesh=asset_hndl(renderable),//(*[14]*)// had to have the "//" otherwise this would fail to compile (potentially a bug, should probably mention it to the ATS community)
+        cloud_tex=asset_hndl(texture),//(*[14]*)
         cloud_opacity=float,//(*[14]*)
-	sun_sprite=asset_hndl,
-        sun_tex=asset_hndl,
-	moon_sprite=asset_hndl,
-        moon_tex=asset_hndl,
-	stars_sprite=asset_hndl,
-        stars_tex=asset_hndl,
+	sun_sprite=asset_hndl(image),
+        sun_tex=asset_hndl(texture),
+	moon_sprite=asset_hndl(image),
+        moon_tex=asset_hndl(texture),
+	stars_sprite=asset_hndl(image),
+        stars_tex=asset_hndl(texture),
 	is_day=bool,
         wind=vec3,
 	world_sun=mat4,
@@ -57,6 +60,6 @@ vtypedef sky = @{
         ground_specular=vec3
 }
 
-fun sky_new () : (*sky*) ptr = "sta#%"
-fun sky_delete ( s: (*sky*) ptr ) : void = "sta#%"
-fun sky_update ( s: (*sky*) ptr, t: float, seed: usint ) : void = "sta#%"
+fun sky_new () : (*sky*) ptr
+fun sky_delete ( s: (*sky*) ptr ) : void
+fun sky_update ( s: (*sky*) ptr, t: float, seed: usint ) : void

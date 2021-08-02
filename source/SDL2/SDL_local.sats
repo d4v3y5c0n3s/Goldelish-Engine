@@ -46,6 +46,7 @@ typedef SDL_RWops = ptr
 
 abst0ype GLsizei = $extype"GLsizei"
 abst0ype GLint = $extype"GLint"
+abst0ype GLuint = $extype"GLuint"
 
 absvtype TCPsocket_base (l:addr) = ptr(l)
 vtypedef TCPsocket0 = [l:addr] TCPsocket_base(l)

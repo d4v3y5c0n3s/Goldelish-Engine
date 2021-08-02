@@ -6,109 +6,235 @@
 
 #include "share/atspre_staload.hats"
 
-staload "./g_graphics.sats"
-staload "./g_entity.sats"
+staload "./../g_graphics.sats"
+staload "./../g_entity.sats"
+staload "./../g_engine.sats"
+staload "./../g_asset.sats"
 
-staload "./assets/shader.sats"
-staload "./assets/texture.sats"
-staload "./assets/material.sats"
-staload "./assets/renderable.sats"
-staload "./assets/terrain.sats"
-staload "./assets/cmesh.sats"
+staload "./../assets/shader.sats"
+staload "./../assets/texture.sats"
+staload "./../assets/material.sats"
+staload "./../assets/renderable.sats"
+//staload "./../assets/terrain.sats"
+staload "./../assets/cmesh.sats"
+staload "./../assets/config.sats"
 
-//staload "./rendering/sky.sats"
+staload "./../entities/camera.sats"
+staload "./../entities/light.sats"
+
+staload "./../SDL2/SDL_local.sats"
+
+//staload "./sky.sats"
+staload "./renderer.sats"
 
 local
 
-assume renderer = @{
+assume renderer = [dln:nat](*; ron:nat]*) @{
   options=asset_hndl(config),
   camera=camera,
+  dyn_lights_num=int dln,
+  dyn_light=arrayptr(light, dln),
+  mat_static=asset_hndl(material),
+  mat_skin=asset_hndl(material),
+  mat_instance=asset_hndl(material),
+  mat_animated=asset_hndl(material),
+  mat_vegetation=asset_hndl(material),
+  mat_terrain=asset_hndl(material),
+  mat_clear=asset_hndl(material),
+  mat_ui=asset_hndl(material),
+  mat_ssao=asset_hndl(material),
+  mat_compose=asset_hndl(material),
+  mat_tonemap=asset_hndl(material),
+  mat_post0=asset_hndl(material),
+  mat_post1=asset_hndl(material),
+  mat_skydome=asset_hndl(material),
+  mat_depth=asset_hndl(material),
+  mat_depth_ins=asset_hndl(material),
+  mat_depth_ani=asset_hndl(material),
+  mat_depth_veg=asset_hndl(material),
+  mat_depth_ter=asset_hndl(material),
+  mat_sun=asset_hndl(material),
+  mat_clouds=asset_hndl(material),
+  mat_particles=asset_hndl(material),
+  mat_sea=asset_hndl(material)
+  (*,
+  mesh_skydome=asset_hndl(renderable),
+  mesh_sphere=asset_hndl(renderable),
+  mesh_sea=asset_hndl(renderable),
+  tex_color_correction=asset_hndl(texture),
+  tex_random=asset_hndl(texture),
+  tex_random_perlin=asset_hndl(texture),
+  tex_environment=asset_hndl(texture),
+  tex_vignetting=asset_hndl(texture),
+  tex_sea_bump0=asset_hndl(texture),
+  tex_sea_bump1=asset_hndl(texture),
+  tex_sea_bump2=asset_hndl(texture),
+  tex_sea_bump3=asset_hndl(texture),
+  tex_sea_env=asset_hndl(texture),
+  tex_cube_sea=asset_hndl(texture),
+  tex_cube_field=asset_hndl(texture),
+  tex_white=asset_hndl(texture),
+  tex_grey=asset_hndl(texture),
+  tex_skin_lookup=asset_hndl(texture),
+  gfbo=GLuint,
+  gdepth_buffer=GLuint,
+  gdiffuse_buffer=GLuint,
+  gnormals_buffer=GLuint,
+  gdiffuse_texture=GLuint,
+  gnormals_texture=GLuint,
+  gdepth_texture=GLuint,
+  ssao_fbo=GLuint,
+  ssao_buffer=GLuint,
+  ssao_texture=GLuint,
+  hdr_fbo=GLuint,
+  hdr_buffer=GLuint,
+  hdr_texture=GLuint,
+  ldr_front_fbo=GLuint,
+  ldr_front_buffer=GLuint,
+  ldr_front_texture=GLuint,
+  ldr_back_fbo=GLuint,
+  ldr_back_buffer=GLuint,
+  ldr_back_texture=GLuint,
+  shadows_fbo=arrayptr(GLuint, 3),
+  shadows_buffer=arrayptr(GLuint, 3),
+  shadows_texture=arrayptr(GLuint, 3),
+  shadows_start=arrayptr(float, 3),
+  shadows_end=arrayptr(float, 3),
+  shadows_widths=arrayptr(int, 3),
+  shadows_heights=arrayptr(int, 3),
+  seed=int,
+  glitch=float,
+  time=float,
+  time_of_day=float,
+  exposure=float,
+  exposure_speed=float,
+  exposure_target=float,
+  skydome_enabled=bool,
+  sea_enabled=bool,
+  render_objects_num=int ron,
+  render_objects=arrayptr(ro, ron),
+  camera_view=mat4,
+  camera_proj=mat4,
+  camera_inv_view=mat4,
+  camera_inv_proj=mat4,
+  camera_near=float,
+  camera_far=float,
+  camera_frustum=box,
+  shadow_view=arrayptr(mat4, 3),
+  shadow_proj=arrayptr(mat4, 3),
+  shadow_near=arrayptr(float, 3),
+  shadow_far=arrayptr(float, 3),
+  shadow_frustum=arrayptr(box, 3)
+  *)
 }
 
 in
 
+implement renderer_new ( options, cam ) = let
+in
+  @{
+  options=options,
+  camera=cam,
+  dyn_lights_num=0,
+  dyn_light=arrayptr_make_elt<light>(i2sz(0), light_new()),
+  mat_static=asset_hndl_new<material>(P("./coreassets/shaders/deferred/static.mat")),
+  mat_skin=asset_hndl_new<material>(P("./coreassets/shaders/deferred/skin.mat")),
+  mat_instance=asset_hndl_new<material>(P("./coreassets/shaders/deferred/instance.mat")),
+  mat_animated=asset_hndl_new<material>(P("./coreassets/shaders/deferred/animated.mat")),
+  mat_vegetation=asset_hndl_new<material>(P("./coreassets/shaders/deferred/vegetation.mat")),
+  mat_terrain=asset_hndl_new<material>(P("./coreassets/shaders/deferred/terrain.mat")),
+  mat_clear=asset_hndl_new<material>(P("./coreassets/shaders/deferred/clear.mat")),
+  mat_ui=asset_hndl_new<material>(P("./coreassets/shaders/deferred/ui.mat")),
+  mat_ssao=asset_hndl_new<material>(P("./coreassets/shaders/deferred/ssao.mat")),
+  mat_compose=asset_hndl_new<material>(P("./coreassets/shaders/deferred/compose.mat")),
+  mat_tonemap=asset_hndl_new<material>(P("./coreassets/shaders/deferred/tonemap.mat")),
+  mat_post0=asset_hndl_new<material>(P("./coreassets/shaders/deferred/post0.mat")),
+  mat_post1=asset_hndl_new<material>(P("./coreassets/shaders/deferred/post1.mat")),
+  mat_skydome=asset_hndl_new<material>(P("./coreassets/shaders/deferred/skydome.mat")),
+  mat_depth=asset_hndl_new<material>(P("./coreassets/shaders/deferred/depth.mat")),
+  mat_depth_ins=asset_hndl_new<material>(P("./coreassets/shaders/deferred/depth_instance.mat")),
+  mat_depth_ani=asset_hndl_new<material>(P("./coreassets/shaders/deferred/depth_animated.mat")),
+  mat_depth_veg=asset_hndl_new<material>(P("./coreassets/shaders/deferred/depth_vegetation.mat")),
+  mat_depth_ter=asset_hndl_new<material>(P("./coreassets/shaders/deferred/depth_terrain.mat")),
+  mat_sun=asset_hndl_new<material>(P("./coreassets/shaders/deferred/sun.mat")),
+  mat_clouds=asset_hndl_new<material>(P("./coreassets/shaders/deferred/clouds.mat")),
+  mat_particles=asset_hndl_new<material>(P("./coreassets/shaders/deferred/particles.mat")),
+  mat_sea=asset_hndl_new<material>(P("./coreassets/shaders/deferred/sea.mat"))
+  }:renderer
+end
+  (*,
+  mesh_skydome=,
+  mesh_sphere=,
+  mesh_sea=,
+  tex_color_correction=,
+  tex_random=,
+  tex_random_perlin=,
+  tex_environment=,
+  tex_vignetting=,
+  tex_sea_bump0=,
+  tex_sea_bump1=,
+  tex_sea_bump2=,
+  tex_sea_bump3=,
+  tex_sea_env=,
+  tex_cube_sea=,
+  tex_cube_field=,
+  tex_white=,
+  tex_grey=,
+  tex_skin_lookup=,
+  gfbo=GLuint,
+  gdepth_buffer=GLuint,
+  gdiffuse_buffer=GLuint,
+  gnormals_buffer=GLuint,
+  gdiffuse_texture=GLuint,
+  gnormals_texture=GLuint,
+  gdepth_texture=GLuint,
+  ssao_fbo=GLuint,
+  ssao_buffer=GLuint,
+  ssao_texture=GLuint,
+  hdr_fbo=GLuint,
+  hdr_buffer=GLuint,
+  hdr_texture=GLuint,
+  ldr_front_fbo=GLuint,
+  ldr_front_buffer=GLuint,
+  ldr_front_texture=GLuint,
+  ldr_back_fbo=GLuint,
+  ldr_back_buffer=GLuint,
+  ldr_back_texture=GLuint,
+  shadows_fbo=arrayptr(GLuint, 3),
+  shadows_buffer=arrayptr(GLuint, 3),
+  shadows_texture=arrayptr(GLuint, 3),
+  shadows_start=arrayptr(float, 3),
+  shadows_end=arrayptr(float, 3),
+  shadows_widths=arrayptr(int, 3),
+  shadows_heights=arrayptr(int, 3),
+  seed=int,
+  glitch=float,
+  time=float,
+  time_of_day=float,
+  exposure=float,
+  exposure_speed=float,
+  exposure_target=float,
+  skydome_enabled=bool,
+  sea_enabled=bool,
+  render_objects_num=int ron,
+  render_objects=arrayptr(ro, ron),
+  camera_view=mat4,
+  camera_proj=mat4,
+  camera_inv_view=mat4,
+  camera_inv_proj=mat4,
+  camera_near=float,
+  camera_far=float,
+  camera_frustum=box,
+  shadow_view=arrayptr(mat4, 3),
+  shadow_proj=arrayptr(mat4, 3),
+  shadow_near=arrayptr(float, 3),
+  shadow_far=arrayptr(float, 3),
+  shadow_frustum=arrayptr(box, 3)
+  *)
+  //}:renderer
+//end
+
 end////
-implement render_object_instance ( i ) =
-{
-}
-
-implement render_object_static ( s ) =
-{
-}
-
-implement render_object_animated ( a ) =
-{
-}
-
-implement render_object_light ( l ) =
-{
-}
-
-implement render_object_axis ( a ) =
-{
-}
-
-implement render_object_landscape ( l ) =
-{
-}
-
-implement render_object_particles ( p ) =
-{
-}
-
-implement render_object_paint ( paint_axis, paint_radius ) =
-{
-}
-
-implement render_object_sphere ( s ) =
-{
-}
-
-implement render_object_cmesh ( cm, world ) =
-{
-}
-
-implement render_object_ellipsoid ( e ) =
-{
-}
-
-implement render_object_frustum ( f ) =
-{
-}
-
-implement render_object_plane ( p ) =
-{
-}
-
-implement render_object_line ( start, end, color, thickness ) =
-{
-}
-
-implement render_object_point ( pos, color, size ) =
-{
-}
-
-val quad_position = [
-    ~1, ~1, 0,
-    1, ~1, 0,
-    1, 1, 0,
-    ~1, ~1, 0,
-    ~1, 1, 0,
-    1, 1, 0
-]//  array of floats
-
-val quad_texcoord = [
-    0, 0,
-    1, 0,
-    1, 1,
-    0, 0,
-    0, 1,
-    1, 1
-]//  array of floats
-
-implement renderer_new ( options ) =
-{
-}
 
 implement renderer_delete ( dr ) =
 {
