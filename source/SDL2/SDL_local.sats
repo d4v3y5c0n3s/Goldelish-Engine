@@ -44,10 +44,6 @@ typedef Mix_Chunk = $extype"Mix_Chunk"
 
 typedef SDL_RWops = ptr
 
-abst0ype GLsizei = $extype"GLsizei"
-abst0ype GLint = $extype"GLint"
-abst0ype GLuint = $extype"GLuint"
-
 absvtype TCPsocket_base (l:addr) = ptr(l)
 vtypedef TCPsocket0 = [l:addr] TCPsocket_base(l)
 vtypedef TCPsocket1 = [l:addr | l > null] TCPsocket_base(l)
@@ -56,6 +52,18 @@ typedef IPaddress = $extype_struct "IPaddress" of {
     host=uint32,
     port=uint16
 }
+
+abst0ype GLsizei = $extype"GLsizei"
+abst0ype GLint = $extype"GLint"
+abst0ype GLuint = $extype"GLuint"
+abst0ype GLenum = $extype"GLenum"
+abst0ype GLboolean = $extype"GLboolean"
+abst0ype GLfloat = $extype"GLfloat"
+abst0ype GLbitfield = $extype"GLbitfield"
+abst0ype GLsizeiptr = $extype"GLsizeiptr"
+abst0ype GLintptr = $extype"GLintptr"
+absvtype image_data = ptr
+absvtype glchar_str = ptr
 
 castfn uint32_to_GLsizei ( uint32 ) : GLsizei
 castfn int32_to_GLint ( int32 ) : GLint
@@ -110,8 +118,6 @@ fn SDL_GL_DeleteContext ( SDL_GLContext0 ) : void = "mac#%"
 fn SDL_GL_MakeCurrent ( !SDL_Window_ptr1, !SDL_GLContext1 ) : int = "mac#%"
 fn SDL_GL_SwapWindow ( !SDL_Window_ptr1 ) : void = "mac#%"
 
-//  this is an OpenGL function, not an SDL one
-fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
 
 fn SDLNet_TCP_Recv ( !TCPsocket1, &charNZ, int ) : int = "mac#%"
 fn SDLNet_ResolveHost ( &IPaddress? >> IPaddress, string, uint16 ) : int = "mac#%"
@@ -147,3 +153,71 @@ fn SDL_RWread ( SDL_RWops, &charNZ, int, int ) : size_t = "mac#%"
 fn SDL_RWreadline {bfr:nat} ( file: SDL_RWops, buffersize: int bfr ) : (bool, Strptr1)
 
 fn SDLNet_TCP_RecvLine (sock: !TCPsocket1, maxlen: int): (bool, Strptr1)
+
+// interface for OpenGL
+fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
+
+
+fn glActiveTexture ( texture: GLenum ) : void = "mac#"
+fn glCompressedTexImage2D ( target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, border: GLint, imagesize: GLsizei, data: !image_data ) : void = "mac#"
+fn glTexImage3D ( target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, format: GLenum, etype: GLenum, data: !image_data ) : void = "mac#"
+fn glCreateShader ( shadertype: GLenum ) : GLuint = "mac#"
+fn glCreateProgram () : void = "mac#"
+fn glShaderSource {s:nat} ( shader: GLuint, count: GLsizei, strings: arrayptr(glchar_str, s), length: &GLint ) : void = "mac#"
+fn glCompileShader ( shader: GLuint ) : void = "mac#"
+fn glGetShaderInfoLog ( shader: GLuint, maxlength: GLsizei, length: GLsizei, infolog: glchar_str ) : void = "mac#"
+fn glAttachShader ( program: GLuint, shader: GLuint ) : void = "mac#"
+fn glLinkProgram ( program: GLuint ) : void = "mac#"
+fn glGetProgramInfoLog ( program: GLuint, maxlength: GLsizei, length: &GLsizei, infolog: glchar_str ) : void = "mac#"
+fn glIsProgram ( program: GLuint ) : GLboolean = "mac#"
+fn glIsShader ( shader: GLuint ) : GLboolean = "mac#"
+fn glGetAttachedShaders {c:nat} ( program: GLuint, maxcount: GLsizei, count: &GLsizei, shaders: arrayptr(GLuint, c) ) : void = "mac#"
+fn glGetUniformLocation ( program: GLuint, name: glchar_str ) : GLint = "mac#"
+fn glUniform1f ( location: GLint, v0: GLfloat ) : void = "mac#"
+fn glUniform1i ( location: GLint, v0: GLint ) : void = "mac#"
+fn glDeleteShader ( shader: GLuint ) : void = "mac#"
+fn glDeleteProgram ( program: GLuint ) : void = "mac#"
+fn glUseProgram ( program: GLuint ) : void = "mac#"
+fn glVertexAttribPointer ( index: GLuint, size: GLint, type: GLenum, normalized: GLboolean, stride: GLsizei, pointer: ptr ) : void = "mac#"
+fn glVertexAttribDivisor ( index: GLuint, divisor: GLuint ) : void = "mac#"
+fn glEnableVertexAttribArray ( index: GLuint ) : void = "mac#"
+fn glDisableVertexAttribArray ( index: GLuint ) : void = "mac#"
+fn glUniform2f ( location: GLint, v0: GLfloat, v1: GLfloat ) : void = "mac#"
+fn glUniform3f ( location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat ) : void = "mac#"
+fn glUniform4f ( location: GLint, v0: GLfloat, v1: GLfloat, v2: GLfloat, v3: GLfloat ) : void = "mac#"
+fn glUniformMatrix3fv ( location: GLint, count: GLsizei, transpose: GLboolean, value: &GLfloat ) : void = "mac#"
+fn glUniformMatrix4fv ( location: GLint, count: GLsizei, transpose: GLboolean, value: &GLfloat ) : void = "mac#"
+fn glUniform1fv ( location: GLint, count: GLsizei, value: &GLfloat ) : void = "mac#"
+fn glUniform2fv ( location: GLint, count: GLsizei, value: &GLfloat ) : void = "mac#"
+fn glUniform3fv ( location: GLint, count: GLsizei, value: &GLfloat ) : void = "mac#"
+fn glUniform4fv ( location: GLint, count: GLsizei, value: &GLfloat ) : void = "mac#"
+fn glGetShaderiv ( shader: GLuint, pname: GLenum, params: &GLint ) : void = "mac#"
+fn glGetProgramiv ( program: GLuint, pname: GLenum, params: &GLint ) : void = "mac#"
+fn glProgramParameteri ( program: GLuint, pname: GLenum, value: GLint ) : void = "mac#"
+fn glBindAttribLocation ( program: GLuint, index: GLuint, name: !glchar_str ) : void = "mac#"
+fn glGenFramebuffers {n:nat} ( n: GLsizei, ids: arrayptr(GLuint, n) ) : void = "mac#"
+fn glBindFramebuffer ( target: GLenum, framebuffer: GLuint ) : void = "mac#"
+fn glBlitFramebuffer ( srcx0: GLint, srcy0: GLint, srcx1: GLint, srcy1: GLint, dstx0: GLint, dsty0: GLint, dstx1: GLint, dsty1: GLint, mask: GLbitfield, filter: GLenum ) : void = "mac#"
+fn glFramebufferTexture ( target: GLenum, attachment: GLenum, texture: GLuint, level: GLint ) : void = "mac#"
+fn glFramebufferTexture2D ( target: GLenum, attachment: GLenum, textarget: GLenum, texture: GLuint, level: GLint ) : void = "mac#"
+fn glDeleteFramebuffers {n:nat} ( n: GLsizei, framebuffers: arrayptr(GLuint, n) ) : void = "mac#"
+fn glCheckFramebufferStatus ( target: GLenum ) : GLenum = "mac#"
+fn glGenBuffers {n:nat} ( n: GLsizei, buffers: arrayptr(GLuint, n) ) : void = "mac#"
+fn glGenRenderbuffers {n:nat} ( n: GLsizei, renderbuffers: arrayptr(GLuint, n) ) : void = "mac#"
+fn glDeleteBuffers {n:nat} ( n: GLsizei, buffers: arrayptr(GLuint, n) ) : void = "mac#"
+fn glDeleteRenderbuffers {n:nat} ( n: GLsizei, renderbuffers: arrayptr(GLuint, n) ) : void = "mac#"
+fn glBindBuffer ( target: GLenum, buffer: GLuint ) : void = "mac#"
+fn glBindRenderbuffer ( target: GLenum, renderbuffer: GLuint ) : void = "mac#"
+fn glBufferData ( target: GLenum, size: GLsizeiptr, data: image_data, usage: GLenum ) : void = "mac#"
+fn glGetBufferSubData ( target: GLenum, offset: GLintptr, size: GLsizeiptr, data: image_data ) : void = "mac#"
+fn glFramebufferRenderbuffer ( target: GLenum, attachment: GLenum, renderbuffertarget: GLenum, renderbuffer: GLuint ) : void = "mac#"
+fn glGetAttribLocation ( program: GLuint, name: glchar_str ) : GLint = "mac#"
+fn glRenderbufferStorage ( target: GLenum, internalformat: GLenum, width: GLsizei, height: GLsizei ) : void = "mac#"
+fn glRenderbufferStorageMultisample ( target: GLenum, samples: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei ) : void = "mac#"
+fn glDrawBuffers {n:nat} ( n: GLsizei, bufs: arrayptr(GLenum, n) ) : void = "mac#"
+fn glGenerateMipmap ( target: GLenum ) : void = "mac#"
+fn glDrawElementsInstanced ( mode: GLenum, count: GLsizei, type: GLenum, indices: image_data, instancecount: GLsizei ) : void = "mac#"
+fn glPatchParameteri ( pname: GLenum, value: GLint ) : void = "mac#"
+fn glPatchParameterfv {c:nat} ( pname: GLenum, values: arrayptr(GLfloat, c) ) : void = "mac#"
+
+fn glBrokenExtension () : void = "mac#"
