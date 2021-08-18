@@ -53,17 +53,17 @@ typedef IPaddress = $extype_struct "IPaddress" of {
     port=uint16
 }
 
-abst0ype GLsizei = $extype"GLsizei"
-abst0ype GLint = $extype"GLint"
-abst0ype GLuint = $extype"GLuint"
-abst0ype GLenum = $extype"GLenum"
-abst0ype GLboolean = $extype"GLboolean"
-abst0ype GLfloat = $extype"GLfloat"
+typedef GLsizei (s:int) = size_t(s)
+typedef GLint (i:int) = int(i)
+typedef GLuint (u:int) = uint(u)
+typedef GLenum (e:int) = int(e)
+typedef GLboolean (b:bool) = bool(b)
+typedef GLfloat = float
 abst0ype GLbitfield = $extype"GLbitfield"
-abst0ype GLsizeiptr = $extype"GLsizeiptr"
-abst0ype GLintptr = $extype"GLintptr"
+typedef GLsizeiptr (a:vt@ype) = sizeof_t(a)
+vtypedef GLintptr (a:vt@ype, l:addr, n:int, i:int) = [i <= n; i >= 0] (array_v(a,l,n) | int(i))
 absvtype image_data = ptr
-absvtype glchar_str = ptr
+vtypedef GLcharstr (s:int) = strnptr(s)
 
 castfn uint32_to_GLsizei ( uint32 ) : GLsizei
 castfn int32_to_GLint ( int32 ) : GLint
@@ -156,7 +156,6 @@ fn SDLNet_TCP_RecvLine (sock: !TCPsocket1, maxlen: int): (bool, Strptr1)
 
 // interface for OpenGL
 fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
-
 
 fn glActiveTexture ( texture: GLenum ) : void = "mac#"
 fn glCompressedTexImage2D ( target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, border: GLint, imagesize: GLsizei, data: !image_data ) : void = "mac#"
