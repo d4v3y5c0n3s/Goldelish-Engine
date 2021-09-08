@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  goldelish.dats  ###
 *)
@@ -9,8 +12,6 @@ staload "./g_graphics.sats"
 staload "./g_joystick.sats"
 staload "./g_engine.sats"
 staload "./g_entity.sats"
-
-extern castfn int_to_ulint ( int ) : ulint
 
 implement goldelish_init () = let
   var graphics = graphics_init()
@@ -24,7 +25,7 @@ in
       ENT=entity_table_init(),
       GRPH=g,
       JOY=j,
-      FR=( @{ fstartt=int_to_ulint(0), facct=0.0, fcntr=0, frate=0.0 } )
+      FR=( @{ fstartt=0ul, facct=0.0, fcntr=0, frate=0.0 } )
     }:goldelish_components)
     | ~None_vt() => begin graphics_finish(g); None_vt() end
   end

@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  shader.sats  ###
 
@@ -10,8 +13,7 @@ staload "./texture.sats"
 
 staload "./../SDL2/SDL_local.sats"
 
-vtypedef shader = GLuint
-vtypedef shader_print = GLuint
+vtypedef shader = GL_Shader
 
 fun vs_load_file ( filename: string ) : (*shader*) ptr
 fun fs_load_file ( filename: string ) : (*shader*) ptr
@@ -21,7 +23,7 @@ fun tes_load_file ( filename: string ) : (*shader*) ptr
 
 fun shader_delete ( s: (*shader*) ptr ) : void
 fun shader_print_log ( s: (*shader*) ptr ) : void
-fun shader_handle ( s: (*shader*) ptr ) : GLuint
+fun shader_handle ( s: (*shader*) ptr ) : GL_Shader
 
 fun shader_program_new () : (*shader_program*) ptr
 fun shader_program_delete ( p: (*shader_program*) ptr ) : void
@@ -33,8 +35,8 @@ fun shader_program_link ( p: (*shader_program*) ptr ) : void
 fun shader_program_print_info ( p: (*shader_program*) ptr ) : void
 fun shader_program_print_log ( p: (*shader_program*) ptr ) : void
 
-fun shader_program_handle ( p: (*shader_program*) ptr ) : GLuint
-fun shader_program_get_attribute ( p: (*shader_program*) ptr, name: string ) : GLuint
+fun shader_program_handle ( p: (*shader_program*) ptr ) : GL_Shader
+fun shader_program_get_attribute ( p: (*shader_program*) ptr, name: string ) : GL_Shader
 
 fun shader_program_enable ( p: (*shader_program*) ptr ) : void
 fun shader_program_disable ( p: (*shader_program*) ptr ) : void

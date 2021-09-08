@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  renderable.sats  ###
 
@@ -12,7 +15,7 @@ staload "./../SDL2/SDL_local.sats"
 
 typedef vertex_weight = @{ bone_ids=int, bone_weights=float }//  bone_ids[3] & bone_weights[3] in C
 
-vtypedef renderable_surface = @{ vertex_vbo=GLuint, triangle_vbo=GLuint, num_verticies=int, num_triangles=int, bound=sphere }
+vtypedef renderable_surface = @{ vertex_vbo=GL_Buffer, triangle_vbo=GL_Buffer, num_verticies=int, num_triangles=int, bound=sphere }
 
 fun renderable_surface_new ( m: (*mesh*) ptr ) : (*renderable_surface*) ptr
 fun renderable_surface_new_rigged ( m: (*mesh*) ptr, weights: (*vertex_weight*) ptr ) : (*renderable_surface*) ptr

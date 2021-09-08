@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  renderer.dats  ###
 
@@ -24,7 +27,7 @@ staload "./../entities/light.sats"
 
 staload "./../SDL2/SDL_local.sats"
 
-//staload "./sky.sats"
+staload "./sky.sats"
 staload "./renderer.sats"
 
 local
@@ -75,25 +78,25 @@ assume renderer = [dln:nat](*; ron:nat]*) @{
   tex_white=asset_hndl(texture),
   tex_grey=asset_hndl(texture),
   tex_skin_lookup=asset_hndl(texture),
-  gfbo=GLuint,
-  gdepth_buffer=GLuint,
-  gdiffuse_buffer=GLuint,
-  gnormals_buffer=GLuint,
-  gdiffuse_texture=GLuint,
-  gnormals_texture=GLuint,
-  gdepth_texture=GLuint,
-  ssao_fbo=GLuint,
-  ssao_buffer=GLuint,
-  ssao_texture=GLuint,
-  hdr_fbo=GLuint,
-  hdr_buffer=GLuint,
-  hdr_texture=GLuint,
-  ldr_front_fbo=GLuint,
-  ldr_front_buffer=GLuint,
-  ldr_front_texture=GLuint,
-  ldr_back_fbo=GLuint,
-  ldr_back_buffer=GLuint,
-  ldr_back_texture=GLuint
+  gfbo=GL_Framebuffer,
+  gdepth_buffer=GL_Renderbuffer,
+  gdiffuse_buffer=GL_Renderbuffer,
+  gnormals_buffer=GL_Renderbuffer,
+  gdiffuse_texture=GL_Texture,
+  gnormals_texture=GL_Texture,
+  gdepth_texture=GL_Texture,
+  ssao_fbo=GL_Framebuffer,
+  ssao_buffer=GL_Renderbuffer,
+  ssao_texture=GL_Texture,
+  hdr_fbo=GL_Framebuffer,
+  hdr_buffer=GL_Renderbuffer,
+  hdr_texture=GL_Texture,
+  ldr_front_fbo=GL_Framebuffer,
+  ldr_front_buffer=GL_Renderbuffer,
+  ldr_front_texture=GL_Texture,
+  ldr_back_fbo=GL_Framebuffer,
+  ldr_back_buffer=GL_Renderbuffer,
+  ldr_back_texture=GL_Texture
   (*,
   shadows_fbo=arrayptr(GLuint, 3),
   shadows_buffer=arrayptr(GLuint, 3),
@@ -128,9 +131,27 @@ assume renderer = [dln:nat](*; ron:nat]*) @{
   *)
 }
 
+extern castfn ref2singleton_array () : void
+
 in
 
-implement renderer_new ( options, cam ) = let
+implement renderer_new ( options, cam, gvp ) = let
+  val width = graphics_viewport_width(gvp)
+  val height = graphics_viewport_width(gvp)
+  val gwidth = width *
+  val gheight = height *
+  var gfbo: GL_Framebuffer
+  val () = glGenFramebuffers(i2sz(1), gfbo)
+  var gdepth_buffer: GL_Renderbuffer
+  val () = glGenRenderbuffers(i2sz(1), gdepth_buffer)
+  val () = glBindRenderbuffer(GL_RENDERBUFFER, gdepth_buffer)
+  val () = glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, , )
+  val () = glFramebufferRenderbuffer()
+  var gdepth_texture: GL_Texture
+  var gdiffuse_buffer: GL_Renderbuffer
+  var gdiffuse_texture: GL_Texture
+  var gnormals_buffer: GL_Renderbuffer
+  var gnormals_texture: GL_Texture
 in
   @{
   options=options,
@@ -178,8 +199,8 @@ in
   tex_white=asset_hndl_new<texture>(P("./coreassets/textures/white.dds")),
   tex_grey=asset_hndl_new<texture>(P("./coreassets/textures/grey.dds")),
   tex_skin_lookup=asset_hndl_new<texture>(P("./coreassets/textures/skin_lookup.dds")),
-  gfbo=,
-  gdepth_buffer=,
+  gfbo=gfbo,
+  gdepth_buffer=gdepth_buffer,
   gdiffuse_buffer=,
   gnormals_buffer=,
   gdiffuse_texture=,

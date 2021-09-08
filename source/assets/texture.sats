@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  texture.sats  ###
 
@@ -9,28 +12,28 @@ staload "./../assets/image.sats"
 
 staload "./../SDL2/SDL_local.sats"
 
-vtypedef texture = @{ handle=GLuint, type=GLuint }
+vtypedef texture = [t:int] @{ handle=GL_Texture, type=GLenum(t) }
 
-fun texture_new () : (*texture*) ptr
-fun texture_new_handle ( h: GLuint ) : (*texture*) ptr
-fun texture_delete ( t: (*texture*) ptr ) : void
+fn texture_new () : (*texture*) ptr
+fn texture_new_handle ( h: GL_Texture ) : (*texture*) ptr
+fn texture_delete ( t: (*texture*) ptr ) : void
 
-fun texture_handle ( t: (*texture*) ptr ) : GLuint
-fun texture_type ( t: (*texture*) ptr ) : GLuint
+fn texture_handle ( t: (*texture*) ptr ) : GL_Texture
+fn texture_type ( t: (*texture*) ptr ) : [t:int] GLenum(t)
 
-fun texture_set_image ( t: (*texture*) ptr, i: (*image*) ptr ) : void
-fun texture_get_image ( t: (*texture*) ptr ) : (*image*) ptr
+fn texture_set_image ( t: (*texture*) ptr, i: (*image*) ptr ) : void
+fn texture_get_image ( t: (*texture*) ptr ) : (*image*) ptr
 
-fun texture_generate_mipmaps ( t: (*texture*) ptr ) : void
-fun texture_set_filtering_nearest ( t: (*texture*) ptr ) : void
-fun texture_set_filtering_linear ( t: (*texture*) ptr ) : void
-fun texture_set_filtering_anisotropic ( t: (*texture*) ptr ) : void
+fn texture_generate_mipmaps ( t: (*texture*) ptr ) : void
+fn texture_set_filtering_nearest ( t: (*texture*) ptr ) : void
+fn texture_set_filtering_linear ( t: (*texture*) ptr ) : void
+fn texture_set_filtering_anisotropic ( t: (*texture*) ptr ) : void
 
-fun bmp_load_file ( filename: string ) : (*texture*) ptr
-fun tga_load_file ( filename: string ) : (*texture*) ptr
-fun dds_load_file ( filename: string ) : (*texture*) ptr
-fun lut_load_file ( filename: string ) : (*texture*) ptr
-fun acv_load_file ( filename: string ) : (*texture*) ptr
+fn bmp_load_file ( filename: string ) : (*texture*) ptr
+fn tga_load_file ( filename: string ) : (*texture*) ptr
+fn dds_load_file ( filename: string ) : (*texture*) ptr
+fn lut_load_file ( filename: string ) : (*texture*) ptr
+fn acv_load_file ( filename: string ) : (*texture*) ptr
 
-fun texture_write_to_file ( t: (*texture*) ptr, filename: string ) : void
-fun texture3d_write_to_file ( t: (*texture*) ptr, filename: string ) : void
+fn texture_write_to_file ( t: (*texture*) ptr, filename: string ) : void
+fn texture3d_write_to_file ( t: (*texture*) ptr, filename: string ) : void

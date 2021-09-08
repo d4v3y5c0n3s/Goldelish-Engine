@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  instance_object.sats  ###
 
@@ -22,7 +25,7 @@ typedef instance_data = @{
 vtypedef instance_object = @{
 	num_instances=int,
 	instances=instance_data,
-	world_buffer=GLuint,
+	world_buffer=GL_Buffer,
 	bound=sphere,
 	renderable=asset_hndl(renderable),
 	collision_body=asset_hndl(cmesh)

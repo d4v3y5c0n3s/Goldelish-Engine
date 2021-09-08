@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  particles.sats  ###
 
@@ -27,7 +30,7 @@ vtypedef particles = @{
 	colors=(*vec4*) ptr,
 	positions=(*vec3*) ptr,
 	velocities=(*vec3*) ptr,
-	vertex_buff=GLuint,
+	vertex_buff=GL_Buffer,
 	vertex_data=(*float*) ptr
 }
 

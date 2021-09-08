@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  renderer.sats  ###
 
@@ -32,7 +35,7 @@ vtypedef ro = [a:vt@ype] ro(a)
 
 absvt0ype renderer
 
-fn renderer_new ( options: asset_hndl(config), cam: camera ) : renderer
+fn renderer_new ( options: asset_hndl(config), cam: camera, gvp: !graphics_viewport ) : renderer
 fn renderer_delete ( dr: renderer ) : void
 
 fn renderer_set_camera ( dr: &renderer, cam: camera ) : void

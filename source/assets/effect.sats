@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  effect.sats  ###
 
@@ -16,11 +19,11 @@ typedef effect_key = @{
 
 fun effect_ket_lerp ( x: effect_key, y: effect_key, amount: float ) : effect_key
 
-vtypedef effect = @{
+vtypedef effect = [bs,bd:int] @{
 	texture=asset_hndl(texture),
 	texture_nm=asset_hndl(texture),
-	blend_src=GLuint,
-	blend_dst=GLuint,
+	blend_src=GLenum(bs),
+	blend_dst=GLenum(bd),
 	count=int,
 	depth=float,
 	thickness=float,

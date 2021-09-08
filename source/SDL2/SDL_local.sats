@@ -1,3 +1,6 @@
+(* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. *)
 (*
 ###  SDL_local.sats  ###
 
@@ -11,10 +14,81 @@ more complete SDL function definitions
 %}
 #include "share/HATS/atslib_staload_libats_libc.hats"
 
+typedef GLsizei (s:int) = size_t(s)
+typedef GLsizei = [s:int] GLsizei(s)
+typedef GLint (i:int) = int(i)
+typedef GLint = [i:int] GLint(i)
+typedef GLuint (u:int) = uint(u)
+typedef GLenum (e:int) = uint(e)
+typedef GLboolean (b:bool) = bool(b)
+typedef GLfloat = float
+abst0ype GLbitfield = $extype"GLbitfield"
+typedef GLsizeiptr (a:vt@ype) = sizeof_t(a)
+vtypedef GLintptr (a:vt@ype, l:addr, n:int, i:int) = [i <= n; i >= 0] (array_v(a,l,n) | int(i))
+vtypedef GLcharstr (s:int) = strnptr(s)
+absvt0ype GL_Shader = [s:int] GLuint(s)
+absvt0ype GL_Framebuffer = [f:int] GLuint(f)
+absvt0ype GL_Renderbuffer = [r:int] GLuint(r)
+absvt0ype GL_Texture = [t:int] GLuint(t)
+abst0ype GL_Program (p:int) = GLuint(p)
+dataprop GL_UnifVar (u:int) = | EXISTS(u) | NONE(~1)
+datasort AttrbT= | ATTR | VERT
+absvt0ype GL_Attrb_base ( t: AttrbT, a: int) = GLint(a)
+vtypedef GL_Attrb (t: AttrbT, a: int) = [a>=0] GL_Attrb_base(t,a)
+vtypedef GL_VertAttrb = [a:nat] GL_Attrb(VERT(),a)
+absvt0ype  GL_Buffer = [b:int] GLuint(b)
+
+//  opengl enums
+#define GL_TEXTURE0 0x84C0
+#define GL_MAX_TEXTURE_UNITS 0x84E2
+//
+#define GL_TEXTURE_2D 0x0DE1
+#define GL_PROXY_TEXTURE_2D 0x8064
+#define GL_TEXTURE_1D_ARRAY 0x8C18
+#define GL_PROXY_TEXTURE_1D_ARRAY 0x8C19
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X 0x8515
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X 0x8516
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y 0x8517
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y 0x8518
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z 0x8519
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z 0x851A
+#define GL_PROXY_TEXTURE_CUBE_MAP 0x851B
+//
+#define GL_FRAMEBUFFER_COMPLETE 0x8CD5
+#define GL_FRAMEBUFFER_UNDEFINED 0x8219
+#define GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT 0x8CD6
+#define GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT 0x8CD7
+#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER 0x8CDB
+#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER 0x8CDC
+#define GL_FRAMEBUFFER_UNSUPPORTED 0x8CDD
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE 0x8D56
+#define GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS 0x8DA8
+//
+#define GL_INVALID_ENUM 0x0500
+#define GL_INVALID_VALUE 0x0501
+#define GL_INVALID_OPERATION 0x0502
+#define GL_STACK_OVERFLOW 0x0503
+#define GL_STACK_UNDERFLOW 0x0504
+#define GL_OUT_OF_MEMORY 0x0505
+#define GL_INVALID_FRAMEBUFFER_OPERATION 0x0506
+#define GL_TABLE_TOO_LARGE 0x8031
+//
+#define GL_RENDERBUFFER 0x8D41
+#define GL_MAX_RENDERBUFFER_SIZE 0x84E8
+//
+#define GL_DEPTH_COMPONENT24 0x81A6
+
 fn SDL_PrintStackTrace () : void = "mac#%"
 
-fn SDL_GL_FrameBufferErrorString ( error: $extype"GLenum" ) : string = "mac#%"
-fn SDL_GL_ErrorString ( error: $extype"GLenum" ) : string = "mac#%"
+fn SDL_GL_FrameBufferErrorString {e:int | e == GL_FRAMEBUFFER_COMPLETE
+|| e == GL_FRAMEBUFFER_UNDEFINED || e == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+|| e == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT || e == GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER
+|| e == GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER || e == GL_FRAMEBUFFER_UNSUPPORTED
+|| e == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE || e == GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS}
+( error: GLenum(e) ) : string = "mac#%"
+fn SDL_GL_ErrorString {e:int | e >= GL_INVALID_ENUM || e <= GL_INVALID_FRAMEBUFFER_OPERATION
+|| e == GL_TABLE_TOO_LARGE}
+( error: GLenum(e) ) : string = "mac#%"
 
 fn SDL_GL_PrintInfo () : void = "mac#%"
 fn SDL_GL_PrintExtensions () : void = "mac#%"
@@ -53,23 +127,11 @@ typedef IPaddress = $extype_struct "IPaddress" of {
     port=uint16
 }
 
-typedef GLsizei (s:int) = size_t(s)
-typedef GLint (i:int) = int(i)
-typedef GLuint (u:int) = uint(u)
-typedef GLenum (e:int) = int(e)
-typedef GLboolean (b:bool) = bool(b)
-typedef GLfloat = float
-abst0ype GLbitfield = $extype"GLbitfield"
-typedef GLsizeiptr (a:vt@ype) = sizeof_t(a)
-vtypedef GLintptr (a:vt@ype, l:addr, n:int, i:int) = [i <= n; i >= 0] (array_v(a,l,n) | int(i))
-absvtype image_data = ptr
-vtypedef GLcharstr (s:int) = strnptr(s)
+castfn uint32_to_GLsizei {s:nat} ( uint32(s) ) : GLsizei(s)
+castfn int32_to_GLint {i:int} ( int32(i) ) : GLint(i)
 
-castfn uint32_to_GLsizei ( uint32 ) : GLsizei
-castfn int32_to_GLint ( int32 ) : GLint
-
-castfn int_to_GLsizei ( int ) : GLsizei
-castfn int_to_GLint ( int ) : GLint
+castfn int_to_GLsizei {s:nat} ( int(s) ) : GLsizei(s)
+castfn int_to_GLint {i:int} ( int(i) ) : GLint(i)
 
 castfn sdl_wptr_to_ptr {l:addr} ( !SDL_Window_ptr_base(l) ) : ptr l
 castfn sdl_glcptr_to_ptr {l:addr} ( !SDL_GLContext_base(l) ) : ptr l
@@ -155,10 +217,22 @@ fn SDL_RWreadline {bfr:nat} ( file: SDL_RWops, buffersize: int bfr ) : (bool, St
 fn SDLNet_TCP_RecvLine (sock: !TCPsocket1, maxlen: int): (bool, Strptr1)
 
 // interface for OpenGL
+
 fn glViewport ( GLint, GLint, GLsizei, GLsizei ) : void = "mac#%"
 
-fn glActiveTexture ( texture: GLenum ) : void = "mac#"
-fn glCompressedTexImage2D ( target: GLenum, level: GLint, internalformat: GLenum, width: GLsizei, height: GLsizei, border: GLint, imagesize: GLsizei, data: !image_data ) : void = "mac#"
+fn glActiveTexture {e:int | e >= GL_TEXTURE0; e < GL_MAX_TEXTURE_UNITS}
+( texture: GLenum(e) ) : void = "mac#"
+sortdef target = {t:int | t == GL_TEXTURE_2D
+  || t == GL_PROXY_TEXTURE_2D
+  || t == GL_PROXY_TEXTURE_1D_ARRAY
+  || t >= GL_TEXTURE_CUBE_MAP_POSITIVE_X && t <= GL_PROXY_TEXTURE_CUBE_MAP }
+sortdef internalformat = {i:int | i==i}
+typedef imsize (bs, w, bw, h, bh) = GLsizei(bs * (w/bw) * (h/bh))
+fn glCompressedTexImage2D {t:target; i:internalformat}
+{bs,w,bw,h,bh:int; sz:int | sz==(bs * (w/bw) * (h/bh))}
+( target: GLenum(t), level: GLint, internalformat: GLenum(i), width: GLsizei(w),
+height: GLsizei(h), border: GLint(0), imagesize: GLsizei(sz), data: !arrayptr(char?, sz) >> arrayptr(char, sz) ) : void = "mac#"
+(*
 fn glTexImage3D ( target: GLenum, level: GLint, internalformat: GLint, width: GLsizei, height: GLsizei, depth: GLsizei, border: GLint, format: GLenum, etype: GLenum, data: !image_data ) : void = "mac#"
 fn glCreateShader ( shadertype: GLenum ) : GLuint = "mac#"
 fn glCreateProgram () : void = "mac#"
@@ -194,7 +268,10 @@ fn glGetShaderiv ( shader: GLuint, pname: GLenum, params: &GLint ) : void = "mac
 fn glGetProgramiv ( program: GLuint, pname: GLenum, params: &GLint ) : void = "mac#"
 fn glProgramParameteri ( program: GLuint, pname: GLenum, value: GLint ) : void = "mac#"
 fn glBindAttribLocation ( program: GLuint, index: GLuint, name: !glchar_str ) : void = "mac#"
-fn glGenFramebuffers {n:nat} ( n: GLsizei, ids: arrayptr(GLuint, n) ) : void = "mac#"
+*)
+fn glGenFramebuffers {n:nat} ( n: GLsizei(n), ids: !arrayptr(GL_Framebuffer?, n) >> arrayptr(GL_Framebuffer, n) ) : void = "mac#"
+fn glGenFramebuffers ( n: GLsizei(1), id: &GL_Framebuffer? >> GL_Framebuffer ) : void = "mac#"
+(*
 fn glBindFramebuffer ( target: GLenum, framebuffer: GLuint ) : void = "mac#"
 fn glBlitFramebuffer ( srcx0: GLint, srcy0: GLint, srcx1: GLint, srcy1: GLint, dstx0: GLint, dsty0: GLint, dstx1: GLint, dsty1: GLint, mask: GLbitfield, filter: GLenum ) : void = "mac#"
 fn glFramebufferTexture ( target: GLenum, attachment: GLenum, texture: GLuint, level: GLint ) : void = "mac#"
@@ -202,16 +279,25 @@ fn glFramebufferTexture2D ( target: GLenum, attachment: GLenum, textarget: GLenu
 fn glDeleteFramebuffers {n:nat} ( n: GLsizei, framebuffers: arrayptr(GLuint, n) ) : void = "mac#"
 fn glCheckFramebufferStatus ( target: GLenum ) : GLenum = "mac#"
 fn glGenBuffers {n:nat} ( n: GLsizei, buffers: arrayptr(GLuint, n) ) : void = "mac#"
-fn glGenRenderbuffers {n:nat} ( n: GLsizei, renderbuffers: arrayptr(GLuint, n) ) : void = "mac#"
+*)
+fn glGenRenderbuffers {n:nat} ( n: GLsizei(n), renderbuffers: !arrayptr(GL_Renderbuffer?, n) >> arrayptr(GL_Renderbuffer, n) ) : void = "mac#"
+fn glGenRenderbuffers ( n: GLsizei(1), renderbuffers: &GL_Renderbuffer? >> GL_Renderbuffer ) : void = "mac#"
+(*
 fn glDeleteBuffers {n:nat} ( n: GLsizei, buffers: arrayptr(GLuint, n) ) : void = "mac#"
 fn glDeleteRenderbuffers {n:nat} ( n: GLsizei, renderbuffers: arrayptr(GLuint, n) ) : void = "mac#"
 fn glBindBuffer ( target: GLenum, buffer: GLuint ) : void = "mac#"
-fn glBindRenderbuffer ( target: GLenum, renderbuffer: GLuint ) : void = "mac#"
+*)
+fn glBindRenderbuffer ( target: GLenum(GL_RENDERBUFFER), renderbuffer: GL_Renderbuffer ) : void = "mac#"
+(*
 fn glBufferData ( target: GLenum, size: GLsizeiptr, data: image_data, usage: GLenum ) : void = "mac#"
 fn glGetBufferSubData ( target: GLenum, offset: GLintptr, size: GLsizeiptr, data: image_data ) : void = "mac#"
 fn glFramebufferRenderbuffer ( target: GLenum, attachment: GLenum, renderbuffertarget: GLenum, renderbuffer: GLuint ) : void = "mac#"
 fn glGetAttribLocation ( program: GLuint, name: glchar_str ) : GLint = "mac#"
-fn glRenderbufferStorage ( target: GLenum, internalformat: GLenum, width: GLsizei, height: GLsizei ) : void = "mac#"
+*)
+sortdef rbif = {r:int | r==GL_DEPTH_COMPONENT24}
+fn glRenderbufferStorage {w,h:int; i:rbif | w <= GL_MAX_RENDERBUFFER_SIZE; h <= GL_MAX_RENDERBUFFER_SIZE}
+( target: GLenum(GL_RENDERBUFFER), internalformat: GLenum(i), width: GLsizei(w), height: GLsizei(h) ) : void = "mac#"
+(*
 fn glRenderbufferStorageMultisample ( target: GLenum, samples: GLsizei, internalformat: GLenum, width: GLsizei, height: GLsizei ) : void = "mac#"
 fn glDrawBuffers {n:nat} ( n: GLsizei, bufs: arrayptr(GLenum, n) ) : void = "mac#"
 fn glGenerateMipmap ( target: GLenum ) : void = "mac#"
@@ -220,3 +306,4 @@ fn glPatchParameteri ( pname: GLenum, value: GLint ) : void = "mac#"
 fn glPatchParameterfv {c:nat} ( pname: GLenum, values: arrayptr(GLfloat, c) ) : void = "mac#"
 
 fn glBrokenExtension () : void = "mac#"
+*)
