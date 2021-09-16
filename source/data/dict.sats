@@ -10,7 +10,7 @@
 staload "./../g_engine.sats"
 
 (*  buckets (aka linked lists)  *)
-absvt@ype bucket(a:vt@ype)
+absvtype bucket(a:vt@ype)
 
 fn{a:vt@ype} bucket_new ( string, a ) : bucket(a)
 
@@ -28,7 +28,7 @@ fn{a:vt@ype} bucket_print ( b: !bucket(a) ) : void
 
 (*  dictionaries  *)
 sortdef dsz = {s:int | s > 0}
-absvt@ype dict(a:vt@ype, n:int)
+absvt0ype dict(a:vt@ype, n:int)
 
 fn{a:vt@ype} dict_new {s:dsz} ( int s ) : dict(a, s)
 fn{a:t@ype} dict_delete {s:dsz} ( d: dict(a, s) ) : void

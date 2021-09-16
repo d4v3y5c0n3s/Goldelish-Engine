@@ -27,9 +27,14 @@ extern castfn int_to_uint32 ( x: int ): uint32
 local
   assume fpath = Strptr1
 in
-implement P ( path ) = ($UNSAFE.castvwtp0{Strptr1}(path)):fpath
+implement P ( path ) = string_make_stream_vt(streamize_string_char(path))
 
 implement fpath_delete ( path ) = strptr_free(path)
+
+(*implement readfile ( f ) = let
+in
+end*)
+
 end
 
 //  timing functions
