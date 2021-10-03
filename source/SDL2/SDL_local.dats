@@ -11,43 +11,6 @@
 
 staload "./SDL_local.sats"
 
-implmnt SDLNet_TCP_RecvLine (sock, maxlen) = let
-
-	fun loop ( sock: !TCPsocket1, i: int, s: stream_vt(charNZ) ) : (bool, stream_vt(charNZ)) =
-		let
-			var c: charNZ = ' '
-			val status = SDLNet_TCP_Recv(sock, c, 1)
-		in
-			if status = ~1 || i = maxlen-1 then let
-				val () = stream_vt_free(s) in (true, stream_vt_make_nil())
-			end else if c = '\n' then (true, s)
-			else if status != 0 then loop(sock, i+1, stream_vt_append(s, stream_vt_make_sing(c)))
-			else (false, s)
-		end
-    
-    val (b, strm) = loop(sock, 0, stream_vt_make_nil())
-in
-    (b, string_make_stream_vt(strm))
-end
-
-implmnt SDL_RWreadline ( file, buffersize ) = let
-
-  fun loop ( f: SDL_RWops, i: int, s: stream_vt(charNZ) ) : (bool, stream_vt(charNZ)) = let
-    var c: charNZ = ' '
-    val status = SDL_RWread(f, c, 1, 1)
-  in
-    if status = ~1 || i = buffersize-1 then let
-      val () = stream_vt_free(s) in (true, stream_vt_make_nil())
-    end else if c = '\n' then (true, s)
-    else if status != 0 then loop(f, i+1, stream_vt_append(s, stream_vt_make_sing(c)))
-    else (false, s)
-  end
-  
-  val (b, strm) = loop(file, 0, stream_vt_make_nil())
-in
-  (b, string_make_stream_vt(strm))
-end
-
 ////
 #ifdef _WIN32
 #include <windows.h>

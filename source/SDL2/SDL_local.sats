@@ -116,8 +116,6 @@ abst@ype SDL_GLattr = $extype"SDL_GLattr"
 typedef Mix_Music = ptr
 typedef Mix_Chunk = $extype"Mix_Chunk"
 
-typedef SDL_RWops = ptr
-
 absvtype TCPsocket_base (l:addr) = ptr(l)
 vtypedef TCPsocket0 = [l:addr] TCPsocket_base(l)
 vtypedef TCPsocket1 = [l:addr | l > null] TCPsocket_base(l)
@@ -209,10 +207,6 @@ fn SDL_SetWindowTitle ( !SDL_Window_ptr1, string ) : void = "mac#%"
 fn SDL_GetTicks() : ulint = "mac#%"
 fn SDL_Delay ( ms:uint32 ) : void = "mac#%"
 fn SDL_ShowCursor ( int ) : int = "mac#%"
-
-fn SDL_RWFromFile ( file: string, mode: string ) : SDL_RWops = "mac#%"
-fn SDL_RWread ( SDL_RWops, &charNZ, int, int ) : size_t = "mac#%"
-fn SDL_RWreadline {bfr:nat} ( file: SDL_RWops, buffersize: int bfr ) : (bool, Strptr1)
 
 fn SDLNet_TCP_RecvLine (sock: !TCPsocket1, maxlen: int): (bool, Strptr1)
 

@@ -24,9 +24,11 @@ fn P {n:int | n <= MAX_PATH} ( path: string(n) ) : fpath
 fn fpath_delete (path: fpath) : void
 
 fn readfile ( f: string ) : stream_vt(charNZ)
-fn{a:vt@ype} parser ( x: stream_vt(charNZ) ) : stream_vt(a)
-fn{} parser$test ( buf: stream_vt(charNZ) ) : stream_vt(charNZ)
-fn parse_line ( buf: stream_vt(charNZ) ) : stream_vt(charNZ)
+
+fn parse_line ( inp: !stream_vt(charNZ) ) : stream_vt(charNZ)
+
+fn eq_string_streamvt ( !stream_vt(charNZ), string ) : bool
+overload = with eq_string_streamvt
 
 (*  ###  timing  ###  *)
 abst@ype timer

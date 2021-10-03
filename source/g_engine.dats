@@ -6,6 +6,7 @@
 *)
 
 #include "share/atspre_staload.hats"
+#include "share/HATS/atslib_staload_libats_libc.hats"
 
 staload "./g_engine.sats"
 staload "./SDL2/SDL_local.sats"
@@ -25,13 +26,26 @@ extern castfn int_to_float ( x: int ): float
 extern castfn int_to_uint32 ( x: int ): uint32
 
 local
-  assume fpath = Strptr1
+
+assume fpath = Strptr1
+
+fun readfile_loop {m:$STDIO.fm}{l:agz} ( pf: $STDIO.fmlte(m, $STDIO.r()) | fp: !$STDIO.FILEptr(l,m) ) : stream_vt(charNZ) =
+let
+	val nc = $STDIO.fgetc(pf | fp)
 in
-implement P ( path ) = string_make_stream_vt(streamize_string_char(path))
+	if isneqz(nc) then $ldelay(stream_vt_cons('4', readfile_loop(pf | fp)))
+	else $ldelay(stream_vt_nil())
+end
+
+
+in
+
+implement P ( path ) = string0_copy(path)
 
 implement fpath_delete ( path ) = strptr_free(path)
 
 (*implement readfile ( f ) = let
+	var file = $STDIO.fopen(f, "r")
 in
 end*)
 

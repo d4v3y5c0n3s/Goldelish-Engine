@@ -1,85 +1,143 @@
-include $(PATSHOME)/share/atsmake-pre.mk
-
-AR=ar
-
-CFLAGS0 = $(CFLAGS)
-LDFLAGS0 = $(LDFLAGS)
-
-CFLAGS0 += -I ./include -std=gnu99 -O3 -g
-LDFLAGS0 += -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
-
-SOURCES_SATS += $(wildcard source/*.sats) $(wildcard source/*/*.sats)  #the static files in the project
-SOURCES_DATS += $(wildcard source/*.dats) $(wildcard source/*/*.dats)  #the dynamic files in the project
-
-SOURCES_DATS_OBJ += $(addprefix obj/,$(notdir $(SOURCES_DATS:.dats=_dats.o)))
-
-SOURCES_OBJ = $(SOURCES_DATS_OBJ)
-
-PLATFORM = $(shell uname)
-ifeq ($(findstring Linux, $(PLATFORM)), Linux)
-	DYNAMIC = libgoldelish.so
-	STATIC = libgoldelish.a
-	CFLAGS0 += -fPIC
-	LDFLAGS0 += -lGL
+ifdef PATSHOME
+  ATSHOMEQ=$(PATSHOME)
+else
+ifdef ATSHOME
+  ATSHOMEQ=$(ATSHOME)
+else
+  ATSHOMEQ="/usr/local/lib/ats2-postiats"
 endif
-ifeq ($(findstring CYGWIN, $(PLATFORM)), CYGWIN)
-	DYNAMIC = libgoldelish.so
-	STATIC = libgoldelish.a
-	CFLAGS0 += -fPIC
-	LDFLAGS0 += -lGL
-endif
-ifeq ($(findstring Darwin, $(PLATFORM)), Darwin)
-	DYNAMIC = libgoldelish.so
-	STATIC = libgoldelish.a
-	CFLAGS0 +=  -fPIC
-	LDFLAGS0 += -framework OpenGL
-endif
-ifeq ($(findstring MINGW, $(PLATFORM)), MINGW)
-	DYNAMIC = goldelish.dll
-	STATIC = libgoldelish.a
-	LDFLAGS0 += -lmingw32 -lopengl32 -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
 endif
 
-INCLUDE += $(LDFLAGS0)
+ATSCC=$(ATSHOMEQ)/bin/patscc
+ATSOPT=$(ATSHOMEQ)/bin/patsopt
 
-display_sources:
-	@echo "SOURCES_SATS:"
-	@echo $(SOURCES_SATS)
-	@echo "SOURCES_DATS:"
-	@echo $(SOURCES_DATS)
+SATS_FILES= \
+ source/g_asset.sats \
+ source/g_audio.sats \
+ source/g_engine.sats \
+ source/g_entity.sats \
+ source/g_graphics.sats \
+ source/g_joystick.sats \
+ source/g_net.sats \
+ source/g_physics.sats \
+ source/g_ui.sats \
+ source/goldelish.sats \
+ source/assets/animation.sats \
+ source/assets/cmesh.sats \
+ source/assets/config.sats \
+ source/assets/effect.sats \
+ source/assets/font.sats \
+ source/assets/image.sats \
+ source/assets/lang.sats \
+ source/assets/material.sats \
+ source/assets/music.sats \
+ source/assets/renderable.sats \
+ source/assets/shader.sats \
+ source/assets/skeleton.sats \
+ source/assets/sound.sats \
+ source/assets/terrain.sats \
+ source/assets/texture.sats \
+ source/data/dict.sats \
+ source/data/int_hashtable.sats \
+ source/data/int_list.sats \
+ source/data/list.sats \
+ source/data/randf.sats \
+ source/data/spline.sats \
+ source/data/vertex_hashtable.sats \
+ source/data/vertex_list.sats \
+ source/entities/animated_object.sats \
+ source/entities/camera.sats \
+ source/entities/instance_object.sats \
+ source/entities/landscape.sats \
+ source/entities/light.sats \
+ source/entities/particles.sats \
+ source/entities/physics_object.sats \
+ source/entities/static_object.sats \
+ source/rendering/renderer.sats \
+ source/rendering/sky.sats \
+ source/ui/ui_browser.sats \
+ source/ui/ui_button.sats \
+ source/ui/ui_dialog.sats \
+ source/ui/ui_listbox.sats \
+ source/ui/ui_option.sats \
+ source/ui/ui_rectangle.sats \
+ source/ui/ui_slider.sats \
+ source/ui/ui_spinner.sats \
+ source/ui/ui_style.sats \
+ source/ui/ui_text.sats \
+ source/ui/ui_textbox.sats \
+ source/ui/ui_toast.sats \
+ source/SDL2/SDL_local.sats \
+DATS_FILES= \
+ source/g_asset.dats \
+ source/g_audio.dats \
+ source/g_engine.dats \
+ source/g_entity.dats \
+ source/g_graphics.dats \
+ source/g_joystick.dats \
+ source/g_net.dats \
+ source/g_physics.dats \
+ source/g_ui.dats \
+ source/goldelish.dats \
+ source/assets/animation.dats \
+ source/assets/cmesh.dats \
+ source/assets/config.dats \
+ source/assets/effect.dats \
+ source/assets/font.dats \
+ source/assets/image.dats \
+ source/assets/lang.dats \
+ source/assets/material.dats \
+ source/assets/music.dats \
+ source/assets/renderable.dats \
+ source/assets/shader.dats \
+ source/assets/skeleton.dats \
+ source/assets/sound.dats \
+ source/assets/terrain.dats \
+ source/assets/texture.dats \
+ source/data/dict.dats \
+ source/data/int_list.dats \
+ source/data/list.dats \
+ source/data/randf.dats \
+ source/data/spline.dats \
+ source/data/vertex_hashtable.dats \
+ source/data/vertex_list.dats \
+ source/entities/animated_object.dats \
+ source/entities/camera.dats \
+ source/entities/instance_object.dats \
+ source/entities/landscape.dats \
+ source/entities/light.dats \
+ source/entities/particles.dats \
+ source/entities/physics_object.dats \
+ source/entities/static_object.dats \
+ source/rendering/renderer.dats \
+ source/rendering/sky.dats \
+ source/ui/ui_browser.dats \
+ source/ui/ui_button.dats \
+ source/ui/ui_dialog.dats \
+ source/ui/ui_listbox.dats \
+ source/ui/ui_option.dats \
+ source/ui/ui_rectangle.dats \
+ source/ui/ui_slider.dats \
+ source/ui/ui_spinner.dats \
+ source/ui/ui_style.dats \
+ source/ui/ui_text.dats \
+ source/ui/ui_textbox.dats \
+ source/ui/ui_toast.dats \
+ source/SDL2/SDL_local.dats \
+CATS_FILES= \
+ source/SDL2/SDL_local.cats \
 
-display_platform:
-	@echo "the platform you are using is:"
-	@echo $(PLATFORM)
+all: typecheck install test
 
-all:: $(DYNAMIC) $(STATIC)
-$(DYNAMIC): $(SOURCES_OBJ)
-	@echo "reached the dynamic block"
-	$(CC) $(SOURCES_OBJ) $(LDFLAGS0) -o $@
-$(STATIC): $(SOURCES_OBJ)
-	$(AR) rcs $@ $(SOURCES_OBJ)
-#obj/%_sats.o: source/%.sats | obj
-#	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
-#obj/%_sats.o: source/*/%.sats | obj
-#	$(PATSCC) --debug $(INCLUDE) $(INCLUDE_ATS) $(CFLAGS0) -o $@ -c $<
-obj/%_dats.o: source/%.dats | obj
-	$(PATSCC) --debug --gline $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
-obj/%_dats.o: source/*/%.dats | obj
-	$(PATSCC) --debug --gline $(INCLUDE) $(INCLUDE_ATS) $(MALLOCFLAG) $(CFLAGS0) -o $@ -c $<
-obj:
-	mkdir obj
+test: install
+	cd test && $(MAKE)
 
-clean:
-	rm $(SOURCES_OBJ) $(STATIC) $(DYNAMIC) $(wildcard *.c); $(shell rm -r obj)
+typecheck:
+	$(ATSCC) -tcats $(SATS_FILES)
+	$(ATSCC) -tcats $(DATS_FILES)
 
-install_unix: $(STATIC)
-	cp $(STATIC) /usr/local/lib/$(STATIC)
-
-install_win32: $(STATIC)
-	cp $(STATIC) C:/MinGW/lib/$(STATIC)
-
-install_win64: $(STATIC) $(DYNAMIC)
-	cp $(STATIC) C:/MinGW64/x86_64-w64-mingw32/lib/$(STATIC)
-	cp $(DYNAMIC) C:/MinGW64/x86_64-w64-mingw32/bin/$(DYNAMIC)
-
-include $(PATSHOME)/share/atsmake-post.mk
+install: typecheck
+	mkdir $(ATSHOMEQ)/Goldelish-Install
+	cp $(SATS_FILES) $(ATSHOMEQ)/Goldelish-Install
+	cp $(DATS_FILES) $(ATSHOMEQ)/Goldelish-Install
+	cp source/goldelish.hats $(ATSHOMEQ)/Goldelish-Install
