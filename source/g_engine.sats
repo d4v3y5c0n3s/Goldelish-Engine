@@ -23,12 +23,15 @@ fn P {n:int | n <= MAX_PATH} ( path: string(n) ) : fpath
 
 fn fpath_delete (path: fpath) : void
 
-fn readfile ( f: string ) : stream_vt(charNZ)
+absvtype parsable (l:addr)
+vtypedef parsable = [l:addr] parsable(l)
 
-fn parse_line ( inp: !stream_vt(charNZ) ) : stream_vt(charNZ)
+fn readfile ( f: string, fp: &ptr? >> ptr l) : #[l:addr] parsable(l)
+fn close_parsable {l:agz} ( p: parsable(l), fp: ptr l ) : void
 
-fn eq_string_streamvt ( !stream_vt(charNZ), string ) : bool
-overload = with eq_string_streamvt
+fn parse_line {l:addr} ( &parsable(l) ) : stream_vt(charNZ)
+
+fn string_match_streamvt {s:nat} ( str: string(s), s: int s, svt: &stream_vt(charNZ) ) : bool
 
 (*  ###  timing  ###  *)
 abst@ype timer

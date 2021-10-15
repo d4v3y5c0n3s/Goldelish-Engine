@@ -28,26 +28,82 @@ extern castfn int_to_uint32 ( x: int ): uint32
 local
 
 assume fpath = Strptr1
+assume parsable(l) = ( option_v($STDIO.FILE_v(l, $STDIO.r()), l != null) | stream_vt(charNZ) )
+
+extern castfn int2char1 {x:int} ( x: int x ) : char(u2i8(x))
 
 fun readfile_loop {m:$STDIO.fm}{l:agz} ( pf: $STDIO.fmlte(m, $STDIO.r()) | fp: !$STDIO.FILEptr(l,m) ) : stream_vt(charNZ) =
 let
 	val nc = $STDIO.fgetc(pf | fp)
 in
-	if isneqz(nc) then $ldelay(stream_vt_cons('4', readfile_loop(pf | fp)))
+	if isgtz(nc) then $ldelay(stream_vt_cons(int2char1(nc), readfile_loop(pf | fp)))
 	else $ldelay(stream_vt_nil())
 end
 
-
 in
-
 implement P ( path ) = string0_copy(path)
-
 implement fpath_delete ( path ) = strptr_free(path)
 
-(*implement readfile ( f ) = let
-	var file = $STDIO.fopen(f, "r")
+implement readfile ( f, fp ) = let
+	var file = $STDIO.fopen(f, $UNSAFE.cast{fmode($STDIO.r)}("r"))
 in
-end*)
+	if $STDIO.FILEptr_isnot_null(file) then let
+		val ret = readfile_loop(file_mode_lte_r_r | file)
+		val (fv | p) = $STDIO.decode(file)
+		val () = fp := p
+	in
+		(Some_v(fv) | ret)
+	end
+	else let
+		val () = fp := the_null_ptr
+		prval () = $STDIO.FILEptr_free_null(file)
+	in
+		(None_v() | $ldelay(stream_vt_nil())):parsable(null)
+	end
+end
+
+implement close_parsable ( p, fp ) = {
+    prval Some_v(fvw) = p.0
+    val file = $STDIO.encode(fvw|fp)
+    val (cv | c) = $STDIO.fclose(file)
+    prval () = assume_file_closed(cv) where {
+      extern praxi assume_file_closed {l:addr}{m:$STDIO.fm}{b:bool} (option_v( $STDIO.FILE_v(l,m), b)) : void
+    }
+    val () = stream_vt_free(p.1)
+}
+
+//  it may be prudent to put the below code into a separate function with a template for the conditional in order to reuse the code for parse_*() functions
+implement parse_line ( p ) =
+case+ !(p.1) of
+| ~stream_vt_nil() => let val () = p.1 := $ldelay(stream_vt_nil()) in $ldelay(stream_vt_nil()) end
+| ~stream_vt_cons(c, next) => let
+  val () = p.1 := next
+in
+  if c = '\n' then $ldelay(stream_vt_nil())
+  else stream_vt_append(stream_vt_make_sing(c), parse_line(p))
+end
+
+implement string_match_streamvt {s} ( str, s, svt ) = let
+
+fun loop {i:nat | s>=i} .<s-i>. ( str: string(s), i: int i, svt: stream_vt(charNZ), b: &bool? >> bool ) : stream_vt(charNZ) =
+  if i < s then
+    case+ !svt of
+    | ~stream_vt_cons(c, next) =>
+      if c = str[i] then stream_vt_append(stream_vt_make_sing(c), loop(str, i+1, next, b))
+      else let
+        val () = b := false in stream_vt_append(stream_vt_make_sing(c), next) end
+    | ~stream_vt_nil() => let val () = b := false in $ldelay(stream_vt_nil()) end
+  else
+    case+ !svt of
+    | ~stream_vt_nil() => let val () = b := true in $ldelay(stream_vt_nil()) end
+    | ~stream_vt_cons(c, next) => let val () = b := false in stream_vt_append(stream_vt_make_sing(c), next) end
+  
+  var ret: bool = false
+  val n_svt = loop(str, 0, svt, ret)
+  val () = svt := n_svt
+in
+  ret
+end
 
 end
 
