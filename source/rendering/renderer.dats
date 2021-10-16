@@ -79,7 +79,7 @@ assume renderer = [dln:nat](*; ron:nat]*) @{
   tex_grey=asset_hndl(texture),
   tex_skin_lookup=asset_hndl(texture),
   gfbo=GL_Framebuffer,
-  gdepth_buffer=GL_Renderbuffer,
+  gdepth_buffer=GL_Renderbuffer(*,
   gdiffuse_buffer=GL_Renderbuffer,
   gnormals_buffer=GL_Renderbuffer,
   gdiffuse_texture=GL_Texture,
@@ -96,7 +96,7 @@ assume renderer = [dln:nat](*; ron:nat]*) @{
   ldr_front_texture=GL_Texture,
   ldr_back_fbo=GL_Framebuffer,
   ldr_back_buffer=GL_Renderbuffer,
-  ldr_back_texture=GL_Texture
+  ldr_back_texture=GL_Texture*)
   (*,
   shadows_fbo=arrayptr(GLuint, 3),
   shadows_buffer=arrayptr(GLuint, 3),
@@ -138,20 +138,20 @@ in
 implement renderer_new ( options, cam, gvp ) = let
   val width = graphics_viewport_width(gvp)
   val height = graphics_viewport_width(gvp)
-  val gwidth = width *
-  val gheight = height *
+  //val gwidth = width *
+  //val gheight = height *
   var gfbo: GL_Framebuffer
   val () = glGenFramebuffers(i2sz(1), gfbo)
   var gdepth_buffer: GL_Renderbuffer
   val () = glGenRenderbuffers(i2sz(1), gdepth_buffer)
-  val () = glBindRenderbuffer(GL_RENDERBUFFER, gdepth_buffer)
-  val () = glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, , )
+  //val () = glBindRenderbuffer(GL_RENDERBUFFER, gdepth_buffer)
+  (*val () = glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, , )
   val () = glFramebufferRenderbuffer()
   var gdepth_texture: GL_Texture
   var gdiffuse_buffer: GL_Renderbuffer
   var gdiffuse_texture: GL_Texture
   var gnormals_buffer: GL_Renderbuffer
-  var gnormals_texture: GL_Texture
+  var gnormals_texture: GL_Texture*)
 in
   @{
   options=options,
@@ -200,7 +200,7 @@ in
   tex_grey=asset_hndl_new<texture>(P("./coreassets/textures/grey.dds")),
   tex_skin_lookup=asset_hndl_new<texture>(P("./coreassets/textures/skin_lookup.dds")),
   gfbo=gfbo,
-  gdepth_buffer=gdepth_buffer,
+  gdepth_buffer=gdepth_buffer(*,
   gdiffuse_buffer=,
   gnormals_buffer=,
   gdiffuse_texture=,
@@ -217,7 +217,7 @@ in
   ldr_front_texture=,
   ldr_back_fbo=,
   ldr_back_buffer=,
-  ldr_back_texture=
+  ldr_back_texture=*)
   }:renderer
 end
   (*,

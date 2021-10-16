@@ -143,8 +143,9 @@ end
 implmnt graphics_viewport_set_title ( gvp, title ) = SDL_SetWindowTitle(gvp.screen, title)
 
 implmnt graphics_viewport_set_icon ( gvp, icon ) = let
-    var window_icon = SDL_LoadBMP(fpath_string(icon))
-    val () = fpath_delete(icon)
+    var fs = fpath_string(icon)
+    var window_icon = SDL_LoadBMP(fs)
+    val () = strptr_free(fs)
 in
     if ptrcast(window_icon) > 0 then let
         val () = SDL_SetWindowIcon(gvp.screen, window_icon)

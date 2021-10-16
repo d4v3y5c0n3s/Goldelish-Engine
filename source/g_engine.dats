@@ -42,6 +42,8 @@ end
 
 in
 implement P ( path ) = string0_copy(path)
+implement P_lin ( path ) = path
+implement fpath_string ( f ) = f
 implement fpath_delete ( path ) = strptr_free(path)
 
 implement readfile ( f, fp ) = let

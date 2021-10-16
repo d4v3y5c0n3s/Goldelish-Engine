@@ -31,7 +31,7 @@ fn graphics_get_antialiasing ( gvp: !graphics_viewport ) : int
 fn graphics_viewport_set_title ( gvp: !graphics_viewport, title: string ) : void
 fn graphics_viewport_set_icon ( gvp: !graphics_viewport, icon: fpath ) : void
 fn graphics_viewport_set_position ( x: int, y: int ) : void
-fn graphics_viewport_set_size ( gvp: !graphics_viewport, w: int, h: int ) : void
+fn graphics_viewport_set_size ( gvp: !graphics_viewport, w: Nat, h: Nat ) : void
 fn graphics_viewport_screenshot () : void
 
 fn graphics_viewport_title ( !graphics_viewport ) : string

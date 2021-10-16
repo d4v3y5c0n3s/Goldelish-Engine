@@ -9,6 +9,7 @@ a relatively simple deferred renderer implementation
 
 staload "./../g_engine.sats"
 staload "./../g_asset.sats"
+staload "./../g_graphics.sats"
 staload "./../assets/texture.sats"
 staload "./../assets/shader.sats"
 staload "./../assets/cmesh.sats"

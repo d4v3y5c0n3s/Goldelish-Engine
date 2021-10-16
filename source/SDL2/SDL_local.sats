@@ -185,7 +185,7 @@ fn SDLNet_GetError () : string = "mac#%"
 fn SDLNet_TCP_Open ( &IPaddress ) : TCPsocket0
 fn SDLNet_TCP_Send ( !TCPsocket1, !Strptr1, int ) : int = "mac#%"
 
-fn SDL_LoadBMP ( string ) : SDL_Surface_ptr0 = "mac#%"
+fn SDL_LoadBMP ( !Strptr1 ) : SDL_Surface_ptr0 = "mac#%"
 fn SDL_SetWindowIcon ( !SDL_Window_ptr1, !SDL_Surface_ptr1 ) : void = "mac#%"
 fn SDL_FreeSurface ( SDL_Surface_ptr0 ) : void = "mac#%"
 fn SDL_GetWindowTitle ( !SDL_Window_ptr1 ) : string = "mac#%"
@@ -207,8 +207,6 @@ fn SDL_SetWindowTitle ( !SDL_Window_ptr1, string ) : void = "mac#%"
 fn SDL_GetTicks() : ulint = "mac#%"
 fn SDL_Delay ( ms:uint32 ) : void = "mac#%"
 fn SDL_ShowCursor ( int ) : int = "mac#%"
-
-fn SDLNet_TCP_RecvLine (sock: !TCPsocket1, maxlen: int): (bool, Strptr1)
 
 // interface for OpenGL
 

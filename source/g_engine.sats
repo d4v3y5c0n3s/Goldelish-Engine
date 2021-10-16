@@ -20,8 +20,10 @@ staload "./SDL2/SDL_local.sats"
 absvtype fpath
 
 fn P {n:int | n <= MAX_PATH} ( path: string(n) ) : fpath
+fn P_lin ( path: Strptr1 ) : fpath
 
-fn fpath_delete (path: fpath) : void
+fn fpath_string ( fpath ) : Strptr1
+fn fpath_delete ( fpath ) : void
 
 absvtype parsable (l:addr)
 vtypedef parsable = [l:addr] parsable(l)
