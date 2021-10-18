@@ -11,7 +11,7 @@ endif
 ATSCC=$(ATSHOMEQ)/bin/patscc
 ATSOPT=$(ATSHOMEQ)/bin/patsopt
 
-SATS_FILES= \
+SOURCE_SATS= \
  source/g_asset.sats \
  source/g_audio.sats \
  source/g_engine.sats \
@@ -20,23 +20,13 @@ SATS_FILES= \
  source/g_joystick.sats \
  source/g_physics.sats \
  source/goldelish.sats \
- source/data/dict.sats \
- source/rendering/renderer.sats \
- source/rendering/sky.sats \
- source/SDL2/SDL_local.sats \
- # source/ui/ui_browser.sats
- # source/ui/ui_button.sats
- # source/ui/ui_dialog.sats
- # source/ui/ui_listbox.sats
- # source/ui/ui_option.sats
- # source/ui/ui_rectangle.sats
- # source/ui/ui_slider.sats
- # source/ui/ui_spinner.sats
- # source/ui/ui_style.sats
- # source/ui/ui_text.sats
- # source/ui/ui_textbox.sats
- # source/ui/ui_toast.sats
  # source/g_ui.sats
+ # source/g_net.sats
+
+SDL2_SATS= \
+ source/SDL2/SDL_local.sats \
+
+ASSETS_SATS= \
  # source/assets/animation.sats
  # source/assets/cmesh.sats
  # source/assets/config.sats
@@ -52,6 +42,18 @@ SATS_FILES= \
  # source/assets/sound.sats
  # source/assets/terrain.sats
  # source/assets/texture.sats
+
+DATA_SATS= \
+ source/data/dict.sats \
+ # source/data/int_hashtable.sats
+ # source/data/int_list.sats
+ # source/data/list.sats
+ # source/data/randf.sats
+ # source/data/spline.sats
+ # source/data/vertex_hashtable.sats
+ # source/data/vertex_list.sats
+
+ENTITIES_SATS= \
  # source/entities/animated_object.sats
  # source/entities/camera.sats
  # source/entities/instance_object.sats
@@ -60,15 +62,35 @@ SATS_FILES= \
  # source/entities/particles.sats
  # source/entities/physics_object.sats
  # source/entities/static_object.sats
- # source/g_net.sats
- # source/data/int_hashtable.sats
- # source/data/int_list.sats
- # source/data/list.sats
- # source/data/randf.sats
- # source/data/spline.sats
- # source/data/vertex_hashtable.sats
- # source/data/vertex_list.sats
-DATS_FILES= \
+
+RENDERING_SATS= \
+ source/rendering/renderer.sats \
+ source/rendering/sky.sats \
+
+UI_SATS= \
+ # source/ui/ui_browser.sats
+ # source/ui/ui_button.sats
+ # source/ui/ui_dialog.sats
+ # source/ui/ui_listbox.sats
+ # source/ui/ui_option.sats
+ # source/ui/ui_rectangle.sats
+ # source/ui/ui_slider.sats
+ # source/ui/ui_spinner.sats
+ # source/ui/ui_style.sats
+ # source/ui/ui_text.sats
+ # source/ui/ui_textbox.sats
+ # source/ui/ui_toast.sats
+
+SATS_FILES= \
+ $(SOURCE_SATS) \
+ $(SDL2_SATS) \
+ $(ASSETS_SATS) \
+ $(DATA_SATS) \
+ $(ENTITIES_SATS) \
+ $(RENDERING_SATS) \
+ $(UI_SATS) \
+
+SOURCE_DATS= \
  source/g_asset.dats \
  source/g_audio.dats \
  source/g_engine.dats \
@@ -77,23 +99,13 @@ DATS_FILES= \
  source/g_joystick.dats \
  source/g_physics.dats \
  source/goldelish.dats \
- source/data/dict.dats \
- source/rendering/renderer.dats \
- source/SDL2/SDL_local.dats \
- # source/rendering/sky.dats
- # source/ui/ui_browser.dats
- # source/ui/ui_button.dats
- # source/ui/ui_dialog.dats
- # source/ui/ui_listbox.dats
- # source/ui/ui_option.dats
- # source/ui/ui_rectangle.dats
- # source/ui/ui_slider.dats
- # source/ui/ui_spinner.dats
- # source/ui/ui_style.dats
- # source/ui/ui_text.dats
- # source/ui/ui_textbox.dats
- # source/ui/ui_toast.dats
  # source/g_ui.dats
+ # source/g_net.dats
+
+SDL2_DATS= \
+ source/SDL2/SDL_local.dats \
+
+ASSETS_DATS= \
  # source/assets/animation.dats
  # source/assets/cmesh.dats
  # source/assets/config.dats
@@ -109,6 +121,17 @@ DATS_FILES= \
  # source/assets/sound.dats
  # source/assets/terrain.dats
  # source/assets/texture.dats
+
+DATA_DATS= \
+ source/data/dict.dats \
+ # source/data/int_list.dats
+ # source/data/list.dats
+ # source/data/randf.dats
+ # source/data/spline.dats
+ # source/data/vertex_hashtable.dats
+ # source/data/vertex_list.dats
+
+ENTITIES_DATS= \
  # source/entities/animated_object.dats
  # source/entities/camera.dats
  # source/entities/instance_object.dats
@@ -117,15 +140,39 @@ DATS_FILES= \
  # source/entities/particles.dats
  # source/entities/physics_object.dats
  # source/entities/static_object.dats
- # source/g_net.dats
- # source/data/int_list.dats
- # source/data/list.dats
- # source/data/randf.dats
- # source/data/spline.dats
- # source/data/vertex_hashtable.dats
- # source/data/vertex_list.dats
-CATS_FILES= \
+
+RENDERING_DATS= \
+ source/rendering/renderer.dats \
+ # source/rendering/sky.dats
+
+UI_DATS= \
+ # source/ui/ui_browser.dats
+ # source/ui/ui_button.dats
+ # source/ui/ui_dialog.dats
+ # source/ui/ui_listbox.dats
+ # source/ui/ui_option.dats
+ # source/ui/ui_rectangle.dats
+ # source/ui/ui_slider.dats
+ # source/ui/ui_spinner.dats
+ # source/ui/ui_style.dats
+ # source/ui/ui_text.dats
+ # source/ui/ui_textbox.dats
+ # source/ui/ui_toast.dats
+
+DATS_FILES= \
+ $(SOURCE_DATS) \
+ $(SDL2_DATS) \
+ $(ASSETS_DATS) \
+ $(DATA_DATS) \
+ $(ENTITIES_DATS) \
+ $(RENDERING_DATS) \
+ $(UI_DATS) \
+
+SDL2_CATS= \
  source/SDL2/SDL_local.cats \
+
+CATS_FILES= \
+ $(SDL2_CATS) \
 
 all: typecheck install test
 
@@ -136,8 +183,32 @@ typecheck:
 	$(ATSCC) -tcats $(SATS_FILES)
 	$(ATSCC) -tcats $(DATS_FILES)
 
+INSTALL_LOCATION=$(ATSHOMEQ)/Goldelish-Install
+
 install: typecheck
-	mkdir $(ATSHOMEQ)/Goldelish-Install
-	cp $(SATS_FILES) $(ATSHOMEQ)/Goldelish-Install
-	cp $(DATS_FILES) $(ATSHOMEQ)/Goldelish-Install
-	cp source/goldelish.hats $(ATSHOMEQ)/Goldelish-Install
+	mkdir $(INSTALL_LOCATION)
+	mkdir $(INSTALL_LOCATION)/assets
+	mkdir $(INSTALL_LOCATION)/data
+	mkdir $(INSTALL_LOCATION)/entities
+	mkdir $(INSTALL_LOCATION)/rendering
+	mkdir $(INSTALL_LOCATION)/ui
+	mkdir $(INSTALL_LOCATION)/SDL2
+	cp $(SOURCE_SATS) $(INSTALL_LOCATION)
+	cp $(DATA_SATS) $(INSTALL_LOCATION)/data
+	cp $(RENDERING_SATS) $(INSTALL_LOCATION)/rendering
+	cp $(SDL2_SATS) $(INSTALL_LOCATION)/SDL2
+	cp $(SOURCE_DATS) $(INSTALL_LOCATION)
+	cp $(DATA_DATS) $(INSTALL_LOCATION)/data
+	cp $(RENDERING_DATS) $(INSTALL_LOCATION)/rendering
+	cp $(SDL2_DATS) $(INSTALL_LOCATION)/SDL2
+	cp $(SDL2_CATS) $(INSTALL_LOCATION)/SDL2
+	cp source/goldelish.hats $(INSTALL_LOCATION)
+#	cp $(ASSETS_SATS) $(INSTALL_LOCATION)/assets
+#	cp $(ASSETS_DATS) $(INSTALL_LOCATION)/assets
+#	cp $(ENTITIES_SATS) $(INSTALL_LOCATION)/entities
+#	cp $(ENTITIES_DATS) $(INSTALL_LOCATION)/entities
+#	cp $(UI_SATS) $(INSTALL_LOCATION)/ui
+#	cp $(UI_DATS) $(INSTALL_LOCATION)/ui
+
+clean:
+	rm -r $(INSTALL_LOCATION)
