@@ -9,21 +9,42 @@
 
 #include "share/atspre_staload.hats"
 
-staload "./data/int_list.sats"
+staload "./image.sats"
 
-////
-implement image_new ( width, height, data ) =
-(
-)
+local
 
-implement image_empty ( width, height ) =
-(
-)
+assume image (w,h,rt,st) = @{
+  width=int w,
+  height=int h,
+  data=arrayptr(uchar,w*h*4),
+  repeat_type=int rt,
+  sample_type=int st
+}
 
-implement image_blank ( width, height ) =
-(
-)
+in
 
+implement image_new {w,h,rt,st} ( width, height, data ) =
+@{
+  width=width,
+  height=height,
+  data=data,
+  repeat_type=IMAGE_REPEAT_TILE,
+  sample_type=IMAGE_SAMPLE_LINEAR
+}:image(w,h,rt,st)
+
+
+implement image_blank {w,h,rt,st} ( width, height ) = let
+  val (pf1 | res) = g1int_mul2(width, height)
+  prval () = mul_elim(pf1)
+  prval () = mul_nat_nat_nat(pf1)
+  val (pf2 | res) = g1int_mul2(res, 4)
+  prval () = mul_elim(pf2)
+  prval () = mul_nat_nat_nat(pf2)
+in
+  image_new(width, height, arrayptr_make_elt(size_of_int(res), c2uc('a')))
+end
+
+end////
 implement image_copy ( src ) =
 (
 )

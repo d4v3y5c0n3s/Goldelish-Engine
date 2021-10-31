@@ -916,7 +916,7 @@ implement quat_interpolate {n,m} ( qs, ws, count ) = let
   val ref = quat_id()
   val ref_inv = quat_inverse(ref)
   val acc = vec3_zero()
-  fun loop {n,m:nat | 0 <= m+1; m+1 <= n} .<m+1>. (m: int m, qs: &(@[quat][n]), ws: &(@[float][n]), acc1: vec3) : vec3 = let
+  fun loop {n,m:nat | 0 <= m+1; m+1 <= n} .<m+1>. (m: int m, qs: !arrayptr(quat,n), ws: !arrayptr(float,n), acc1: vec3) : vec3 = let
     val qlog0 = quat_log(quat_mul_quat(ref_inv, qs[m]))
     val qlog1 = quat_log(quat_mul_quat(ref_inv, quat_neg(qs[m])))
   in
@@ -2117,7 +2117,7 @@ in
 end
 
 implement sphere_merge_many ( s, count ) = let
-  fun loop {n,m:nat | 0 <= m+1; m+1 <= n} .<m+1>. ( sphere_arr: &(@[sphere][n]), m: int m, ret: sphere ) : sphere =
+  fun loop {n,m:nat | 0 <= m+1; m+1 <= n} .<m+1>. ( sphere_arr: !arrayptr(sphere,n), m: int m, ret: sphere ) : sphere =
   if m <= 0 then ret
   else let
     val cur_sphere = sphere_arr[m]

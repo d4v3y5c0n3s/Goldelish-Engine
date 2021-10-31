@@ -108,7 +108,7 @@ fn vec2_reflect ( v1: vec2, v2: vec2 ) : vec2
 
 fn vec2_print ( v: vec2 ) : void
 
-fn vec2_to_array (v: vec2, out: &(@[float][2]) ) : void
+fn vec2_to_array (v: vec2, out: !arrayptr(float, 2) ) : void
 
 fn vec2_hash ( v: vec2 ) : int
 fn vec2_mix_hash ( v: vec2 ) : int
@@ -165,7 +165,7 @@ fn vec3_project ( v1: vec3, v2: vec3 ) : vec3
 
 fn vec3_print ( v: vec3 ) : void
 
-fn vec3_to_array ( v: vec3, out: &(@[float][3]) ) : void
+fn vec3_to_array ( v: vec3, out: !arrayptr(float,3) ) : void
 
 fn vec3_hash ( v: vec3 ) : int
 
@@ -218,7 +218,7 @@ fn vec4_reflect ( v1: vec4, v2: vec4 ) : vec4
 
 fn vec4_print ( v: vec4 ) : void
 
-fn vec4_to_array ( v: vec4, out: &(@[float][4]) ) : void
+fn vec4_to_array ( v: vec4, out: !arrayptr(float,4) ) : void
 
 fn vec3_to_homogeneous ( v: vec3 ) : vec4
 fn vec4_from_homogeneous ( v: vec4 ) : vec3
@@ -272,7 +272,7 @@ fn quat_constrain ( q: quat, axis: vec3 ) : quat
 fn quat_constrain_y ( q: quat ) : quat
 
 fn quat_distance ( q0: quat, q1: quat ) : float
-fn quat_interpolate {n,m:nat | m == n - 1} ( qs: &(@[quat][n]), ws: &(@[float][n]), count: int m ) : quat
+fn quat_interpolate {n,m:nat | m == n - 1} ( qs: !arrayptr(quat,n), ws: !arrayptr(float,n), count: int m ) : quat
 
 typedef quat_dual = @{ real=quat, dual=quat }
 
@@ -298,7 +298,7 @@ fn mat2_transpose ( m: mat2 ) : mat2
 fn mat2_det ( m: mat2 ) : float
 fn mat2_inverse ( m: mat2 ) : mat2
 
-fn mat2_to_array ( m: mat2, out: &(@[float][4]) ) : void
+fn mat2_to_array ( m: mat2, out: !arrayptr(float,4) ) : void
 fn mat2_print ( m: mat2 ) : void
 fn mat2_rotation ( a: float ) : mat2
 
@@ -315,7 +315,7 @@ fn mat3_transpose ( m: mat3 ) : mat3
 fn mat3_det ( m: mat3 ) : float
 fn mat3_inverse ( m: mat3 ) : mat3
 
-fn mat3_to_array ( m: mat3, out: &(@[float][9]) ) : void
+fn mat3_to_array ( m: mat3, out: !arrayptr(float,9) ) : void
 fn mat3_print ( m: mat3 ) : void
 
 fn mat3_scale ( s: vec3 ) : mat3
@@ -347,8 +347,8 @@ fn mat4_to_mat3 ( m: mat4 ) : mat3
 fn mat4_to_quat ( m: mat4 ) : quat
 fn mat4_to_quat_dual ( m: mat4 ) : quat_dual
 
-fn mat4_to_array ( m: mat4, out: &(@[float][16]) ) : void
-fn mat4_to_array_trans ( m: mat4, out: &(@[float][16]) ) : void
+fn mat4_to_array ( m: mat4, out: !arrayptr(float,16) ) : void
+fn mat4_to_array_trans ( m: mat4, out: !arrayptr(float,16) ) : void
 
 fn mat4_print ( m: mat4 ) : void
 
@@ -435,7 +435,7 @@ fn sphere_unit () : sphere
 fn sphere_point () : sphere
 fn sphere_new ( center: vec3, radius: float ) : sphere
 fn sphere_merge ( s1: sphere, s2: sphere ) : sphere
-fn sphere_merge_many {n,m:nat | m == n - 1} ( s: &(@[sphere][n]), count: int m ) : sphere
+fn sphere_merge_many {n,m:nat | m == n - 1} ( s: !arrayptr(sphere,n), count: int m ) : sphere
 fn sphere_transform ( s: sphere, world: mat4 ) : sphere
 fn sphere_translate ( s: sphere, x: vec3 ) : sphere
 fn sphere_scale ( s: sphere, x: float ) : sphere
